@@ -1203,7 +1203,7 @@ function initTopoBackground() {
                         H(0.3, 2.9,-1.0, 4.2, 2.6), H(5.2,-2.6, 0.7, 2.6, 2.4), Z, Z ];
   const FORMATIONS = [
     { f: { hills: BASE_HILLS, warp: 0.04, flow: 0.02, tilt: 0.05 }, cam: { deg: 11, yOff: 320, yaw: 0 } },
-    { f: { hills: BASE_HILLS, warp: 0.035, flow: 0.018, tilt: 0.04 }, cam: { deg: 45, yOff: 260, yaw: 0.12 } },
+    { f: { hills: BASE_HILLS, warp: 0.035, flow: 0.018, tilt: 0.04 }, cam: { deg: 65, yOff: 380, yaw: -0.5236 } },
   ];
 
   const CELL = 10, WORLD_H = 12, WORLD_W = 20, OVER = 0.4;   // WORLD_W: x-units across the full width
@@ -1424,9 +1424,12 @@ function initTopoBackground() {
     return Math.max(1, end);
   }
   let scrollP = 0;
+  // the camera finishes its move over the first 55% of the shared-background
+  // stretch, so it tracks scroll gradually rather than snapping quickly
+  const CAM_RANGE = 0.55;
   lenis.on('scroll', ({ scroll }) => {
     scrollP = Math.min(1, scroll / scrollSpanPx());
-    paramsAtScroll(scrollP);
+    paramsAtScroll(Math.min(1, scrollP / CAM_RANGE));
     const f = Math.max(0, (scrollP - 0.7) / 0.3);
     canvas.style.opacity = (1 - f).toFixed(3);
     canvas.style.filter = 'blur(' + (f * 14).toFixed(2) + 'px)';
