@@ -1285,38 +1285,31 @@ function initTopoBackground() {
 
   function cloneF(f) { return { hills: f.hills.map(h => ({ ...h })), warp: f.warp, flow: f.flow, tilt: f.tilt }; }
   const lp = (a, b, e) => a + (b - a) * e;
-  function lerpF(A, B, e) {
-    const hills = A.hills.map((a, k) => {
-      const b = B.hills[k];
-      return { x: lp(a.x,b.x,e), y: lp(a.y,b.y,e), a: lp(a.a,b.a,e), rx: lp(a.rx,b.rx,e), ry: lp(a.ry,b.ry,e) };
-    });
-    return { hills, warp: lp(A.warp,B.warp,e), flow: lp(A.flow,B.flow,e), tilt: lp(A.tilt,B.tilt,e) };
-  }
-  function easeInOutSine(t) { return -(Math.cos(Math.PI * t) - 1) / 2; }
 
   const D2R = Math.PI / 180;
   const CAM_DIST = 22, H_SCALE = 1.2, BASE_L = 0.7;
   const ANCHOR_Y = 0.35, YOFF_SCALE = 0.5;   // vertical anchor: keeps the field at the top
 
-  let activeIndex = 0;
   let live = cloneF(FORMATIONS[0].f);
-  let fromF = cloneF(live), toF = cloneF(live);
-  let pitch = FORMATIONS[0].cam.deg * D2R, pitchFrom = pitch, pitchTo = pitch;
-  let yOff = FORMATIONS[0].cam.yOff, yOffFrom = yOff, yOffTo = yOff;
-  let camYaw = FORMATIONS[0].cam.yaw, camYawFrom = camYaw, camYawTo = camYaw;
+  let pitch = FORMATIONS[0].cam.deg * D2R;
+  let yOff = FORMATIONS[0].cam.yOff;
+  let camYaw = FORMATIONS[0].cam.yaw;
   let mouseYaw = 0;
-  let tween = null;
 
-  function morphTo(index) {
-    index = ((index % FORMATIONS.length) + FORMATIONS.length) % FORMATIONS.length;
-    if (index === activeIndex) return;
-    activeIndex = index;
-    fromF = cloneF(live);
-    toF = cloneF(FORMATIONS[index].f);
-    pitchFrom = pitch; pitchTo = FORMATIONS[index].cam.deg * D2R;
-    yOffFrom = yOff;   yOffTo = FORMATIONS[index].cam.yOff;
-    camYawFrom = camYaw; camYawTo = FORMATIONS[index].cam.yaw;
-    tween = { start: null, dur: 4000 };
+  // Continuous keyframe interpolation — camera + field params are a direct,
+  // zero-delay function of scroll progress (no step thresholds, no tween
+  // duration to wait out). Keyframes are evenly spaced across FORMATIONS.
+  const KEY_T = FORMATIONS.map((_, i) => i / (FORMATIONS.length - 1));
+  function paramsAtScroll(p) {
+    let k = 0;
+    while (k < KEY_T.length - 2 && p > KEY_T[k + 1]) k++;
+    const t0 = KEY_T[k], t1 = KEY_T[k + 1];
+    const e = t1 > t0 ? (p - t0) / (t1 - t0) : 0;
+    const A = FORMATIONS[k], B = FORMATIONS[k + 1];
+    live = { hills: A.f.hills, warp: lp(A.f.warp, B.f.warp, e), flow: lp(A.f.flow, B.f.flow, e), tilt: lp(A.f.tilt, B.f.tilt, e) };
+    pitch = lp(A.cam.deg, B.cam.deg, e) * D2R;
+    yOff = lp(A.cam.yOff, B.cam.yOff, e);
+    camYaw = lp(A.cam.yaw, B.cam.yaw, e);
   }
 
   function computeField(P, t) {
@@ -1435,7 +1428,7 @@ function initTopoBackground() {
   let scrollP = 0;
   lenis.on('scroll', ({ scroll }) => {
     scrollP = Math.min(1, scroll / scrollSpanPx());
-    morphTo(Math.min(FORMATIONS.length - 1, Math.floor(scrollP * FORMATIONS.length)));
+    paramsAtScroll(scrollP);
     const f = Math.max(0, (scrollP - 0.7) / 0.3);
     canvas.style.opacity = (1 - f).toFixed(3);
     canvas.style.filter = 'blur(' + (f * 14).toFixed(2) + 'px)';
@@ -1444,16 +1437,6 @@ function initTopoBackground() {
   function frame(t) {
     const TIME_PERIOD = 78.54;
     const time = reduceMotion ? 0 : (t * 0.001) % TIME_PERIOD;
-    if (tween) {
-      if (tween.start === null) tween.start = t;
-      const k = Math.min(1, (t - tween.start) / tween.dur);
-      const e = easeInOutSine(k);
-      live = lerpF(fromF, toF, e);
-      pitch = pitchFrom + (pitchTo - pitchFrom) * e;
-      yOff = yOffFrom + (yOffTo - yOffFrom) * e;
-      camYaw = camYawFrom + (camYawTo - camYawFrom) * e;
-      if (k >= 1) { live = cloneF(toF); pitch = pitchTo; yOff = yOffTo; camYaw = camYawTo; tween = null; }
-    }
     mouseYaw += (mouseX * 0.04 - mouseYaw) * 0.03;
     const totalYaw = camYaw + mouseYaw;
     const pitchView = pitch + (reduceMotion ? 0 : mouseY * 0.015);
