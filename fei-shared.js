@@ -1204,8 +1204,6 @@ function initTopoBackground() {
   const FORMATIONS = [
     { f: { hills: BASE_HILLS, warp: 0.04, flow: 0.02, tilt: 0.05 }, cam: { deg: 11, yOff: 320, yaw: 0 } },
     { f: { hills: BASE_HILLS, warp: 0.035, flow: 0.018, tilt: 0.04 }, cam: { deg: 45, yOff: 260, yaw: 0.12 } },
-    { f: { hills: BASE_HILLS, warp: 0.035, flow: 0.018, tilt: 0.03 }, cam: { deg: 20, yOff: 300, yaw: -0.1 } },
-    { f: { hills: BASE_HILLS, warp: 0.04, flow: 0.02, tilt: 0.05 }, cam: { deg: 11, yOff: 310, yaw: 0 } },
   ];
 
   const CELL = 10, WORLD_H = 12, WORLD_W = 20, OVER = 0.4;   // WORLD_W: x-units across the full width
@@ -1238,9 +1236,9 @@ function initTopoBackground() {
   const LEVELS = [];
   for (let L = -1.4; L <= 3.05; L += 0.09) LEVELS.push(L);
   const PEAK_LEVEL = 1.55;
-  const LINE_COLOR = 'rgba(147,174,193,0.11)';
-  const PEAK_COLOR = 'rgba(0,104,252,0.26)';
-  const ACCENT_COLOR = 'rgba(0,238,255,0.13)';   // accent cyan index contours
+  const LINE_COLOR = 'rgba(147,174,193,0.16)';
+  const PEAK_COLOR = 'rgba(0,104,252,0.31)';
+  const ACCENT_COLOR = 'rgba(0,238,255,0.18)';   // accent cyan index contours
   const ACCENT_LEVELS = new Set([19, 34]);        // two lines thread through in cyan
 
   function resize() {
