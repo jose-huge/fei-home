@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Eagle Investments — Prototype</title>
+
+<!-- ============================================================
+     FEI HOMEPAGE PROTOTYPE — desktop only (1440 reference)
+     Scaffold: tokens, fonts, 12-col grid, grid-lines, Lenis +
+     GSAP ScrollTrigger + three.js, animation utilities.
+     ============================================================ -->
+
+<link rel="stylesheet" href="fei-shared.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@400;500&family=Chivo:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- fixed three.js canvas shared by Hero / Market Views / Our Funds -->
+<canvas id="topo-bg"></canvas>
+
+<main>
+  <!-- ============ HEADER (246:6371 + 246:4715) ============ -->
+  <header id="site-header">
+    <div class="hdr-eyebrow">
+      <div class="container hdr-eyebrow-inner">
+        <div class="hdr-eyebrow-left">
+          <span class="utility-nav">Financial Professional
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg>
+          </span>
+          <span class="utility-nav" style="padding-left:0;">/</span>
+          <span class="utility-nav">US
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg>
+          </span>
+        </div>
+        <div class="hdr-eyebrow-right">
+          <a class="utility-nav" href="#">Noteholder Services</a>
+          <a class="utility-nav" href="#">Subscriptions</a>
+          <a class="utility-nav" href="#">Account Access</a>
+        </div>
+      </div>
+    </div>
+    <div class="hdr-main">
+      <div class="container hdr-main-inner">
+        <a class="hdr-logo" href="#"><img src="assets/img/FEI-Logo.svg" alt="First Eagle Investments"></a>
+        <nav class="hdr-l1">
+          <button data-l1="investments">Investments</button>
+          <button data-l1="insights">Insights</button>
+          <button data-l1="resources">Resources</button>
+          <button data-l1="who-we-are">Who We Are</button>
+          <button class="hdr-search" aria-label="Search">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5L18 18"/></svg>
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <div id="nav-overlay"></div>
+  <aside id="nav-sheet" aria-hidden="true" data-lenis-prevent>
+    <button class="sheet-close" id="sheet-close" aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+    </button>
+    <div class="sheet-body" id="sheet-body"><!-- built by JS --></div>
+  </aside>
+
+  <!-- ============ HERO (763:4541) ============ -->
+  <section id="hero">
+    <div class="container hero-content">
+      <div class="hero-copy" data-sf-group>
+        <p class="eyebrow" data-sf>Against the index</p>
+        <h1 class="hero-title" data-sf>We invest<br>where others stop exploring.</h1>
+        <p class="hero-body" data-sf>We look for resilient, undervalued companies and hold them with conviction. The losses your clients avoid matter as much as the gains you deliver.</p>
+        <a class="btn" href="#" data-sf>Explore Our Strategies
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <p class="eyebrow">Scale</p>
+          <p class="stat-num" data-tick="$213B">$213B</p>
+          <p class="stat-caption">AUM Assets under management<br>(As of 31 Mar 2026)</p>
+        </div>
+        <hr class="stat-divider">
+        <div class="hero-stat">
+          <p class="eyebrow">Heritage</p>
+          <p class="stat-num" data-tick="1864">1864</p>
+          <p class="stat-caption">Over 160 years investing through every kind of market.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRODUCT TICKER (Sprint-1 240:14785) ============ -->
+  <section id="product-ticker">
+    <div class="container" data-fade>
+      <div class="pt-inner">
+        <div class="pt-label">
+          <div class="pt-label-text">
+            <p class="pt-heading">Fund performance</p>
+            <p class="pt-sub">NAV &amp; 1-day change as of 7/16/2026</p>
+          </div>
+          <a class="pt-finder-btn btn btn--outline" href="#">Open the Fund Finder</a>
+        </div>
+        <div class="pt-divider"><span class="pt-divider-fill" id="pt-divider-fill"></span></div>
+        <div class="pt-fund" id="pt-fund">
+          <span class="pt-tick"></span>
+          <span class="pt-name"></span>
+          <span class="pt-nav"></span>
+          <span class="pt-chg"></span>
+        </div>
+        <div class="pt-table" id="pt-table" aria-hidden="true">
+          <div class="pt-table-head">
+            <span class="pt-th">Ticker</span>
+            <span class="pt-th">Fund</span>
+            <span class="pt-th pt-th--right">NAV</span>
+            <span class="pt-th pt-th--right">1-Day</span>
+            <span class="pt-th pt-th--right">YTD</span>
+          </div>
+          <div class="pt-table-body" id="pt-table-body"></div>
+        </div>
+        <button class="pt-plus" id="pt-plus" aria-label="View fund performance" aria-expanded="false">
+          <svg class="pt-icon-plus" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 2v12M2 8h12"/></svg>
+          <svg class="pt-icon-minus" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 8h12"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MARKET VIEWS (763:4587) ============ -->
+  <section id="market-views">
+    <div class="grid-lines grid-lines--left"><span></span><span></span><span></span></div>
+
+    <div class="mv-title" data-sf-group>
+      <div class="title-group">
+        <p class="eyebrow" data-sf>Macro &amp; Market Views</p>
+        <h2 class="section-title" data-sf>Perspective,<br>not prediction.</h2>
+      </div>
+      <a class="btn btn--outline" href="#" data-sf>More Insights
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+      </a>
+    </div>
+
+    <div class="mv-carousel" id="mv-carousel"><!-- cards injected by JS --></div>
+
+    <div class="mv-arrows">
+      <div class="mv-dots" id="mv-dots" aria-hidden="true"><!-- dots injected by JS --></div>
+      <div class="mv-btns">
+        <button class="arrow-btn" id="mv-prev" aria-label="Previous video">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8H2M7 3L2 8l5 5"/></svg>
+        </button>
+        <button class="arrow-btn" id="mv-next" aria-label="Next video">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="mv-subscribe" data-fade>
+      <div class="mv-sub-copy">
+        <h3>Stay informed with our latest thinking.</h3>
+        <p>Subscribe to receive new insights, research, videos and other thought leadership from our investment teams.</p>
+      </div>
+      <div class="mv-sub-right">
+        <form class="mv-sub-form" onsubmit="return false">
+          <input class="input-field" type="email" placeholder="Your email address*">
+          <button class="btn" type="submit" id="mv-sub-btn" disabled>Subscribe</button>
+        </form>
+        <label class="mv-sub-consent">
+          <input type="checkbox" id="mv-consent">
+          <span>I accept the <a href="#">Terms &amp; Conditions</a> and <a href="#">Privacy Policy</a></span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OUR FUNDS — Find funds (2745:36197) ============ -->
+  <section id="our-funds">
+    <div class="of-video">
+      <img src="assets/img/of-city.jpg" alt="" onerror="this.remove()">
+      <video src="assets/video/Slowed-Down.mp4" autoplay muted loop playsinline onerror="this.remove()"></video>
+    </div>
+    <div class="of-gradient"></div>
+    <div class="grid-lines grid-lines--right" style="top:-34px;"><span></span><span></span><span></span></div>
+
+    <div class="of-title" data-sf-group>
+      <h2 class="section-title" data-sf>Our Funds.</h2>
+    </div>
+
+    <a class="btn of-find" href="#" data-sf>Open the Fund Finder
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+    </a>
+
+    <div class="of-search-bar" data-sf>
+      <div class="of-search-field">
+        <span class="of-search-field-label">Asset class</span>
+        <div class="of-search-box">
+          <span class="of-search-field-value">All</span>
+          <svg class="of-search-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="of-search-field">
+        <span class="of-search-field-label">Goal</span>
+        <div class="of-search-box">
+          <span class="of-search-field-value">Growth</span>
+          <svg class="of-search-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="of-search-field">
+        <span class="of-search-field-label">Risk tolerance</span>
+        <div class="of-search-box">
+          <span class="of-search-field-value">High</span>
+          <svg class="of-search-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="of-cards">
+      <div class="fund-card">
+        <div class="fund-card-copy">
+          <div class="fund-eyebrow">
+            <span class="fund-ticker-tag">SGENX</span>
+            <span aria-hidden="true">•</span>
+            <span>Class A</span>
+          </div>
+          <p class="fund-name">First Eagle Global Fund</p>
+          <p class="fund-desc">Global value investing with a margin of safety. US and international equities, plus cash and gold as a buffer.</p>
+        </div>
+        <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+      <div class="fund-card">
+        <div class="fund-card-copy">
+          <div class="fund-eyebrow">
+            <span class="fund-ticker-tag">FESAX</span>
+            <span aria-hidden="true">•</span>
+            <span>Class A</span>
+          </div>
+          <p class="fund-name">First Eagle Small Cap Opportunity Fund</p>
+          <p class="fund-desc">Undervalued small-cap companies with a catalyst for change. Built for investors who can look past the noise.</p>
+        </div>
+        <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+      <div class="fund-card">
+        <div class="fund-card-copy">
+          <div class="fund-eyebrow">
+            <span class="fund-ticker-tag">SGGDX</span>
+            <span aria-hidden="true">•</span>
+            <span>Class A</span>
+          </div>
+          <p class="fund-name">First Eagle Gold Fund</p>
+          <p class="fund-desc">Gold and precious metals as a strategic position, not a trade. A hedge against inflation and market stress.</p>
+        </div>
+        <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+
+    <div class="of-copy" data-sf-group>
+      <div>
+        <h3 class="of-copy-title" data-sf>Markets are uncertain.<br>Our position is not.</h3>
+        <p class="body" data-sf>Uncertainty changes markets. It doesn't change our principles. We invest with patience, discipline and conviction—always focused on protecting capital and uncovering enduring value.</p>
+      </div>
+      <a class="btn" href="#" data-sf>Discover Our Approach
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ RECENT INSIGHTS — filtered panel slider (Sprint-1 1594:39821) ============ -->
+  <section id="recent-insights">
+    <div class="eagles-edge"></div>
+
+    <div class="ri4-header" data-sf-group>
+      <div class="ri4-title">
+        <p class="eyebrow" data-sf>Recent Insights</p>
+        <h2 class="section-title" data-sf>The thinking behind the strategies.</h2>
+        <p class="body" data-sf>What’s moving, what’s noise, and what we’re doing about it.</p>
+      </div>
+      <a class="btn" href="#" data-sf>See All Insights</a>
+    </div>
+
+    <div class="ri4-tabs" id="ri4-tabs" data-fade><!-- tabs rendered by JS --></div>
+    <div class="ri4-slider" id="ri4-slider" data-fade><!-- panels rendered by JS --></div>
+
+    <div class="ri4-arrows">
+      <button class="arrow-btn" id="ri4-prev" aria-label="Previous insight">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8H2M7 3L2 8l5 5"/></svg>
+      </button>
+      <button class="arrow-btn" id="ri4-next" aria-label="Next insight">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ TEAMS (763:4776) ============ -->
+  <section id="teams">
+    <div class="tm-header" data-sf-group>
+      <div class="tm-title">
+        <p class="eyebrow" data-sf>The Teams Behind the Strategies</p>
+        <h2 class="section-title" data-sf>Independent managers. One shared standard.</h2>
+        <p class="body" data-sf>Our investment teams operate with autonomy and accountability as a focused discipline.</p>
+      </div>
+    </div>
+    <div class="tm-carousel" id="tm-carousel"><!-- cards injected by JS --></div>
+    <div class="tm-arrows">
+      <div class="mv-dots" id="tm-dots" aria-hidden="true"><!-- dots injected by JS --></div>
+      <div class="mv-btns">
+        <button class="arrow-btn arrow-btn--cobalt" id="tm-prev" aria-label="Previous team">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8H2M7 3L2 8l5 5"/></svg>
+        </button>
+        <button class="arrow-btn arrow-btn--cobalt" id="tm-next" aria-label="Next team">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INSIGHTS CONTENT GRID (2745:36301) ============ -->
+  <section id="insights-grid">
+    <div class="ig-header" data-sf-group>
+      <p class="eyebrow" data-sf>Insights</p>
+      <h2 class="section-title" data-sf>Actionable insights for today's markets</h2>
+    </div>
+    <div class="ig-cards" data-sf-group>
+      <div class="ig-card ig-card--wide" data-sf>
+        <p class="ig-card-title">Stock Indices Under Different Dollar Regimes</p>
+        <p class="ig-card-desc">Periods of US dollar weakness have historically coincided with stronger relative performance from international equities.</p>
+        <a class="ig-card-link" href="#">Global Equity ETF Positioning for Resilience
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10V2"/><path d="M14 10v2.667a1.333 1.333 0 0 1-1.333 1.333H3.333A1.333 1.333 0 0 1 2 12.667V10"/><path d="M4.667 6.667L8 10l3.333-3.333"/></svg>
+        </a>
+      </div>
+      <div class="ig-card" data-sf>
+        <p class="ig-card-title">Small Cap Poised for a Favorable Rate Regime</p>
+        <p class="ig-card-desc">Small Cap Value equities currently trade at a discount relative to many other areas in the US equity market. These discounted valuations may provide an extra layer of support for Small Cap Value as markets enter a historically more favorable low-rate environment.</p>
+        <a class="ig-card-link" href="#">Small Cap Poised for a Favorable Rate Regime
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10V2"/><path d="M14 10v2.667a1.333 1.333 0 0 1-1.333 1.333H3.333A1.333 1.333 0 0 1 2 12.667V10"/><path d="M4.667 6.667L8 10l3.333-3.333"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ UTILITY (763:4797) ============ -->
+  <section id="utility">
+    <div class="ut-card" data-sf>
+      <div class="ut-title">
+        <p class="eyebrow">Built for your practice</p>
+        <h2 class="section-title">Everything you need for client conversations.</h2>
+      </div>
+      <div class="ut-list" data-sf-group>
+        <a class="ut-row" href="#" data-sf>
+          <div class="ut-row-copy">
+            <p class="ut-row-title">Fund finder</p>
+            <p class="ut-row-desc">Filter by asset class, vehicle, or strategy. Compare performance.</p>
+          </div>
+          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h20M16 5l9 9-9 9"/></svg>
+        </a>
+        <a class="ut-row" href="#" data-sf>
+          <div class="ut-row-copy">
+            <p class="ut-row-title">Fact sheets and fund literature</p>
+            <p class="ut-row-desc">Download the latest fund documents in one place.</p>
+          </div>
+          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h20M16 5l9 9-9 9"/></svg>
+        </a>
+        <a class="ut-row" href="#" data-sf>
+          <div class="ut-row-copy">
+            <p class="ut-row-title">First Eagle Academy</p>
+            <p class="ut-row-desc">Earn CE credits and learn about HNW acquisitions, succession planning, and more.</p>
+          </div>
+          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h20M16 5l9 9-9 9"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHY FEI (763:4819) ============ -->
+  <section id="why-fei">
+    <div class="wf-carousel" id="wf-carousel"><!-- testimonials injected by JS --></div>
+    <div class="wf-scrim wf-scrim--top"></div>
+    <div class="wf-scrim wf-scrim--bottom"></div>
+    <div class="grid-lines grid-lines--left"><span></span><span></span><span></span></div>
+
+    <div class="wf-title" data-sf-group>
+      <p class="eyebrow" data-sf>Why First Eagle</p>
+      <h2 class="section-title" data-sf>160 years of reasons.</h2>
+      <p class="body" data-sf>What the record shows, and what the advisors who use it say.</p>
+      <a class="btn wf-history" href="#" data-sf>Our History
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+      </a>
+    </div>
+
+    <div class="wf-arrows">
+      <button class="arrow-btn" id="wf-prev" aria-label="Previous testimonial">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14V2M3 7l5-5 5 5"/></svg>
+      </button>
+      <button class="arrow-btn" id="wf-next" aria-label="Next testimonial">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v12M3 9l5 5 5-5"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ BY THE NUMBERS (763:4840) ============ -->
+  <section id="by-the-numbers">
+    <div class="btn-stats" data-sf-group>
+      <div class="btn-stat" data-sf>
+        <p class="label">Heritage</p>
+        <p class="value" data-tick="1864">1864</p>
+        <p class="desc">Over 160 years investing through every kind of market.</p>
+      </div>
+      <div class="btn-sep"></div>
+      <div class="btn-stat" data-sf>
+        <p class="label">Scale</p>
+        <p class="value" data-tick="$213B">$213B</p>
+        <p class="desc">AUM Assets under management across the platform.</p>
+      </div>
+      <div class="btn-sep"></div>
+      <div class="btn-stat" data-sf>
+        <p class="label">Reach</p>
+        <p class="value" data-tick="630+">630+</p>
+        <p class="desc">Institutional investors globally.</p>
+      </div>
+      <div class="btn-sep"></div>
+      <div class="btn-stat" data-sf>
+        <p class="label">Expertise</p>
+        <p class="value" data-tick="195">195</p>
+        <p class="desc">Investment professionals across all teams.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT (763:4858) ============ -->
+  <section id="contact">
+    <div class="ct-card" data-sf>
+      <div class="ct-copy">
+        <h2 class="ct-title">We’re ready when you are.</h2>
+        <p class="ct-body">Whether you have questions about a specific fund or want to learn more about how we fit into your practice, our team is here to help.</p>
+      </div>
+      <a class="btn btn--light" href="#">Contact Us
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER (763:4864) ============ -->
+  <footer id="site-footer">
+    <div class="ft-upper">
+      <div class="container">
+        <div class="ft-subscribe">
+          <div class="ft-subscribe-copy">
+            <h3>Stay ahead of the markets</h3>
+            <p>Get the Bird’s Eye View and timely perspectives from our investment teams, delivered to your inbox.</p>
+          </div>
+          <form class="mv-sub-form" onsubmit="return false">
+            <input class="input-field" type="email" placeholder="Your email address">
+            <button class="btn" type="submit">Subscribe</button>
+          </form>
+        </div>
+
+        <div class="ft-nav">
+          <div class="ft-brand">
+            <div class="ft-logo"><img src="assets/img/FEI-Logo.svg" alt="First Eagle Investments"></div>
+            <p>An independent, privately owned asset manager focused on capital preservation and long-term value since 1864.</p>
+            <div class="ft-social">
+              <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 17 17" fill="currentColor"><path d="M3.9 2A1.9 1.9 0 1 1 .1 2a1.9 1.9 0 0 1 3.8 0ZM.4 5.3h3.2V16H.4V5.3Zm5.4 0h3v1.5h.1c.4-.8 1.5-1.7 3.1-1.7 3.3 0 3.9 2.2 3.9 5V16h-3.2v-5.2c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V16H5.8V5.3Z"/></svg></a>
+              <a href="#" aria-label="X"><svg viewBox="0 0 17 17" fill="currentColor"><path d="M10.1 7.2 16.4 0h-1.5L9.4 6.2 5.1 0H0l6.6 9.6L0 17h1.5l5.8-6.6L11.9 17H17l-6.9-9.8Zm-2 2.3-.7-1L2 1.1h2.3l4.3 6.2.7 1 5.6 8h-2.3L8.1 9.5Z"/></svg></a>
+              <a href="#" aria-label="YouTube"><svg viewBox="0 0 17 12" fill="currentColor"><path d="M16.6 1.9A2.1 2.1 0 0 0 15.1.4C13.8 0 8.5 0 8.5 0S3.2 0 1.9.4A2.1 2.1 0 0 0 .4 1.9 22 22 0 0 0 0 6a22 22 0 0 0 .4 4.1 2.1 2.1 0 0 0 1.5 1.5c1.3.4 6.6.4 6.6.4s5.3 0 6.6-.4a2.1 2.1 0 0 0 1.5-1.5A22 22 0 0 0 17 6a22 22 0 0 0-.4-4.1ZM6.8 8.6V3.4L11.2 6 6.8 8.6Z"/></svg></a>
+            </div>
+          </div>
+          <div class="ft-cols">
+            <div class="ft-col">
+              <h4>Investments</h4>
+              <ul>
+                <li><a href="#">Mutual Funds</a></li>
+                <li><a href="#">ETFs</a></li>
+                <li><a href="#">Interval Funds</a></li>
+                <li><a href="#">SMAs</a></li>
+                <li><a href="#">By Asset Class</a></li>
+                <li><a href="#">Fund Finder</a></li>
+              </ul>
+            </div>
+            <div class="ft-col">
+              <h4>Explore</h4>
+              <ul>
+                <li><a href="#">Bird’s Eye View</a></li>
+                <li><a href="#">Insights</a></li>
+                <li><a href="#">First Eagle Academy</a></li>
+                <li><a href="#">Client Servicing</a></li>
+                <li><a href="#">Retirement Solutions</a></li>
+                <li><a href="#">Ways to Invest</a></li>
+                <li><a href="#">Documents &amp; Forms</a></li>
+              </ul>
+            </div>
+            <div class="ft-col">
+              <h4>Who We Are</h4>
+              <ul>
+                <li><a href="#">About First Eagle</a></li>
+                <li><a href="#">Leadership</a></li>
+                <li><a href="#">Investment Teams</a></li>
+                <li><a href="#">Press and Media</a></li>
+                <li><a href="#">Careers</a></li>
+                <li><a href="#">Contact Us</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="ft-region">
+          <div class="ft-region-inner">
+            <span class="ft-region-label">You’re viewing content for</span>
+            <span class="ft-region-value">Financial Professional
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg>
+            </span>
+            <span class="ft-region-value" style="padding-left:0;">/</span>
+            <span class="ft-region-value">US
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="ft-legal">
+          <div class="ft-legal-links">
+            <a href="#">Terms</a>
+            <a href="#">Privacy Notice</a>
+            <a href="#">Notice About WhatsApp</a>
+            <a href="#">UK Tax Strategy</a>
+            <a href="#">Business Continuity</a>
+            <a href="#">Accessibility Statement</a>
+            <a href="#">Transparency in Coverage</a>
+            <a href="#">Complaint Handling Policy for FEIM Ltd</a>
+            <a href="#">Global Value Team Responsible Investment Guidelines</a>
+          </div>
+          <button class="btn btn--outline-cobalt" id="back-to-top">Back to Top</button>
+        </div>
+
+        <div class="ft-copyright">
+          <p>© 2026 First Eagle Investment Management, LLC. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ft-disclosures">
+      <div class="container">
+        <p><strong>Risk Disclosures</strong></p>
+        <p>All investments involve the risk of loss of principal.</p>
+        <p>There are risks associated with investing in securities of foreign countries, such as erratic market conditions, economic and political instability and fluctuations in currency exchange rates.</p>
+        <p>A principal risk of investing in value stocks is that the price of the security may not approach its anticipated value or may decline in value. "Value" investments, as a category, or entire industries or sectors associated with such investments, may lose favor with investors as compared to those that are more "growth" oriented.</p>
+        <p>Investment in gold and gold-related investments present certain risks and returns on gold related investments have traditionally been more volatile than investments in broader equity or debt markets.</p>
+        <p>Diversification does not guarantee investment returns and does not eliminate the risk of loss.</p>
+        <p>Investors should consider investment objectives, risks, charges and expenses carefully before investing. The <a href="#">prospectus</a> and <a href="#">summary prospectus</a> contain this and other information about the Funds and may be viewed <a href="#">online</a> or calling us at 800.747.2008. Please read the prospectus carefully before investing. Investments are not FDIC insured or bank guaranteed and may lose value.</p>
+        <p>FEF Distributors, LLC ("FEFD") (SIPC), a limited purpose broker-dealer, distributes certain First Eagle products. FEFD does not provide services to any investor, but rather provides services to its First Eagle affiliates. As such, when FEFD presents a fund, strategy, or other product to a prospective investor, FEFD and its representatives do not determine whether an investment in the fund, strategy or other product is in the best interests of, or is otherwise beneficial or suitable for, the investor. No statement by FEFD should be construed as a recommendation. Investors should exercise their own judgment and/or consult with a financial professional to determine whether it is advisable for the investor to invest in any First Eagle fund, strategy, or product.</p>
+        <p>The First Eagle Funds are offered by FEF Distributors, LLC, a subsidiary of First Eagle Investment Management, LLC, which provides advisory services.</p>
+        <p>Check the background of FEF Distributors, LLC (Member <a href="#">SIPC</a>) on <a href="#">FINRA’s BrokerCheck</a>.</p>
+        <p>Form Customer Relationship Summary ("FORM CRS") can be accessed by clicking on this link <a href="#">FORM CRS</a></p>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<!-- ---------- Libraries ---------- -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+
+<script src="fei-shared.js"></script>
+</body>
+</html>
