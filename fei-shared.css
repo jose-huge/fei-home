@@ -1475,9 +1475,9 @@ main{position:relative;z-index:1;}
 #rt-insights .ri4-arrows .arrow-btn{border-color:var(--white);color:var(--white);}
 #rt-insights .ri4-date-chip{color:var(--white);}
 
-#rt-explore{background:var(--oxford-blue);position:relative;overflow:hidden;padding:112px calc(var(--edge) + var(--margin));}
-.rt-exp-topo{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
-.rt-exp-topo img{position:absolute;top:-46px;left:0;width:140%;opacity:1;mix-blend-mode:screen;}
+#rt-explore{background:var(--oxford-blue);position:relative;overflow-x:clip;padding:112px calc(var(--edge) + var(--margin));}
+.rt-exp-topo{position:absolute;inset:0;pointer-events:none;}
+.rt-exp-topo img{position:absolute;top:-120px;left:0;width:140%;opacity:1;mix-blend-mode:screen;}
 .rt-exp-inner{position:relative;z-index:1;max-width:var(--max-w);margin:0 auto;display:flex;flex-direction:column;gap:56px;}
 .rt-exp-heading{font-family:var(--font-water);font-weight:700;font-size:calc(32px * var(--ts));line-height:1;color:var(--white);}
 .rt-exp-tiles{display:grid;grid-template-columns:repeat(12,1fr);column-gap:32px;}
