@@ -1150,13 +1150,12 @@ main{position:relative;z-index:1;}
   text-decoration:none;cursor:pointer;
 }
 .ab-subnav-item--active{color:var(--oxford-blue);border-color:var(--cobalt-blue);}
-.ab-statement{background:var(--white);padding:80px calc(var(--edge) + var(--margin));}
+.ab-statement{background:var(--white);padding:64px calc(var(--edge) + var(--margin));}
 .ab-statement-inner{
-  display:grid;grid-template-columns:repeat(12,1fr);column-gap:32px;
   max-width:1521px;margin:0 auto;
 }
 .ab-statement-text{
-  grid-column:1/span 8;
+  max-width:950px;
   font-family:var(--font-air);font-weight:400;font-size:calc(64px * var(--ts));
   line-height:1;letter-spacing:-0.64px;color:var(--oxford-blue);
 }
@@ -1370,7 +1369,7 @@ main{position:relative;z-index:1;}
 .retirement-page #site-header{position:absolute;top:0;left:0;right:0;background:transparent;border-bottom:none;}
 .retirement-page .hdr-eyebrow{background:#162035;}
 .retirement-page .hdr-main-inner{border-bottom:1px solid var(--light-30);}
-.retirement-page #ab-hero{background:var(--white);}
+.retirement-page #ab-hero{background:var(--white);height:auto;}
 
 #rt-approach{background:var(--oxford-blue);}
 .rt-featured-wrap{
