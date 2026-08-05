@@ -154,35 +154,24 @@
     </div>
   </section>
 
-  <!-- ============ HISTORY — heritage timeline (2799:44370) ============ -->
+  <!-- ============ HISTORY — heritage timeline (3088:17000 / 3039:62437) ============
+       Two stacked layers share one stage: the Overview grid and the year
+       filmstrip. Panels + tabs are built from AH_ITEMS in fei-shared.js. -->
   <section id="ab-history">
-    <div class="ab-history-copy" data-sf-group>
-      <h2 class="section-title" data-sf>Built on conviction since 1864</h2>
-      <p class="body" data-sf>Founded in Europe in 1864 and headquartered in New York since 1937, we are a global, investment-centric firm focused on our clients and long-term performance.</p>
+    <div class="ab-history-stage" data-mode="overview">
+      <div class="ab-history-overview">
+        <div class="ab-history-copy" data-sf-group>
+          <h2 class="section-title" data-sf>Built on conviction since 1864</h2>
+          <p class="body" data-sf>Founded in Europe in 1864 and headquartered in New York since 1937, we are a global, investment-centric firm focused on our clients and long-term performance.</p>
+        </div>
+        <div class="ab-history-image"><img src="assets/img/about-history.png" alt=""></div>
+      </div>
+      <div class="ab-history-strip-wrap">
+        <div class="ab-history-rail"></div>
+        <div class="ab-history-strip" id="ab-history-strip"></div>
+      </div>
     </div>
-    <div class="ab-history-image"><img src="assets/img/about-history.png" alt=""></div>
-    <div class="ab-history-tabs" data-fade>
-      <span class="ab-history-tab ab-history-tab--active">Overview</span>
-      <span class="ab-history-tab">1864</span>
-      <span class="ab-history-tab">1928</span>
-      <span class="ab-history-tab">1931</span>
-      <span class="ab-history-tab">1937</span>
-      <span class="ab-history-tab">1967</span>
-      <span class="ab-history-tab">1979</span>
-      <span class="ab-history-tab">1987</span>
-      <span class="ab-history-tab">1999</span>
-      <span class="ab-history-tab">2002</span>
-      <span class="ab-history-tab">2009</span>
-      <span class="ab-history-tab">2011</span>
-      <span class="ab-history-tab">2015</span>
-      <span class="ab-history-tab">2017</span>
-      <span class="ab-history-tab">2020</span>
-      <span class="ab-history-tab">2021</span>
-      <span class="ab-history-tab">2022</span>
-      <span class="ab-history-tab">2023</span>
-      <span class="ab-history-tab">2025</span>
-      <span class="ab-history-tab">2026</span>
-    </div>
+    <nav class="ab-history-tabs" id="ab-history-tabs" data-fade></nav>
   </section>
 
   <!-- ============ OUR LEGACY — leadership carousel (2799:44424) ============ -->

@@ -1486,6 +1486,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTopoBackground();
   initLeadershipCarousel();
   initAboutSubnav();
+  initAboutHistory();
 });
 
 function initAboutSubnav() {
@@ -1647,4 +1648,112 @@ function initLeadershipCarousel() {
   window.addEventListener('resize', () => {
     cards().forEach(c => gsap.set(c, { x: (+c.dataset.slot) * step() }));
   });
+}
+
+/* ============================================================
+   ABOUT PAGE — heritage timeline ("Built on conviction since 1864")
+   Figma: 3088:17000 (Overview) / 3039:62437 (1864) / 3039:62697 (1928)
+
+   A horizontal filmstrip of year groups that translates so the active
+   group is centered in the stage — derived from Figma, where the 952px
+   1864 group sits at x=244 in a 1440 frame: (1440-952)/2 = 244.
+
+   Tab 0 is Overview (the grid layout); tabs 1..n map to AH_ITEMS.
+   Active/inactive colouring is CSS class-driven (see .ab-history-item.active),
+   matching how .ab-subnav-item--active and .lg-card.active already work.
+   No-ops if #ab-history-strip is absent, so index.html is unaffected.
+   ============================================================ */
+const AH_ITEMS = [
+  { year: '1864', title: 'Gebr. Arnhold (Arnhold Brothers) founded in Dresden',
+    desc: 'The firm financed a range of local businesses, including brewers.',
+    img: 'assets/img/timeline-1864.png' },
+  { year: '1928', title: 'Acquired Adler Bank in Switzerland',
+    desc: 'Adler means “Eagle” in German, and ultimately served as the basis of the company’s future renaming as “First Eagle.”' },
+  { year: '1931', title: 'Arnhold and S. Bleichroeder formed in Berlin',
+    desc: 'The combination of two storied banks created one of the leading merchant and investment banks in Europe.',
+    img: 'assets/img/timeline-1931.png' },
+  { year: '1937', title: 'All business activities moved to New York City',
+    desc: 'Faced by the realities of a deteriorating global political and economic environment, the firm relocated to New York.',
+    img: 'assets/img/timeline-1937.png' },
+  { year: '1967', title: 'Launched first offshore fund, First Eagle Fund N.V.',
+    desc: 'The firm moved beyond managing the wealth of family and friends and began investing on behalf of external clients.',
+    img: 'assets/img/timeline-1967.png' },
+  { year: '1979', title: 'Creation of Global Value strategy by Jean-Marie Eveillard',
+    desc: 'Jean-Marie would later join First Eagle through the 1999 acquisition of Société Générale Asset Management Corp.',
+    img: 'assets/img/timeline-1979.png' },
+  { year: '1987', title: 'Established first US-registered mutual fund, First Eagle Fund of America',
+    img: 'assets/img/timeline-1987.png' },
+  { year: '1999', title: 'Acquired majority share of Société Générale Asset Management Corp.',
+    desc: 'Forming what is now our Global Value team, this acquisition solidified the firm’s commitment to a prudent approach to investing characterized by patience, humility and conviction.',
+    img: 'assets/img/timeline-1999.png' },
+  { year: '2002', title: 'Sold investment banking and global securities businesses',
+    desc: 'Divestment reoriented the firm’s focus exclusively on investment management.' },
+  { year: '2009', title: 'Renamed First Eagle Investment Management',
+    img: 'assets/img/timeline-2009.png' },
+  { year: '2011', title: 'Introduced high yield credit capability',
+    desc: 'Hiring of team expanded the firm’s investment lineup into fixed income.' },
+  { year: '2015', title: 'Private equity funds managed by Blackstone Capital Partners and Corsair Capital invest in the firm',
+    desc: 'The long-term investment of these companies ensured a continuation of First Eagle’s investment culture and philosophy.',
+    img: 'assets/img/timeline-2015.png' },
+  { year: '2017', title: 'Acquired private credit manager NewStar Financial',
+    desc: 'Acquisition marked expansion of investment capabilities into the alternative credit space.' },
+  { year: '2020', title: 'Acquired alternative credit manager THL Credit, forming Alternative Credit team',
+    desc: 'Acquisition bolstered First Eagle’s position as one of the leading managers of broadly syndicated loan and direct-lending strategies.' },
+  { year: '2021', title: 'Renamed First Eagle Investments and established Small Cap team',
+    desc: 'Experienced team brought a time-tested, opportunistic approach to active management in a particularly inefficient market.',
+    img: 'assets/img/timeline-2021.png' },
+  { year: '2022', title: 'Acquired Napier Park Global Capital',
+    desc: 'Acquisition significantly broadens alternative credit capabilities including opportunistic credit.',
+    img: 'assets/img/timeline-2022.svg', logo: true },
+  { year: '2023', title: 'Established High Yield Municipal Credit Team',
+    desc: 'Launch to expand the firm’s fixed income footprint into municipal credit, a key asset class for a range of retail and institutional investors in the US.' },
+  { year: '2025', title: 'Private equity funds managed by Genstar Capital make majority investment in the firm',
+    desc: 'The investment preserves First Eagle’s independence and investment-led culture while accelerating organic and inorganic growth.' },
+  { year: '2026', title: 'Acquired Diamond Hill Investment Group',
+    desc: 'Acquisition expanded footprint in traditional fixed income while augmenting US-focused multi-cap equity capabilities.' }
+];
+
+function initAboutHistory() {
+  const strip = document.getElementById('ab-history-strip');
+  if (!strip) return;
+  const stage = document.querySelector('.ab-history-stage');
+  const tabsWrap = document.getElementById('ab-history-tabs');
+
+  strip.innerHTML = AH_ITEMS.map(it => `
+    <div class="ab-history-item" data-year="${it.year}">
+      <div class="ab-history-card">
+        <p class="ab-history-year">${it.year}</p>
+        <div class="ab-history-item-copy">
+          <h3 class="ab-history-item-title">${it.title}</h3>
+          ${it.desc ? `<p class="ab-history-item-desc">${it.desc}</p>` : ''}
+        </div>
+      </div>
+      ${it.img ? `<div class="ab-history-item-img${it.logo ? ' ab-history-item-img--logo' : ''}"><img src="${it.img}" alt=""></div>` : ''}
+    </div>`).join('');
+
+  tabsWrap.innerHTML = ['Overview', ...AH_ITEMS.map(i => i.year)]
+    .map(label => `<button type="button" class="ab-history-tab">${label}</button>`).join('');
+
+  const items = [...strip.querySelectorAll('.ab-history-item')];
+  const tabs = [...tabsWrap.querySelectorAll('.ab-history-tab')];
+  let active = 0;
+
+  /* x that centers a year group in the stage */
+  const xFor = i => stage.clientWidth / 2 - (items[i].offsetLeft + items[i].offsetWidth / 2);
+
+  function show(idx, animate = true) {
+    active = idx;
+    tabs.forEach((t, i) => t.classList.toggle('ab-history-tab--active', i === idx));
+    if (idx === 0) { stage.dataset.mode = 'overview'; return; }
+    stage.dataset.mode = 'timeline';
+    const y = idx - 1;
+    items.forEach((el, i) => el.classList.toggle('active', i === y));
+    const x = xFor(y);
+    animate ? gsap.to(strip, { x, duration: 0.9, ease: 'power3.inOut' })
+            : gsap.set(strip, { x });
+  }
+
+  tabs.forEach((t, i) => t.addEventListener('click', () => show(i)));
+  window.addEventListener('resize', () => { if (active > 0) show(active, false); });
+  show(0);
 }
