@@ -1181,14 +1181,14 @@ main{position:relative;z-index:1;}
 }
 .ab-phil-topics{grid-column:1/span 4;display:flex;flex-direction:column;gap:56px;}
 .ab-phil-list{display:flex;flex-direction:column;gap:24px;padding-right:24px;}
-.ab-phil-item{display:flex;align-items:center;gap:24px;}
+.ab-phil-item{display:flex;align-items:center;gap:16px;}
 .ab-phil-item p{font-family:var(--font-water);font-size:calc(32px * var(--ts));line-height:1;color:var(--gray-40);}
 .ab-phil-item--active p{color:var(--cyan);}
 .ab-phil-track{
   width:2px;height:30px;flex-shrink:0;
-  background:var(--light-10);border-radius:9999px;
+  background:var(--gray-40);border-radius:9999px;
 }
-.ab-phil-item--active .ab-phil-track{background:var(--bright-cobalt);}
+.ab-phil-item--active .ab-phil-track{background:var(--cyan);}
 .ab-phil-fill{display:none;}
 .ab-phil-image{grid-column:5/span 4;border-radius:8px;overflow:hidden;}
 .ab-phil-image img{width:100%;height:100%;object-fit:cover;display:block;}
