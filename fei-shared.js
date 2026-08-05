@@ -93,36 +93,60 @@ const PT_FUNDS = [
 ];
 
 function initProductTicker() {
-  const el = document.getElementById('pt-fund');
-  if (!el) return;
-  const fill = document.getElementById('pt-divider-fill');
+  const tableBody = document.getElementById('pt-table-body');
+  if (!tableBody) return;
+
+  const fill      = document.getElementById('pt-divider-fill');
+  const bar       = document.getElementById('product-ticker');
+  const ptInner   = document.querySelector('#product-ticker .pt-inner');
+  const ptDivider = document.querySelector('#product-ticker .pt-divider');
+  const table     = document.getElementById('pt-table');
+  const plusBtn   = document.getElementById('pt-plus');
+  const finderBtn = document.querySelector('.pt-finder-btn');
+  const ptIconPlus  = plusBtn.querySelector('.pt-icon-plus');
+  const ptIconMinus = plusBtn.querySelector('.pt-icon-minus');
+
   const DWELL = 4000;
-  let idx = 0, hover = false, elapsed = 0, lastTs = null;
+  let idx = 0, hover = false, elapsed = 0, lastTs = null, isAnimating = false;
   const mod = i => ((i % PT_FUNDS.length) + PT_FUNDS.length) % PT_FUNDS.length;
 
-  function paint(i) {
-    const f = PT_FUNDS[mod(i)];
+  const ARROW_SVG = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M5.5 5.5L8 3L10.5 5.5"/><path d="M8 3V13"/></svg>`;
+  const ARROW_UP   = `<span class="chg-arrow">${ARROW_SVG}</span>`;
+  const ARROW_DOWN = `<span class="chg-arrow" style="transform:rotate(180deg)">${ARROW_SVG}</span>`;
+
+  function makeRow(f) {
     const isDown = f.chg.startsWith('-');
     const chgNum = f.chg.replace(/^[+-]/, '');
-    el.querySelector('.pt-tick').textContent = f.tick;
-    el.querySelector('.pt-name').textContent = f.name;
-    el.querySelector('.pt-nav').textContent = f.nav;
-    const chg = el.querySelector('.pt-chg');
-    const arrowSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M5.5 5.5L8 3L10.5 5.5"/><path d="M8 3V13"/></svg>`;
-    chg.innerHTML = `<em class="chg-arrow">${arrowSvg}</em>${chgNum}`;
-    chg.classList.toggle('down', isDown);
+    const ytdNum = f.ytd.replace(/^[+-]/, '');
+    const ytdDown = f.ytd.startsWith('-');
+    return `<div class="pt-row">
+      <span class="pt-td pt-td--ticker">${f.tick}</span>
+      <span class="pt-td">${f.name}</span>
+      <span class="pt-td pt-td--nav">${f.nav}</span>
+      <span class="pt-td pt-td--chg${isDown ? ' down' : ''}">${isDown ? ARROW_DOWN : ARROW_UP}${chgNum}</span>
+      <span class="pt-td pt-td--chg${ytdDown ? ' down' : ''}">${ytdDown ? ARROW_DOWN : ARROW_UP}${ytdNum}</span>
+    </div>`;
   }
+
+  /* Closed state: render single animated row */
+  function paintRow(i) {
+    tableBody.innerHTML = makeRow(PT_FUNDS[mod(i)]);
+  }
+
   function goTo(i) {
     idx = mod(i);
     elapsed = 0;
-    gsap.to(el, { y: -10, opacity: 0, duration: 0.25, ease: 'power2.in', onComplete() {
-      paint(idx);
-      gsap.fromTo(el, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
+    const row = tableBody.firstElementChild;
+    if (!row) return;
+    gsap.to(row, { y: -10, opacity: 0, duration: 0.25, ease: 'power2.in', onComplete() {
+      paintRow(idx);
+      const newRow = tableBody.firstElementChild;
+      gsap.fromTo(newRow, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
     }});
   }
-  paint(0);
 
-  const bar = document.getElementById('product-ticker');
+  paintRow(0);
+
   bar.addEventListener('mouseenter', () => hover = true);
   bar.addEventListener('mouseleave', () => hover = false);
 
@@ -137,108 +161,54 @@ function initProductTicker() {
   }
   rafId = requestAnimationFrame(step);
 
-  // ---- expand / collapse table ----
-  const ptInner    = document.querySelector('#product-ticker .pt-inner');
-  const ptDivider  = document.querySelector('#product-ticker .pt-divider');
-  const plusBtn    = document.getElementById('pt-plus');
-  const table      = document.getElementById('pt-table');
-  const tableBody  = document.getElementById('pt-table-body');
-  const finderBtn  = document.querySelector('.pt-finder-btn');
-  const ptIconPlus  = plusBtn.querySelector('.pt-icon-plus');
-  const ptIconMinus = plusBtn.querySelector('.pt-icon-minus');
-
-  const collapsedH = ptInner.offsetHeight;
-  let isAnimating = false;
-
-  const ARROW_SVG = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M5.5 5.5L8 3L10.5 5.5"/><path d="M8 3V13"/></svg>`;
-  const ARROW_UP = `<span class="chg-arrow">${ARROW_SVG}</span>`;
-  const ARROW_DOWN = `<span class="chg-arrow" style="transform:rotate(180deg)">${ARROW_SVG}</span>`;
-
-  function renderTable() {
-    tableBody.innerHTML = PT_FUNDS.map(f => {
-      const isDown = f.chg.startsWith('-');
-      const chgNum = f.chg.replace(/^[+-]/, '');
-      const ytdNum = f.ytd.replace(/^[+-]/, '');
-      const ytdDown = f.ytd.startsWith('-');
-      return `<div class="pt-row">
-        <span class="pt-td pt-td--ticker">${f.tick}</span>
-        <span class="pt-td">${f.name}</span>
-        <span class="pt-td pt-td--nav">${f.nav}</span>
-        <span class="pt-td pt-td--chg${isDown ? ' down' : ''}">${isDown ? ARROW_DOWN : ARROW_UP}${chgNum}</span>
-        <span class="pt-td pt-td--chg${ytdDown ? ' down' : ''}">${ytdDown ? ARROW_DOWN : ARROW_UP}${ytdNum}</span>
-      </div>`;
-    }).join('');
-  }
-
+  /* ---- expand: show all rows ---- */
   function expandTicker() {
     if (isAnimating) return;
     isAnimating = true;
     cancelAnimationFrame(rafId);
-    renderTable();
 
-    // Lock height first so showing new content doesn't shift the layout
+    const collapsedH = ptInner.offsetHeight;
     ptInner.style.height = collapsedH + 'px';
     ptInner.style.overflow = 'hidden';
 
-    // Now show new content invisibly — clipped by overflow:hidden, no visual jump
-    el.style.display = 'none';
-    table.style.display = 'flex';
-    finderBtn.style.display = 'inline-flex';
-    gsap.set(table, { opacity: 0, y: 10 });
-    gsap.set(finderBtn, { opacity: 0 });
-    gsap.set(ptIconMinus, { opacity: 0 });
+    // Render all rows
+    tableBody.innerHTML = PT_FUNDS.map(f => makeRow(f)).join('');
+    const allRows = [...tableBody.children];
+    gsap.set(allRows.slice(1), { opacity: 0, y: 8 });
 
-    bar.classList.add('is-expanded');
-    plusBtn.setAttribute('aria-expanded', 'true');
-    table.setAttribute('aria-hidden', 'false');
+    if (finderBtn) { finderBtn.style.display = 'inline-flex'; gsap.set(finderBtn, { opacity: 0 }); }
 
-    // Measure with a synchronous flip to flex-start, then revert. With
-    // align-items:center and the box still locked at collapsedH, the tall
-    // table overflows evenly above and below center — but scrollHeight only
-    // ever reports the downward half of that overflow, undercounting the
-    // real expanded height. Flipping alignment right before the read (and
-    // back immediately after) captures the true height without a visible
-    // flash, since no paint happens between these two synchronous writes.
     ptInner.style.alignItems = 'flex-start';
     const toH = ptInner.scrollHeight;
     ptInner.style.alignItems = 'center';
+    if (finderBtn) finderBtn.style.display = 'none';
 
-    // Hide finderBtn again — showing it makes pt-label tall and center-alignment
-    // clips the heading. It gets restored inside the timeline .call() below,
-    // after align-items has already switched and pt-label is still short.
-    finderBtn.style.display = 'none';
+    bar.classList.add('is-expanded');
+    plusBtn.setAttribute('aria-expanded', 'true');
 
-    // Restore pt-fund for fade-out animation
-    gsap.set(el, { display: 'flex', opacity: 1, y: 0 });
-
-    const tl = gsap.timeline({
-      onComplete() {
-        ptInner.style.height = 'auto';
-        ptInner.style.overflow = '';
-        isAnimating = false;
-      }
-    });
+    const tl = gsap.timeline({ onComplete() {
+      ptInner.style.height = 'auto';
+      ptInner.style.overflow = '';
+      isAnimating = false;
+    }});
 
     tl
-      .to(el, { opacity: 0, y: -8, duration: 0.2, ease: 'power2.in' })
-      .set(el, { display: 'none' })
       .call(() => {
-        // pt-label is still heading+sub height here (finderBtn hidden), so
-        // switching align-items causes only a ~1px shift — invisible.
         ptInner.style.alignItems  = 'flex-start';
         plusBtn.style.alignSelf   = 'flex-start';
         ptDivider.style.alignSelf = 'stretch';
         ptDivider.style.height    = 'auto';
-        finderBtn.style.display   = 'inline-flex'; // restore now, fades in below
+        if (finderBtn) finderBtn.style.display = 'inline-flex';
       })
-      .to(ptInner, { height: toH, duration: 0.4, ease: 'power2.out' }, '<')
-      .to(table, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' })
+      .to(ptInner, { height: toH, duration: 0.4, ease: 'power2.out' })
+      .to(allRows.slice(1), { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out', stagger: 0.04 }, '-=0.15')
       .to(finderBtn, { opacity: 1, duration: 0.2, ease: 'power2.out' }, '<');
 
-    gsap.to(ptIconPlus,  { opacity: 0, duration: 0.2, ease: 'power2.in' });
-    gsap.to(ptIconMinus, { opacity: 1, duration: 0.2, ease: 'power2.out', delay: 0.15 });
+    gsap.to(ptIconMinus, { opacity: 0, duration: 0.2, ease: 'power2.in' });
+    gsap.to(ptIconPlus,  { opacity: 1, duration: 0.2, ease: 'power2.out', delay: 0.15 });
   }
 
+  /* ---- collapse: back to 1 animated row ---- */
   function collapseTicker() {
     if (isAnimating) return;
     isAnimating = true;
@@ -247,50 +217,42 @@ function initProductTicker() {
     ptInner.style.height = fromH + 'px';
     ptInner.style.overflow = 'hidden';
 
-    const tl = gsap.timeline({
-      onComplete() {
-        bar.classList.remove('is-expanded');
-        plusBtn.setAttribute('aria-expanded', 'false');
-        table.setAttribute('aria-hidden', 'true');
-        table.style.display = 'none';
-        table.style.opacity = '';
-        finderBtn.style.display = 'none';
-        finderBtn.style.opacity = '';
-        ptInner.style.height     = '';
-        ptInner.style.overflow   = '';
-        ptInner.style.alignItems = '';
-        plusBtn.style.alignSelf  = '';
-        ptDivider.style.alignSelf = '';
-        ptDivider.style.height    = '';
-        elapsed = 0; lastTs = null;
-        rafId = requestAnimationFrame(step);
-        isAnimating = false;
-      }
-    });
+    const collapsedH = ptInner.offsetHeight; // same as fromH — captured for animation
+    const allRows = [...tableBody.children];
+
+    const tl = gsap.timeline({ onComplete() {
+      bar.classList.remove('is-expanded');
+      plusBtn.setAttribute('aria-expanded', 'false');
+      if (finderBtn) { finderBtn.style.display = 'none'; finderBtn.style.opacity = ''; }
+      ptInner.style.height = '';
+      ptInner.style.overflow = '';
+      ptInner.style.alignItems = '';
+      plusBtn.style.alignSelf  = '';
+      ptDivider.style.alignSelf = '';
+      ptDivider.style.height    = '';
+      elapsed = 0; lastTs = null;
+      paintRow(idx);
+      rafId = requestAnimationFrame(step);
+      isAnimating = false;
+    }});
 
     tl
-      .to([table, finderBtn], { opacity: 0, duration: 0.22, ease: 'power2.in' })
-      .set([table, finderBtn], { display: 'none' })
+      .to([...allRows.slice(1), finderBtn].filter(Boolean), { opacity: 0, duration: 0.2, ease: 'power2.in' })
       .call(() => {
         ptInner.style.alignItems  = '';
         plusBtn.style.alignSelf   = '';
         ptDivider.style.alignSelf = '';
         ptDivider.style.height    = '';
       })
-      .set(el, { display: 'flex', opacity: 0, y: 8 })
-      .to(ptInner, { height: collapsedH, duration: 0.36, ease: 'power3.inOut' })
-      .to(el, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' }, '-=0.1');
+      .to(ptInner, { height: fromH - (allRows.length - 1) * 34, duration: 0.36, ease: 'power3.inOut' });
 
-    gsap.to(ptIconMinus, { opacity: 0, duration: 0.2, ease: 'power2.in' });
-    gsap.to(ptIconPlus,  { opacity: 1, duration: 0.2, ease: 'power2.out', delay: 0.1 });
+    gsap.to(ptIconPlus,  { opacity: 0, duration: 0.2, ease: 'power2.in' });
+    gsap.to(ptIconMinus, { opacity: 1, duration: 0.2, ease: 'power2.out', delay: 0.1 });
   }
 
   plusBtn.addEventListener('click', () => {
-    if (bar.classList.contains('is-expanded')) {
-      collapseTicker();
-    } else {
-      expandTicker();
-    }
+    if (bar.classList.contains('is-expanded')) collapseTicker();
+    else expandTicker();
   });
 }
 
@@ -786,7 +748,9 @@ function initMarketViews() {
   /* subscribe consent: button stays disabled until the box is checked */
   const consent = document.getElementById('mv-consent');
   const subBtn = document.getElementById('mv-sub-btn');
-  consent.addEventListener('change', () => { subBtn.disabled = !consent.checked; });
+  if (consent && subBtn) {
+    consent.addEventListener('change', () => { subBtn.disabled = !consent.checked; });
+  }
 }
 
 /* ============================================================

@@ -202,23 +202,24 @@ main{position:relative;z-index:1;}
 .pt-chg{font-family:var(--font-water);font-size:calc(24px * var(--ts));color:var(--white);white-space:nowrap;display:flex;align-items:center;gap:4px;}
 .pt-chg .chg-arrow{color:#4DDB87;font-style:normal;}
 .pt-chg.down .chg-arrow{color:#FF6B6B;}
-/* expanded table */
-.pt-table{display:none;flex:1;min-width:0;flex-direction:column;gap:8px;opacity:0;}
-.pt-table-head{display:grid;grid-template-columns:74px 1fr 90px 90px 90px;column-gap:32px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.3);}
+/* table — visible in closed state (1 animated row) and expanded (all rows) */
+.pt-table{display:flex;flex:1;min-width:0;flex-direction:column;gap:8px;}
+.pt-table-head{display:grid;grid-template-columns:74px 1fr 90px 90px 90px;column-gap:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.1);}
 .pt-th{font-family:var(--font-mono);font-size:calc(12px * var(--ts));letter-spacing:0.06em;text-transform:uppercase;color:var(--mid-blue-gray);line-height:1.3;}
 .pt-th--right{text-align:right;}
 .pt-table-body{display:flex;flex-direction:column;gap:8px;}
-.pt-row{display:grid;grid-template-columns:74px 1fr 90px 90px 90px;column-gap:32px;align-items:center;}
+.pt-row{display:grid;grid-template-columns:74px 1fr 90px 90px 90px;column-gap:16px;align-items:center;}
 .pt-td{font-family:var(--font-water);font-size:calc(18px * var(--ts));line-height:1.3;color:var(--white);}
-.pt-td--ticker{font-family:var(--font-mono);font-size:calc(12px * var(--ts));letter-spacing:0.06em;text-transform:uppercase;color:var(--mid-blue-gray);}
-.pt-td--nav{color:var(--mid-blue-gray);text-align:right;}
+.pt-td--ticker{font-family:var(--font-mono);font-size:calc(14px * var(--ts));letter-spacing:0.06em;text-transform:uppercase;color:var(--cyan);}
+.pt-td--nav{color:var(--white);text-align:right;}
 .pt-td--chg{display:flex;align-items:center;justify-content:flex-end;gap:4px;color:var(--white);}
 .pt-td--chg .chg-arrow{color:#4DDB87;display:flex;align-items:center;flex-shrink:0;}
 .pt-td--chg .chg-arrow svg{width:16px;height:16px;}
 .pt-td--chg.down .chg-arrow{color:#FF6B6B;}
 .pt-td--chg.down .chg-arrow svg{transform:rotate(180deg);}
-/* toggle icons */
-.pt-icon-minus{opacity:0;}
+/* toggle icons — minus visible by default (closed = table showing) */
+.pt-icon-plus{opacity:0;}
+.pt-icon-minus{opacity:1;}
 .pt-plus{
   display:grid;place-items:center;
   width:40px;height:40px;flex-shrink:0;
@@ -353,7 +354,7 @@ main{position:relative;z-index:1;}
 .mv-subscribe .input-field::placeholder{color:var(--oxford-blue);}
 .mv-subscribe .btn{background:var(--white);color:var(--oxford-blue);}
 .mv-subscribe .btn:hover{background:var(--gray-10);}
-.mv-sub-right{width:472px;display:flex;flex-direction:column;gap:12px;}
+.mv-sub-right{display:flex;align-items:center;}
 .mv-sub-form{display:flex;gap:8px;align-items:flex-start;}
 .mv-sub-consent{
   display:flex;gap:8px;align-items:flex-start;cursor:pointer;
@@ -412,7 +413,7 @@ main{position:relative;z-index:1;}
 #our-funds .grid-lines{z-index:3;}
 .of-title{
   position:absolute;top:82px;left:calc(var(--edge) + var(--margin));
-  width:max(var(--col3),296px);display:flex;flex-direction:column;gap:11px;z-index:4;
+  width:var(--col6);display:flex;flex-direction:column;gap:11px;z-index:4;
 }
 .of-find{position:absolute;top:96px;right:calc(var(--edge) + var(--margin));z-index:4;}
 .of-search-bar{
@@ -785,16 +786,14 @@ main{position:relative;z-index:1;}
 }
 .ig-header .section-title{color:var(--oxford-blue);line-height:1;}
 .ig-cards{display:flex;gap:32px;align-items:flex-start;}
-.ig-card{flex:1 1 0;min-width:0;}
+.ig-card{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:24px;}
+.ig-card-img{aspect-ratio:850/564;overflow:hidden;border-radius:8px;border:1px solid var(--gray-10);background:var(--gray-5,#f5f7f8);}
+.ig-card-img img{width:100%;height:100%;object-fit:cover;display:block;}
 .ig-card-copy{max-width:500px;display:flex;flex-direction:column;gap:8px;}
 .ig-card-title{
   font-family:var(--font-water);font-weight:700;
   font-size:calc(24px * var(--ts));line-height:1.2;
   color:var(--oxford-blue);
-}
-.ig-card-desc{
-  font-family:var(--font-water);font-size:calc(16px * var(--ts));
-  line-height:1.3;color:var(--text-secondary);
 }
 .ig-card-link{
   display:inline-flex;align-items:center;gap:8px;margin-top:8px;
@@ -802,7 +801,7 @@ main{position:relative;z-index:1;}
   color:var(--bright-cobalt);
 }
 .ig-card-link:hover{text-decoration:underline;}
-.ig-card-link svg{width:16px;height:16px;flex-shrink:0;transition:transform .25s var(--ease-out);}
+.ig-card-link svg{width:16px;height:16px;flex-shrink:0;transition:transform .2s var(--ease-out);}
 .ig-card-link:hover svg{transform:translateY(2px);}
 
 /* ---------- Why FEI (763:4819) ---------- */
