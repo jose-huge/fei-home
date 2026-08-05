@@ -255,6 +255,13 @@ Both use Oxford Blue (`#000E29`) as the shadow color at low opacity, consistent 
 
 GSAP-driven timeline sequences (e.g. product ticker expand/collapse) compose multiple tiers together rather than using one flat duration for the whole sequence.
 
+**Arrow hover convention (global):** Any inline arrow icon (`<svg>` trailing a link or button label) must translate right `4px` on hover. Always pair `transform` with `color` in the same transition, both at `duration-fast` (0.2s) with `--ease-out`. Example:
+
+```css
+.my-link svg { transition: color .2s var(--ease-out), transform .2s var(--ease-out); }
+.my-link:hover svg { color: var(--cyan); transform: translateX(4px); }
+```
+
 ---
 
 ## 8. Z-Index
