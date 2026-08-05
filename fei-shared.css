@@ -1150,7 +1150,7 @@ main{position:relative;z-index:1;}
   max-width:1521px;margin:0 auto;
 }
 .ab-statement-text{
-  grid-column:1/span 9;
+  grid-column:1/span 8;
   font-family:var(--font-air);font-weight:400;font-size:calc(64px * var(--ts));
   line-height:1;letter-spacing:-0.64px;color:var(--oxford-blue);
 }
