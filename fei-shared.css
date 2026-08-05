@@ -969,9 +969,9 @@ main{position:relative;z-index:1;}
 }
 .utility-nav svg{width:12px;height:12px;}
 .hdr-eyebrow-left,.hdr-eyebrow-right{display:flex;align-items:center;gap:4px;}
-.hdr-eyebrow-right .utility-nav{color:var(--mid-blue-gray);transition:color .2s;}
+.hdr-eyebrow-left .utility-nav,.hdr-eyebrow-right .utility-nav{color:var(--mid-blue-gray);transition:color .2s;}
 .hdr-eyebrow-right .utility-nav{cursor:pointer;}
-.hdr-eyebrow-right .utility-nav:hover{color:var(--white);}
+.hdr-eyebrow-left .utility-nav:hover,.hdr-eyebrow-right .utility-nav:hover{color:var(--white);}
 .hdr-main-inner{display:flex;align-items:center;justify-content:space-between;height:96px;}
 .about-page .hdr-main-inner{border-bottom:1px solid var(--light-30);}
 .hdr-logo img{height:33px;width:auto;display:block;}
