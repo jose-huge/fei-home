@@ -1485,7 +1485,37 @@ document.addEventListener('DOMContentLoaded', () => {
   initWhyFei();
   initTopoBackground();
   initLeadershipCarousel();
+  initAboutSubnav();
 });
+
+function initAboutSubnav() {
+  const nav = document.querySelector('.ab-subnav');
+  if (!nav) return;
+  const links = [...nav.querySelectorAll('.ab-subnav-item')];
+  const sections = links.map(a => document.querySelector(a.getAttribute('href')));
+
+  links.forEach((a, i) => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = sections[i];
+      if (!target) return;
+      const y = target.getBoundingClientRect().top + window.scrollY - nav.offsetHeight;
+      lenis.scrollTo(y, { duration: 1.2 });
+    });
+  });
+
+  const setActive = idx => links.forEach((a, i) => a.classList.toggle('ab-subnav-item--active', i === idx));
+  const onScroll = () => {
+    const navH = nav.offsetHeight;
+    let idx = 0;
+    sections.forEach((s, i) => {
+      if (s && s.getBoundingClientRect().top - navH <= 1) idx = i;
+    });
+    setActive(idx);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
 
 /* ============================================================
    ABOUT PAGE — leadership carousel ("Our legacy")

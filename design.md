@@ -126,8 +126,8 @@ The site is primarily dark-themed (oxford-blue backgrounds) but several sections
 | Headline/headline-3 | 32 | — |
 | Headline/headline-4 | 24 | `.fund-name`, `.ig-card-title`, `.team-name` |
 | Body/body-xl | 24 | — |
-| Body/body-lg | 18 | `.of-copy .body`, `.ig-card-link` |
-| Body/body-md | 16 | default body text, most `.body` copy |
+| Body/body-lg | 18 | **Default `.body` size site-wide** — use unless a section explicitly calls for another size; `.of-copy .body`, `.ig-card-link` |
+| Body/body-md | 16 | smaller body copy, used where noted (not the default) |
 | Body/body-sm | 14 | `.sheet-col a` (nav), small labels |
 | Body/body-xs | 12 | `.pt-th` (table headers) |
 | Numeric/numeric-large | 100 | (Air family; overlaps Display/display-1 at XL) |
