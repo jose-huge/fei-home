@@ -439,7 +439,7 @@ const NAV = {
   'who-we-are': {
     title: 'Who We Are',
     l2: [
-      { label: 'About First Eagle', panel: { cols: [{ h: 'About First Eagle', rows: ['Overview', 'Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)'] }] } },
+      { label: 'About First Eagle', panel: { cols: [{ h: 'About First Eagle', rows: ['Overview|about.html', 'Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)'] }] } },
       { label: 'Capabilities', panel: { cols: [{ h: 'Capabilities', rows: ['Municipal Credit', 'Gold', 'Interval Funds', 'ETF Investing', 'Retirement Solutions'] }] } },
       { label: 'Our Clients', panel: { cols: [{ h: 'Our Clients', rows: ['Consultants', 'Corporate Pensions', 'Defined Contributions', 'Endowments and Foundations', 'Family Offices', 'Insurance', 'Public Pensions', 'Sovereign Wealth Funds', 'Taft Hartley Plans'] }] } },
       { label: 'Leadership', panel: { cols: [{ h: 'Leadership', rows: ['Senior Leadership', 'Corporate & Infrastructure Leadership', 'Client Team'] }] } },
@@ -472,7 +472,10 @@ function initNavSheet() {
       <div class="sheet-col">
         ${c.h ? `<h5>${c.h}</h5>` : ''}
         <ul class="${c.rows ? 'rows' : ''}">
-          ${(c.items || c.rows).map(i => `<li><a href="#">${i}</a></li>`).join('')}
+          ${(c.items || c.rows).map(i => {
+            const [label, href] = i.split('|');
+            return `<li><a href="${href || '#'}">${label}</a></li>`;
+          }).join('')}
         </ul>
       </div>`).join('') + `</div>`;
   }
@@ -568,6 +571,19 @@ function initNavSheet() {
   document.getElementById('sheet-close').addEventListener('click', close);
   overlay.addEventListener('click', close);
   window.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+  // Real navigation links (e.g. "Overview" -> about.html) close the sheet
+  // first, then navigate once the close animation finishes — instead of
+  // the page unloading mid-slide while the sheet is still open.
+  body.addEventListener('click', e => {
+    const a = e.target.closest('a[href]');
+    if (!a) return;
+    const href = a.getAttribute('href');
+    if (!href || href === '#') return;
+    e.preventDefault();
+    close();
+    setTimeout(() => { window.location.href = href; }, 600);
+  });
 }
 
 /* ============================================================
@@ -1468,4 +1484,137 @@ document.addEventListener('DOMContentLoaded', () => {
   initTeams();
   initWhyFei();
   initTopoBackground();
+  initLeadershipCarousel();
 });
+
+/* ============================================================
+   ABOUT PAGE — leadership carousel ("Our legacy")
+   Reuses the same sliding-filmstrip mechanic as #market-views
+   (.mv-carousel): translateX'd cards, GSAP cross-dissolve on
+   next/prev, auto-advance, dots. No-op if #lg-carousel is
+   absent, so this has zero effect on index.html.
+   ============================================================ */
+const LG_ITEMS = [
+  { img: 'assets/img/about-leader-mclennan.png', name: 'Matthew McLennan', role: 'Head of Global Value Team and Portfolio Manager • First Eagle' },
+  { img: 'assets/img/about-leader-hench.png', name: 'Bill Hench', role: 'Head of Small Cap Team and Portfolio Manager • First Eagle' },
+  { img: 'assets/img/about-leader-albertini.png', name: 'Julien Albertini', role: 'Deputy Head of Global Value and Portfolio Manager • First Eagle' },
+  { img: 'assets/img/about-leader-mclennan.png', name: 'Matthew McLennan', role: 'Head of Global Value Team and Portfolio Manager • First Eagle' },
+  { img: 'assets/img/about-leader-hench.png', name: 'Bill Hench', role: 'Head of Small Cap Team and Portfolio Manager • First Eagle' },
+  { img: 'assets/img/about-leader-albertini.png', name: 'Julien Albertini', role: 'Deputy Head of Global Value and Portfolio Manager • First Eagle' }
+];
+
+function initLeadershipCarousel() {
+  const track = document.getElementById('lg-carousel');
+  if (!track) return;
+  const BUFFER = 5;
+  let firstIndex = 0;
+  let animating = false;
+  const mod = i => ((i % LG_ITEMS.length) + LG_ITEMS.length) % LG_ITEMS.length;
+
+  function step() {
+    // fixed 296px leader-portrait card, unlike the 3-col responsive
+    // market-views card — this carousel sits in a narrower fixed column
+    return 296 + 32;
+  }
+
+  function makeCard(itemIdx, slot, isActive = slot === 0) {
+    const it = LG_ITEMS[mod(itemIdx)];
+    const el = document.createElement('article');
+    el.className = 'lg-card' + (isActive ? ' active' : '');
+    el.dataset.slot = slot;
+    el.innerHTML = `
+      <div class="lg-portrait"><img src="${it.img}" alt="${it.name}" onerror="this.remove()"></div>
+      <div>
+        <p class="lg-name">${it.name}</p>
+        <p class="lg-role">${it.role}</p>
+      </div>`;
+    gsap.set(el, { x: slot * step(), zIndex: slot === 0 ? 1 : 2 });
+    track.appendChild(el);
+    return el;
+  }
+
+  for (let s = 0; s <= BUFFER; s++) makeCard(firstIndex + s, s);
+
+  function cards() { return [...track.querySelectorAll('.lg-card')]; }
+
+  const dotsWrap = document.getElementById('lg-dots');
+  LG_ITEMS.forEach(() => {
+    const d = document.createElement('span');
+    d.className = 'mv-dot';
+    dotsWrap.appendChild(d);
+  });
+  function updateDots() {
+    [...dotsWrap.children].forEach((d, i) => d.classList.toggle('active', i === mod(firstIndex)));
+  }
+  updateDots();
+
+  function next(dur = 0.65) {
+    if (animating) return; animating = true;
+    firstIndex = mod(firstIndex + 1);
+    updateDots();
+    const all = cards();
+    const dying = all.find(c => +c.dataset.slot === 0);
+    dying.classList.remove('active');
+    dying.style.zIndex = 0;
+    const movers = all.filter(c => +c.dataset.slot >= 1);
+    let incoming = null;
+    const tl = gsap.timeline({ onComplete() {
+      if (incoming) incoming.classList.add('active');
+      dying.remove(); animating = false;
+      lgPump();
+    }});
+    tl.to(dying, { opacity: 0, duration: dur, ease: 'power3.inOut' }, 0);
+    movers.forEach(c => {
+      const newSlot = +c.dataset.slot - 1;
+      c.dataset.slot = newSlot;
+      if (newSlot === 0) incoming = c;
+      tl.to(c, { x: newSlot * step(), duration: dur, ease: 'power3.inOut' }, 0);
+    });
+    makeCard(firstIndex + BUFFER, BUFFER);
+  }
+
+  function prev(dur = 0.65) {
+    if (animating) return; animating = true;
+    firstIndex = mod(firstIndex - 1);
+    updateDots();
+    const reveal = makeCard(firstIndex, 0, false);
+    reveal.style.zIndex = 0;
+    const movers = cards().filter(c => c !== reveal);
+    const tl = gsap.timeline({ onComplete() {
+      cards().filter(k => +k.dataset.slot > BUFFER).forEach(k => k.remove());
+      reveal.classList.add('active');
+      reveal.style.zIndex = 1;
+      animating = false;
+      lgPump();
+    }});
+    movers.forEach(c => {
+      const newSlot = +c.dataset.slot + 1;
+      c.dataset.slot = newSlot;
+      if (newSlot === 1) c.classList.remove('active');
+      tl.to(c, { x: newSlot * step(), duration: dur, ease: 'power3.inOut' }, 0);
+    });
+  }
+
+  const lgQueue = [];
+  function lgPump() {
+    if (animating || !lgQueue.length) return;
+    const dir = lgQueue.shift();
+    const dur = lgQueue.length ? 0.35 : 0.65;
+    dir > 0 ? next(dur) : prev(dur);
+  }
+  document.getElementById('lg-next').addEventListener('click', () => { lgQueue.push(1); lgPump(); });
+  document.getElementById('lg-prev').addEventListener('click', () => { lgQueue.push(-1); lgPump(); });
+
+  let lgHover = false;
+  [track, document.querySelector('.lg-arrows')].forEach(el => {
+    el.addEventListener('mouseenter', () => lgHover = true);
+    el.addEventListener('mouseleave', () => lgHover = false);
+  });
+  setInterval(() => {
+    if (!lgHover && !animating && !lgQueue.length && !document.hidden) next();
+  }, 3000);
+
+  window.addEventListener('resize', () => {
+    cards().forEach(c => gsap.set(c, { x: (+c.dataset.slot) * step() }));
+  });
+}
