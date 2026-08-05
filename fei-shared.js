@@ -1954,23 +1954,82 @@ function initAboutHistory() {
   const items = [...strip.querySelectorAll('.ab-history-item')];
   const tabs = [...tabsWrap.querySelectorAll('.ab-history-tab')];
   let active = 0;
+  let transitioning = false;
+
+  const overview = stage.querySelector('.ab-history-overview');
+  const stripWrap = stage.querySelector('.ab-history-strip-wrap');
 
   /* x that centers a year group in the stage */
   const xFor = i => stage.clientWidth / 2 - (items[i].offsetLeft + items[i].offsetWidth / 2);
 
+  function setActiveYear(y) {
+    items.forEach((el, i) => el.classList.toggle('active', i === y));
+  }
+
   function show(idx, animate = true) {
+    if (transitioning && animate) return;
+    const prev = active;
     active = idx;
     tabs.forEach((t, i) => t.classList.toggle('ab-history-tab--active', i === idx));
-    if (idx === 0) { stage.dataset.mode = 'overview'; return; }
-    stage.dataset.mode = 'timeline';
-    const y = idx - 1;
-    items.forEach((el, i) => el.classList.toggle('active', i === y));
-    const x = xFor(y);
-    animate ? gsap.to(strip, { x, duration: 0.9, ease: 'power3.inOut' })
-            : gsap.set(strip, { x });
+
+    if (!animate) {
+      if (idx === 0) {
+        stage.dataset.mode = 'overview';
+        gsap.set(overview, { opacity: 1, x: 0 });
+        gsap.set(stripWrap, { opacity: 0, x: 0 });
+      } else {
+        stage.dataset.mode = 'timeline';
+        setActiveYear(idx - 1);
+        gsap.set(strip, { x: xFor(idx - 1) });
+        gsap.set(overview, { opacity: 0, x: 0 });
+        gsap.set(stripWrap, { opacity: 1, x: 0 });
+      }
+      return;
+    }
+
+    transitioning = true;
+
+    if (idx === 0) {
+      // timeline → overview: strip slides right out, overview slides in from left
+      gsap.to(stripWrap, { opacity: 0, x: 60, duration: 0.35, ease: 'power2.in',
+        onComplete() {
+          stage.dataset.mode = 'overview';
+          gsap.set(stripWrap, { x: 0 });
+          gsap.fromTo(overview,
+            { opacity: 0, x: -50 },
+            { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out', onComplete() { transitioning = false; } });
+        }
+      });
+    } else if (prev === 0) {
+      // overview → year: overview slides left out, timeline slides in from right
+      gsap.to(overview, { opacity: 0, x: -50, duration: 0.35, ease: 'power2.in',
+        onComplete() {
+          stage.dataset.mode = 'timeline';
+          setActiveYear(idx - 1);
+          gsap.set(strip, { x: xFor(idx - 1) });
+          gsap.fromTo(stripWrap,
+            { opacity: 0, x: 60 },
+            { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out', onComplete() {
+              gsap.set(overview, { x: 0 }); // reset for next time
+              transitioning = false;
+            }});
+        }
+      });
+    } else {
+      // year → year: slide strip
+      setActiveYear(idx - 1);
+      gsap.to(strip, { x: xFor(idx - 1), duration: 0.9, ease: 'power3.inOut',
+        onComplete() { transitioning = false; }
+      });
+    }
   }
+
+  /* Set initial state without animation */
+  gsap.set(overview, { opacity: 1, x: 0 });
+  gsap.set(stripWrap, { opacity: 0, x: 0 });
+  stage.dataset.mode = 'overview';
+  tabs[0].classList.add('ab-history-tab--active');
 
   tabs.forEach((t, i) => t.addEventListener('click', () => show(i)));
   window.addEventListener('resize', () => { if (active > 0) show(active, false); });
-  show(0);
 }
