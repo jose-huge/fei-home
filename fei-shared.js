@@ -790,6 +790,153 @@ function initMarketViews() {
 }
 
 /* ============================================================
+   SMALL CAP VIEWS — same video carousel as Market Views,
+   wired to #rt-smallcap with sc- prefixed element IDs.
+   ============================================================ */
+function initSmallCapViews() {
+  const track = document.getElementById('sc-carousel');
+  if (!track) return;
+  const BUFFER = 5;
+  let firstIndex = 0;
+  let animating = false;
+  const mod = i => ((i % MV_ITEMS.length) + MV_ITEMS.length) % MV_ITEMS.length;
+
+  function step() {
+    const vpw = document.documentElement.clientWidth;
+    const inner = Math.min(vpw, 1680) - 160;
+    const colw = (inner - 11 * 32) / 12;
+    const cardW = Math.max(3 * colw + 2 * 32, 296);
+    return cardW + 32;
+  }
+
+  function makeCard(itemIdx, slot, isActive = slot === 0) {
+    const it = MV_ITEMS[mod(itemIdx)];
+    const el = document.createElement('article');
+    el.className = 'mv-card' + (isActive ? ' active' : '');
+    el.dataset.slot = slot;
+    el.innerHTML = `
+      <div class="mv-frame">
+        <img class="mv-still mv-still--color" src="${it.img}" alt="" onerror="this.remove()">
+        <img class="mv-still mv-still--ds" src="${it.imgDs}" alt="" onerror="this.remove()">
+        <div class="mv-vignette"></div>
+        <div class="mv-date"><p class="eyebrow">${it.date}</p></div>
+        <button class="mv-play"><span>${it.dur}</span>
+          <svg viewBox="0 0 11 12"><path d="M0 0 L11 6 L0 12 Z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="mv-desc">
+        <p class="mv-card-title">${it.title}</p>
+        <p class="mv-card-body"><span class="speaker">${it.speaker}</span>${it.body}</p>
+      </div>`;
+    gsap.set(el, { x: slot * step(), zIndex: slot === 0 ? 1 : 2 });
+    track.appendChild(el);
+    return el;
+  }
+
+  for (let s = 0; s <= BUFFER; s++) makeCard(firstIndex + s, s);
+
+  function cards() { return [...track.querySelectorAll('.mv-card')]; }
+
+  const dotsWrap = document.getElementById('sc-dots');
+  MV_ITEMS.forEach(() => {
+    const d = document.createElement('span');
+    d.className = 'mv-dot';
+    dotsWrap.appendChild(d);
+  });
+  function updateDots() {
+    [...dotsWrap.children].forEach((d, i) => d.classList.toggle('active', i === mod(firstIndex)));
+  }
+  updateDots();
+
+  function scNext(dur = 0.65) {
+    if (animating) return; animating = true;
+    firstIndex = mod(firstIndex + 1);
+    updateDots();
+    const all = cards();
+    const dying = all.find(c => +c.dataset.slot === 0);
+    dying.classList.remove('active');
+    dying.style.zIndex = 0;
+    const movers = all.filter(c => +c.dataset.slot >= 1);
+    let incoming = null;
+    const tl = gsap.timeline({ onComplete() {
+      if (incoming) incoming.classList.add('active');
+      dying.remove(); animating = false;
+      scPump();
+    }});
+    tl.to(dying, { opacity: 0, duration: dur, ease: 'power3.inOut' }, 0);
+    movers.forEach(c => {
+      const newSlot = +c.dataset.slot - 1;
+      c.dataset.slot = newSlot;
+      if (newSlot === 0) incoming = c;
+      tl.to(c, { x: newSlot * step(), duration: dur, ease: 'power3.inOut' }, 0);
+    });
+    makeCard(firstIndex + BUFFER, BUFFER);
+  }
+
+  function scPrev(dur = 0.65) {
+    if (animating) return; animating = true;
+    firstIndex = mod(firstIndex - 1);
+    updateDots();
+    const reveal = makeCard(firstIndex, 0, false);
+    reveal.style.zIndex = 0;
+    const movers = cards().filter(c => c !== reveal);
+    const tl = gsap.timeline({ onComplete() {
+      cards().filter(k => +k.dataset.slot > BUFFER).forEach(k => k.remove());
+      reveal.classList.add('active');
+      reveal.style.zIndex = 1;
+      animating = false;
+      scPump();
+    }});
+    movers.forEach(c => {
+      const newSlot = +c.dataset.slot + 1;
+      c.dataset.slot = newSlot;
+      if (newSlot === 1) c.classList.remove('active');
+      tl.to(c, { x: newSlot * step(), duration: dur, ease: 'power3.inOut' }, 0);
+    });
+  }
+
+  const scQueue = [];
+  function scPump() {
+    if (animating || !scQueue.length) return;
+    const dir = scQueue.shift();
+    const dur = scQueue.length ? 0.35 : 0.65;
+    dir > 0 ? scNext(dur) : scPrev(dur);
+  }
+  document.getElementById('sc-next').addEventListener('click', () => { scQueue.push(1); scPump(); });
+  document.getElementById('sc-prev').addEventListener('click', () => { scQueue.push(-1); scPump(); });
+
+  let scHover = false;
+  const scSection = document.getElementById('rt-smallcap');
+  [track, scSection && scSection.querySelector('.mv-arrows')].forEach(el => {
+    if (!el) return;
+    el.addEventListener('mouseenter', () => scHover = true);
+    el.addEventListener('mouseleave', () => scHover = false);
+  });
+  setInterval(() => {
+    if (!scHover && !animating && !scQueue.length && !document.hidden) scNext();
+  }, 3000);
+
+  function layoutSC() {
+    const section = document.getElementById('rt-smallcap');
+    if (!section) return;
+    const arrows = section.querySelector('.mv-arrows');
+    const cardW = step() - 32;
+    const frameH = cardW * 474 / 296;
+    const maxCardH = Math.max(frameH, ...cards().map(c => c.offsetHeight));
+    const arrowsTop = 106 + maxCardH + 24;
+    arrows.style.top = arrowsTop + 'px';
+    section.style.height = (arrowsTop + 40 + 80) + 'px';
+    ScrollTrigger.refresh();
+  }
+  layoutSC();
+  window.addEventListener('load', layoutSC);
+  window.addEventListener('resize', () => {
+    cards().forEach(c => gsap.set(c, { x: (+c.dataset.slot) * step() }));
+    layoutSC();
+  });
+}
+
+/* ============================================================
    RECENT INSIGHTS — filtered panel slider (Sprint-1 1594:39821)
    ------------------------------------------------------------
    Category tabs reload the panels (staggered). All items render
@@ -941,6 +1088,74 @@ function initInsightsDeck4() {
   }, 4000);
 
   render(false);
+}
+
+/* ============================================================
+   RETIREMENT INSIGHTS — tab-free version of the panel slider
+   Uses the Market Outlook items from RI4_CATS[0].
+   ============================================================ */
+function initRtInsights() {
+  const slider = document.getElementById('ri4-rt-slider');
+  if (!slider) return;
+  const items = RI4_CATS[0].items;
+  const mod = i => ((i % items.length) + items.length) % items.length;
+  let active = 0;
+
+  function makePanel(it, i) {
+    const el = document.createElement('article');
+    el.className = 'ri4-panel' + (i === active ? ' expanded' : '');
+    el.innerHTML = `
+      <img class="ri4-bg" src="${it.img}" alt="" onerror="this.remove()">
+      <div class="ri4-scrim"></div>
+      <div class="ri4-darken"></div>
+      <div class="ri4-tagchip">
+        <span class="insight-tag">${it.tag}</span>
+        <span class="ri4-date-chip">${it.date}</span>
+      </div>
+      <div class="ri4-info">
+        <div class="ri4-copy">
+          <p class="ri4-headline">${it.title}</p>
+          <p class="ri4-desc">${it.desc}</p>
+        </div>
+        <div class="ri4-byrow">
+          <div class="ri4-byline">
+            <div class="insight-portrait"><img src="${it.portrait}" alt="" onerror="this.remove()"></div>
+            <div class="insight-author">
+              <p class="name">${it.name}</p>
+              <p class="role">${it.role} &bull; First Eagle</p>
+            </div>
+          </div>
+          <a class="btn btn--outline" href="#">Read Insight
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+          </a>
+        </div>
+      </div>`;
+    el.addEventListener('click', () => { if (!el.classList.contains('expanded')) setActive(i); });
+    return el;
+  }
+
+  function render() {
+    slider.innerHTML = '';
+    items.forEach((it, i) => slider.appendChild(makePanel(it, i)));
+  }
+
+  function setActive(i) {
+    active = mod(i);
+    [...slider.children].forEach((p, k) => p.classList.toggle('expanded', k === active));
+  }
+
+  document.getElementById('ri4-rt-next').addEventListener('click', () => setActive(active + 1));
+  document.getElementById('ri4-rt-prev').addEventListener('click', () => setActive(active - 1));
+
+  let hover = false;
+  [slider, document.querySelector('.ri4-arrows')].forEach(el => {
+    if (!el) return;
+    el.addEventListener('mouseenter', () => hover = true);
+    el.addEventListener('mouseleave', () => hover = false);
+  });
+  setInterval(() => { if (!hover && !document.hidden) setActive(active + 1); }, 4000);
+
+  render();
 }
 
 /* ============================================================
@@ -1481,6 +1696,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initFundFilter();
   initMarketViews();
   initInsightsDeck4();
+  initRtInsights();
+  initSmallCapViews();
   initTeams();
   initWhyFei();
   initTopoBackground();

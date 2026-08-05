@@ -160,53 +160,93 @@
     </div>
   </section>
 
+  <!-- ============ SURVEY CTA (3024:31246) ============ -->
+  <section id="rt-survey">
+    <div class="rt-survey-inner">
+      <div class="rt-survey-card" data-sf>
+        <div class="rt-survey-copy">
+          <p class="eyebrow rt-survey-eyebrow">Retirement Survey</p>
+          <h2 class="rt-survey-title">Redefine retirement impact</h2>
+          <p class="body rt-survey-body">Share your expert perspective on retirement income and help shape better outcomes for plan participants.</p>
+        </div>
+        <a class="btn btn--light rt-survey-btn" href="#">Get started</a>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ RECENT INSIGHTS ============ -->
   <section id="rt-insights">
-    <div class="pr-header" data-sf-group>
-      <h2 class="section-title" data-sf>Recent insights</h2>
-      <a class="btn" href="#" data-sf>All insights</a>
+    <div class="ri4-header" data-sf-group>
+      <div class="ri4-title">
+        <p class="eyebrow" data-sf>Recent Insights</p>
+        <h2 class="section-title" data-sf>The thinking behind the strategies.</h2>
+        <p class="body" data-sf>What's moving, what's noise, and what we're doing about it.</p>
+      </div>
+      <a class="btn" href="#" data-sf>See All Insights</a>
     </div>
-    <div class="pr-cards" data-sf-group>
-      <a class="pr-card" href="#" data-sf>
-        <div class="pr-card-info">
-          <div class="pr-card-text">
-            <p class="pr-card-date">Jul 31, 2026</p>
-            <p class="pr-card-title">Navigating Retirement Income in a Volatile Rate Environment</p>
-          </div>
-          <svg class="pr-card-arrow" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16h20M18 6l10 10-10 10"/></svg>
-        </div>
-      </a>
-      <a class="pr-card" href="#" data-sf>
-        <div class="pr-card-info">
-          <div class="pr-card-text">
-            <p class="pr-card-date">Jul 18, 2026</p>
-            <p class="pr-card-title">The Case for Capital Preservation in Defined Contribution Plans</p>
-          </div>
-          <svg class="pr-card-arrow" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16h20M18 6l10 10-10 10"/></svg>
-        </div>
-      </a>
-      <a class="pr-card" href="#" data-sf>
-        <div class="pr-card-info">
-          <div class="pr-card-text">
-            <p class="pr-card-date">Jul 4, 2026</p>
-            <p class="pr-card-title">Fiduciary Duty and the Margin of Safety Approach</p>
-          </div>
-          <svg class="pr-card-arrow" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16h20M18 6l10 10-10 10"/></svg>
-        </div>
-      </a>
+    <div class="ri4-slider" id="ri4-rt-slider" data-fade><!-- panels rendered by JS --></div>
+    <div class="ri4-arrows">
+      <button class="arrow-btn" id="ri4-rt-prev" aria-label="Previous insight">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8H2M7 3L2 8l5 5"/></svg>
+      </button>
+      <button class="arrow-btn" id="ri4-rt-next" aria-label="Next insight">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+      </button>
     </div>
   </section>
 
   <!-- ============ SMALL CAP VIEWS ============ -->
   <section id="rt-smallcap">
-    <div class="rt-section-inner">
-      <div class="title-group" data-sf-group>
-        <h2 class="section-title" data-sf>Small cap views</h2>
-        <p class="body" data-sf>Perspectives from our dedicated small cap team on opportunities and risks in the small cap universe.</p>
+    <div class="mv-title" data-sf-group>
+      <div class="title-group">
+        <p class="eyebrow" data-sf>Small Cap Views</p>
+        <h2 class="section-title" data-sf>Experience and selectivity in small cap</h2>
+        <p class="body" data-sf>Selectivity and experience matter in evaluating a small cap company.</p>
+      </div>
+    </div>
+
+    <div class="mv-carousel" id="sc-carousel"><!-- cards injected by JS --></div>
+
+    <div class="mv-arrows">
+      <div class="mv-dots" id="sc-dots" aria-hidden="true"><!-- dots injected by JS --></div>
+      <div class="mv-btns">
+        <button class="arrow-btn" id="sc-prev" aria-label="Previous video">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8H2M7 3L2 8l5 5"/></svg>
+        </button>
+        <button class="arrow-btn" id="sc-next" aria-label="Next video">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+        </button>
       </div>
     </div>
   </section>
   </div>
+
+  <!-- ============ CONTACT INFO ============ -->
+  <section id="rt-contact-info">
+    <div class="rt-ci-inner">
+      <div class="rt-ci-heading">
+        <h2 class="rt-ci-title">Contact</h2>
+      </div>
+      <div class="rt-ci-list">
+        <div class="rt-ci-item">
+          <p class="rt-ci-item-name">Internal advisor consultant desk</p>
+          <div class="rt-ci-item-details">
+            <p>salesandmarketing@firsteagle.com</p>
+            <p>800-747-2008</p>
+            <p>877-683-3403</p>
+          </div>
+        </div>
+        <div class="rt-ci-divider"></div>
+        <div class="rt-ci-item">
+          <p class="rt-ci-item-name">Global Headquarters</p>
+          <div class="rt-ci-item-details">
+            <p>1345 Avenue of the Americas, New York, NY 10105</p>
+            <p>212-698-3300</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ============ CONTACT ============ -->
   <section id="contact">
