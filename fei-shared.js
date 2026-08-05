@@ -427,7 +427,7 @@ const NAV = {
         label: 'Client Servicing',
         panel: { cols: [{ h: null, rows: ['Account Services', 'Forms & Applications', 'Tax Center', 'FAQs'] }] }
       },
-      { label: 'Retirement Solutions', panel: null }
+      { label: 'Retirement Solutions', panel: { cols: [{ h: 'Retirement Solutions', rows: ['Overview|retirement.html', 'Approach|retirement.html#rt-approach', 'Client Education|retirement.html#rt-education', 'Recent Insights|retirement.html#rt-insights', 'Small Cap Views|retirement.html#rt-smallcap'] }] } }
     ],
     brief: {
       img: 'assets/img/nav-img-people.png', eyebrow: 'First Eagle Academy',
