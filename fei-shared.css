@@ -1122,6 +1122,7 @@ main{position:relative;z-index:1;}
 }
 .ab-hero-head{grid-column:1/span 9;display:flex;flex-direction:column;gap:16px;align-self:start;}
 .ab-hero-title{
+  max-width:980px;
   font-family:var(--font-air);font-weight:400;font-size:calc(100px * var(--ts));
   line-height:0.9;letter-spacing:-4px;color:var(--white);
 }
