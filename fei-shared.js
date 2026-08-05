@@ -427,7 +427,7 @@ const NAV = {
         label: 'Client Servicing',
         panel: { cols: [{ h: null, rows: ['Account Services', 'Forms & Applications', 'Tax Center', 'FAQs'] }] }
       },
-      { label: 'Retirement Solutions', panel: { cols: [{ h: 'Retirement Solutions', rows: ['Overview|retirement.html', 'Approach|retirement.html#rt-approach', 'Client Education|retirement.html#rt-education', 'Recent Insights|retirement.html#rt-insights', 'Small Cap Views|retirement.html#rt-smallcap'] }] } }
+      { label: 'Retirement Solutions', href: 'retirement.html', panel: null }
     ],
     brief: {
       img: 'assets/img/nav-img-people.png', eyebrow: 'First Eagle Academy',
@@ -489,10 +489,10 @@ function initNavSheet() {
       const sel = d.l2[l2Index];
       main = `
         <div class="sheet-rail" data-anim>
-          ${d.l2.map((item, i) => `
-            <button data-l2="${i}" class="${i === l2Index ? 'sel' : ''}">
-              ${item.label}${item.panel ? chevR : ''}
-            </button>`).join('')}
+          ${d.l2.map((item, i) => item.href
+            ? `<a href="${item.href}" class="sheet-rail-link">${item.label}</a>`
+            : `<button data-l2="${i}" class="${i === l2Index ? 'sel' : ''}">${item.label}${item.panel ? chevR : ''}</button>`
+          ).join('')}
         </div>
         <div class="sheet-panel" data-anim>
           ${sel.panel ? (sel.panel.desc ? `<p class="panel-desc">${sel.panel.desc}</p>` : '') + colsHTML(sel.panel.cols) : ''}
