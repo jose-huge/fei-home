@@ -162,12 +162,12 @@ function initProductTicker() {
   rafId = requestAnimationFrame(step);
 
   /* ---- expand: show all rows ---- */
+  let collapsedH = ptInner.offsetHeight; // captured before any expansion
+
   function expandTicker() {
     if (isAnimating) return;
     isAnimating = true;
     cancelAnimationFrame(rafId);
-
-    const collapsedH = ptInner.offsetHeight;
     ptInner.style.height = collapsedH + 'px';
     ptInner.style.overflow = 'hidden';
 
@@ -204,8 +204,8 @@ function initProductTicker() {
       .to(allRows.slice(1), { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out', stagger: 0.04 }, '-=0.15')
       .to(finderBtn, { opacity: 1, duration: 0.2, ease: 'power2.out' }, '<');
 
-    gsap.to(ptIconMinus, { opacity: 0, duration: 0.2, ease: 'power2.in' });
-    gsap.to(ptIconPlus,  { opacity: 1, duration: 0.2, ease: 'power2.out', delay: 0.15 });
+    gsap.to(ptIconPlus,  { opacity: 0, duration: 0.2, ease: 'power2.in' });
+    gsap.to(ptIconMinus, { opacity: 1, duration: 0.2, ease: 'power2.out', delay: 0.15 });
   }
 
   /* ---- collapse: back to 1 animated row ---- */
@@ -217,19 +217,19 @@ function initProductTicker() {
     ptInner.style.height = fromH + 'px';
     ptInner.style.overflow = 'hidden';
 
-    const collapsedH = ptInner.offsetHeight; // same as fromH — captured for animation
     const allRows = [...tableBody.children];
 
     const tl = gsap.timeline({ onComplete() {
       bar.classList.remove('is-expanded');
       plusBtn.setAttribute('aria-expanded', 'false');
       if (finderBtn) { finderBtn.style.display = 'none'; finderBtn.style.opacity = ''; }
-      ptInner.style.height = '';
-      ptInner.style.overflow = '';
-      ptInner.style.alignItems = '';
-      plusBtn.style.alignSelf  = '';
+      ptInner.style.height      = '';
+      ptInner.style.overflow    = '';
+      ptInner.style.alignItems  = '';
+      plusBtn.style.alignSelf   = '';
       ptDivider.style.alignSelf = '';
       ptDivider.style.height    = '';
+      collapsedH = ptInner.offsetHeight; // re-capture after layout settles
       elapsed = 0; lastTs = null;
       paintRow(idx);
       rafId = requestAnimationFrame(step);
@@ -238,16 +238,10 @@ function initProductTicker() {
 
     tl
       .to([...allRows.slice(1), finderBtn].filter(Boolean), { opacity: 0, duration: 0.2, ease: 'power2.in' })
-      .call(() => {
-        ptInner.style.alignItems  = '';
-        plusBtn.style.alignSelf   = '';
-        ptDivider.style.alignSelf = '';
-        ptDivider.style.height    = '';
-      })
-      .to(ptInner, { height: fromH - (allRows.length - 1) * 34, duration: 0.36, ease: 'power3.inOut' });
+      .to(ptInner, { height: collapsedH, duration: 0.36, ease: 'power3.inOut' });
 
-    gsap.to(ptIconPlus,  { opacity: 0, duration: 0.2, ease: 'power2.in' });
-    gsap.to(ptIconMinus, { opacity: 1, duration: 0.2, ease: 'power2.out', delay: 0.1 });
+    gsap.to(ptIconMinus, { opacity: 0, duration: 0.2, ease: 'power2.in' });
+    gsap.to(ptIconPlus,  { opacity: 1, duration: 0.2, ease: 'power2.out', delay: 0.1 });
   }
 
   plusBtn.addEventListener('click', () => {

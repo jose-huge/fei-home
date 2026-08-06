@@ -217,9 +217,9 @@ main{position:relative;z-index:1;}
 .pt-td--chg .chg-arrow svg{width:16px;height:16px;}
 .pt-td--chg.down .chg-arrow{color:#FF6B6B;}
 .pt-td--chg.down .chg-arrow svg{transform:rotate(180deg);}
-/* toggle icons — minus visible by default (closed = table showing) */
-.pt-icon-plus{opacity:0;}
-.pt-icon-minus{opacity:1;}
+/* toggle icons — plus visible by default (closed = table showing 1 row) */
+.pt-icon-plus{opacity:1;}
+.pt-icon-minus{opacity:0;}
 .pt-plus{
   display:grid;place-items:center;
   width:40px;height:40px;flex-shrink:0;
