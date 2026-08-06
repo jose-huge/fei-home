@@ -1173,28 +1173,37 @@ main{position:relative;z-index:1;}
 }
 .ab-disclosure-link svg{width:12px;height:12px;}
 /* ---------- Philosophy ---------- */
-#ab-philosophy{
-  background:var(--oxford-blue);padding:64px calc(var(--edge) + var(--margin));
-  display:grid;grid-template-columns:repeat(12,1fr);gap:32px;max-width:1521px;margin:0 auto;
+#ab-philosophy{background:var(--oxford-blue);padding:0 calc(var(--edge) + var(--margin)) 64px;}
+.ab-phil-card{
+  position:relative;border-radius:8px;overflow:hidden;
+  display:grid;grid-template-columns:repeat(12,1fr);gap:32px;
+  padding:32px;
 }
-.ab-phil-topics{grid-column:1/span 4;display:flex;flex-direction:column;gap:56px;}
-.ab-phil-list{display:flex;flex-direction:column;gap:24px;padding-right:24px;}
-.ab-phil-item{display:flex;align-items:center;gap:16px;}
-.ab-phil-item{cursor:pointer;}
-.ab-phil-item p{font-family:var(--font-water);font-size:calc(32px * var(--ts));line-height:1;color:var(--gray-40);transition:color .25s var(--ease-out);}
-.ab-phil-item--active p,.ab-phil-item:hover p{color:var(--cyan);}
-.ab-phil-track{
-  width:2px;height:30px;flex-shrink:0;
-  background:var(--gray-40);border-radius:9999px;
-  transition:background .25s var(--ease-out);
+.ab-phil-card-bg{position:absolute;inset:0;pointer-events:none;}
+.ab-phil-card-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.ab-phil-card-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.5);}
+.ab-phil-header{
+  grid-column:1/span 5;position:relative;
+  display:flex;flex-direction:column;gap:16px;
+  padding-top:16px;
 }
-.ab-phil-item--active .ab-phil-track,.ab-phil-item:hover .ab-phil-track{background:var(--cyan);}
-.ab-phil-fill{display:none;}
-.ab-phil-image{grid-column:5/span 4;border-radius:8px;overflow:hidden;}
-.ab-phil-image img{width:100%;height:100%;object-fit:cover;display:block;}
-.ab-phil-copy{grid-column:9/span 4;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:24px;}
-.ab-phil-heading{font-family:var(--font-water);font-weight:700;font-size:calc(24px * var(--ts));line-height:1.2;color:var(--white);margin-bottom:8px;}
-.ab-phil-copy .body{font-family:var(--font-water);font-size:calc(18px * var(--ts));line-height:1.3;color:var(--steel-blue-dark);}
+.ab-phil-title{font-family:var(--font-water);font-weight:700;font-size:calc(48px * var(--ts));line-height:1;letter-spacing:-0.48px;color:var(--white);}
+.ab-phil-intro{font-family:var(--font-water);font-size:calc(16px * var(--ts));line-height:1.3;color:var(--white);}
+.ab-phil-list{
+  grid-column:7/span 6;position:relative;
+  display:flex;flex-direction:column;
+}
+.ab-phil-item{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:16px;padding:16px 0 24px;
+  cursor:pointer;
+}
+.ab-phil-item-text{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;padding-right:40px;}
+.ab-phil-item-title{font-family:var(--font-water);font-weight:700;font-size:calc(24px * var(--ts));line-height:1.2;color:var(--white);}
+.ab-phil-item-desc{font-family:var(--font-water);font-size:calc(16px * var(--ts));line-height:1.3;color:var(--white);}
+.ab-phil-arrow{width:24px;height:24px;flex-shrink:0;color:var(--white);transition:transform .2s var(--ease-out),color .2s var(--ease-out);}
+.ab-phil-item:hover .ab-phil-arrow{transform:translateX(4px);color:var(--cyan);}
+.ab-phil-divider{height:1px;background:rgba(255,255,255,0.1);}
 
 /* ---------- History / heritage timeline ----------
    Full-bleed section: the year filmstrip bleeds past the container while the
