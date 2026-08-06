@@ -395,7 +395,7 @@ const NAV = {
   'who-we-are': {
     title: 'Who We Are',
     l2: [
-      { label: 'About First Eagle', panel: { cols: [{ h: 'About First Eagle', rows: ['Overview|about.html', 'Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)'] }] } },
+      { label: 'About First Eagle', panel: { cols: [{ h: 'About First Eagle', rows: ['Overview', 'Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)'] }] } },
       { label: 'Capabilities', panel: { cols: [{ h: 'Capabilities', rows: ['Municipal Credit', 'Gold', 'Interval Funds', 'ETF Investing', 'Retirement Solutions'] }] } },
       { label: 'Our Clients', panel: { cols: [{ h: 'Our Clients', rows: ['Consultants', 'Corporate Pensions', 'Defined Contributions', 'Endowments and Foundations', 'Family Offices', 'Insurance', 'Public Pensions', 'Sovereign Wealth Funds', 'Taft Hartley Plans'] }] } },
       { label: 'Leadership', panel: { cols: [{ h: 'Leadership', rows: ['Senior Leadership', 'Corporate & Infrastructure Leadership', 'Client Team'] }] } },
