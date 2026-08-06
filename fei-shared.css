@@ -1173,7 +1173,7 @@ main{position:relative;z-index:1;}
 }
 .ab-disclosure-link svg{width:12px;height:12px;}
 /* ---------- Philosophy ---------- */
-#ab-philosophy{background:var(--oxford-blue);padding:0 calc(var(--edge) + var(--margin)) 64px;}
+#ab-philosophy{background:var(--oxford-blue);padding:64px calc(var(--edge) + var(--margin));}
 .ab-phil-card{
   position:relative;border-radius:8px;overflow:hidden;
   display:grid;grid-template-columns:repeat(12,1fr);gap:32px;
@@ -1379,6 +1379,9 @@ main{position:relative;z-index:1;}
 .retirement-page .hdr-eyebrow{background:#162035;}
 .retirement-page .hdr-main-inner{border-bottom:1px solid var(--light-30);}
 .retirement-page #ab-hero{background:var(--white);height:auto;}
+.about-page #ab-hero{height:auto;}
+.about-page .ab-hero-clip{position:absolute;inset:0;min-height:100%;}
+.about-page .ab-hero-inner{height:auto;padding-bottom:120px;}
 
 #rt-approach{background:var(--oxford-blue);}
 .rt-featured-wrap{
