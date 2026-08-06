@@ -106,7 +106,7 @@ function initProductTicker() {
   const ptIconPlus  = plusBtn.querySelector('.pt-icon-plus');
   const ptIconMinus = plusBtn.querySelector('.pt-icon-minus');
 
-  const DWELL = 4000;
+  const DWELL = 3000;
   let idx = 0, hover = false, elapsed = 0, lastTs = null, isAnimating = false;
   const mod = i => ((i % PT_FUNDS.length) + PT_FUNDS.length) % PT_FUNDS.length;
 
