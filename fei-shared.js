@@ -96,9 +96,10 @@ function initProductTicker() {
   const fundEl   = document.getElementById('pt-bar-fund');
   if (!fundEl) return;
 
-  const pauseBtn = document.getElementById('pt-pause');
-  const prevBtn  = document.getElementById('pt-prev');
-  const nextBtn  = document.getElementById('pt-next');
+  const pauseBtn    = document.getElementById('pt-pause');
+  const prevBtn     = document.getElementById('pt-prev');
+  const nextBtn     = document.getElementById('pt-next');
+  const progressEl  = document.getElementById('pt-bar-progress');
 
   const DWELL = 3000;
   const mod = i => ((i % PT_FUNDS.length) + PT_FUNDS.length) % PT_FUNDS.length;
@@ -123,6 +124,7 @@ function initProductTicker() {
   function goTo(i, dir) {
     idx = mod(i);
     elapsed = 0;
+    if (progressEl) progressEl.style.height = '0%';
     gsap.to(fundEl, { opacity: 0, x: dir * -12, duration: 0.2, ease: 'power2.in', onComplete() {
       render(idx);
       gsap.fromTo(fundEl, { opacity: 0, x: dir * 12 }, { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' });
@@ -134,7 +136,8 @@ function initProductTicker() {
   function step(ts) {
     if (lastTs !== null && !paused && !document.hidden) elapsed += ts - lastTs;
     lastTs = ts;
-    if (elapsed >= DWELL) goTo(idx + 1, 1);
+    if (elapsed >= DWELL) { goTo(idx + 1, 1); }
+    else if (progressEl) progressEl.style.height = (elapsed / DWELL * 100) + '%';
     requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
@@ -981,7 +984,7 @@ function initRtInsights() {
     el.addEventListener('mouseenter', () => hover = true);
     el.addEventListener('mouseleave', () => hover = false);
   });
-  setInterval(() => { if (!hover && !document.hidden) setActive(active + 1); }, 4000);
+  setInterval(() => { if (!hover && !document.hidden) setActive(active + 1); }, 5000);
 
   render();
 }
