@@ -93,161 +93,58 @@ const PT_FUNDS = [
 ];
 
 function initProductTicker() {
-  const tableBody = document.getElementById('pt-table-body');
-  if (!tableBody) return;
+  const fundEl   = document.getElementById('pt-bar-fund');
+  if (!fundEl) return;
 
-  const fill      = document.getElementById('pt-divider-fill');
-  const bar       = document.getElementById('product-ticker');
-  const ptInner   = document.querySelector('#product-ticker .pt-inner');
-  const ptDivider = document.querySelector('#product-ticker .pt-divider');
-  const table     = document.getElementById('pt-table');
-  const plusBtn   = document.getElementById('pt-plus');
-  const finderBtn = document.querySelector('.pt-finder-btn');
-  const ptIconPlus  = plusBtn.querySelector('.pt-icon-plus');
-  const ptIconMinus = plusBtn.querySelector('.pt-icon-minus');
+  const pauseBtn = document.getElementById('pt-pause');
+  const prevBtn  = document.getElementById('pt-prev');
+  const nextBtn  = document.getElementById('pt-next');
 
   const DWELL = 3000;
-  let idx = 0, hover = false, elapsed = 0, lastTs = null, isAnimating = false;
   const mod = i => ((i % PT_FUNDS.length) + PT_FUNDS.length) % PT_FUNDS.length;
+  let idx = 0, paused = false, elapsed = 0, lastTs = null;
 
   const ARROW_SVG = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M5.5 5.5L8 3L10.5 5.5"/><path d="M8 3V13"/></svg>`;
-  const ARROW_UP   = `<span class="chg-arrow">${ARROW_SVG}</span>`;
-  const ARROW_DOWN = `<span class="chg-arrow" style="transform:rotate(180deg)">${ARROW_SVG}</span>`;
 
-  function makeRow(f) {
+  function render(i) {
+    const f = PT_FUNDS[mod(i)];
     const isDown = f.chg.startsWith('-');
     const chgNum = f.chg.replace(/^[+-]/, '');
-    const ytdNum = f.ytd.replace(/^[+-]/, '');
-    const ytdDown = f.ytd.startsWith('-');
-    return `<div class="pt-row">
-      <span class="pt-td pt-td--ticker">${f.tick}</span>
-      <span class="pt-td">${f.name}</span>
-      <span class="pt-td pt-td--nav">${f.nav}</span>
-      <span class="pt-td pt-td--chg${isDown ? ' down' : ''}">${isDown ? ARROW_DOWN : ARROW_UP}${chgNum}</span>
-      <span class="pt-td pt-td--chg${ytdDown ? ' down' : ''}">${ytdDown ? ARROW_DOWN : ARROW_UP}${ytdNum}</span>
-    </div>`;
+    fundEl.innerHTML = `
+      <span class="pt-bar-name">${f.name}</span>
+      <span class="pt-bar-fsep"></span>
+      <span class="pt-bar-ticker">${f.tick}</span>
+      <span class="pt-bar-nav">${f.nav}</span>
+      <span class="pt-bar-chg${isDown ? ' down' : ''}">
+        (<span class="chg-arrow">${ARROW_SVG}</span>${chgNum})
+      </span>`;
   }
 
-  /* Closed state: render single animated row */
-  function paintRow(i) {
-    tableBody.innerHTML = makeRow(PT_FUNDS[mod(i)]);
-  }
-
-  function goTo(i) {
+  function goTo(i, dir) {
     idx = mod(i);
     elapsed = 0;
-    const row = tableBody.firstElementChild;
-    if (!row) return;
-    gsap.to(row, { y: -10, opacity: 0, duration: 0.25, ease: 'power2.in', onComplete() {
-      paintRow(idx);
-      const newRow = tableBody.firstElementChild;
-      gsap.fromTo(newRow, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
+    gsap.to(fundEl, { opacity: 0, x: dir * -12, duration: 0.2, ease: 'power2.in', onComplete() {
+      render(idx);
+      gsap.fromTo(fundEl, { opacity: 0, x: dir * 12 }, { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' });
     }});
   }
 
-  paintRow(0);
+  render(0);
 
-  bar.addEventListener('mouseenter', () => hover = true);
-  bar.addEventListener('mouseleave', () => hover = false);
-
-  let rafId;
   function step(ts) {
-    if (lastTs !== null && !hover && !document.hidden) elapsed += ts - lastTs;
+    if (lastTs !== null && !paused && !document.hidden) elapsed += ts - lastTs;
     lastTs = ts;
-    const p = Math.min(elapsed / DWELL, 1);
-    fill.style.height = ((1 - p) * 100) + '%';
-    if (p >= 1) goTo(idx + 1);
-    rafId = requestAnimationFrame(step);
+    if (elapsed >= DWELL) goTo(idx + 1, 1);
+    requestAnimationFrame(step);
   }
-  rafId = requestAnimationFrame(step);
+  requestAnimationFrame(step);
 
-  /* ---- expand: show all rows ---- */
-  let collapsedH = ptInner.offsetHeight; // captured before any expansion
-
-  function expandTicker() {
-    if (isAnimating) return;
-    isAnimating = true;
-    cancelAnimationFrame(rafId);
-    ptInner.style.height = collapsedH + 'px';
-    ptInner.style.overflow = 'hidden';
-
-    // Render all rows
-    tableBody.innerHTML = PT_FUNDS.map(f => makeRow(f)).join('');
-    const allRows = [...tableBody.children];
-    gsap.set(allRows.slice(1), { opacity: 0, y: 8 });
-
-    if (finderBtn) { finderBtn.style.display = 'inline-flex'; gsap.set(finderBtn, { opacity: 0 }); }
-
-    ptInner.style.alignItems = 'flex-start';
-    const toH = ptInner.scrollHeight;
-    ptInner.style.alignItems = 'center';
-    if (finderBtn) finderBtn.style.display = 'none';
-
-    bar.classList.add('is-expanded');
-    plusBtn.setAttribute('aria-expanded', 'true');
-
-    const tl = gsap.timeline({ onComplete() {
-      ptInner.style.height = 'auto';
-      ptInner.style.overflow = '';
-      isAnimating = false;
-    }});
-
-    tl
-      .call(() => {
-        ptInner.style.alignItems  = 'flex-start';
-        plusBtn.style.alignSelf   = 'flex-start';
-        ptDivider.style.alignSelf = 'stretch';
-        ptDivider.style.height    = 'auto';
-        if (finderBtn) finderBtn.style.display = 'inline-flex';
-      })
-      .to(ptInner, { height: toH, duration: 0.4, ease: 'power2.out' })
-      .to(allRows.slice(1), { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out', stagger: 0.04 }, '-=0.15')
-      .to(finderBtn, { opacity: 1, duration: 0.2, ease: 'power2.out' }, '<');
-
-    gsap.to(ptIconPlus,  { opacity: 0, duration: 0.2, ease: 'power2.in' });
-    gsap.to(ptIconMinus, { opacity: 1, duration: 0.2, ease: 'power2.out', delay: 0.15 });
-  }
-
-  /* ---- collapse: back to 1 animated row ---- */
-  function collapseTicker() {
-    if (isAnimating) return;
-    isAnimating = true;
-
-    const fromH = ptInner.offsetHeight;
-    ptInner.style.height = fromH + 'px';
-    ptInner.style.overflow = 'hidden';
-
-    const allRows = [...tableBody.children];
-
-    const tl = gsap.timeline({ onComplete() {
-      bar.classList.remove('is-expanded');
-      plusBtn.setAttribute('aria-expanded', 'false');
-      if (finderBtn) { finderBtn.style.display = 'none'; finderBtn.style.opacity = ''; }
-      ptInner.style.height      = '';
-      ptInner.style.overflow    = '';
-      ptInner.style.alignItems  = '';
-      plusBtn.style.alignSelf   = '';
-      ptDivider.style.alignSelf = '';
-      ptDivider.style.height    = '';
-      collapsedH = ptInner.offsetHeight; // re-capture after layout settles
-      elapsed = 0; lastTs = null;
-      paintRow(idx);
-      rafId = requestAnimationFrame(step);
-      isAnimating = false;
-    }});
-
-    tl
-      .to([...allRows.slice(1), finderBtn].filter(Boolean), { opacity: 0, duration: 0.2, ease: 'power2.in' })
-      .to(ptInner, { height: collapsedH, duration: 0.36, ease: 'power3.inOut' });
-
-    gsap.to(ptIconMinus, { opacity: 0, duration: 0.2, ease: 'power2.in' });
-    gsap.to(ptIconPlus,  { opacity: 1, duration: 0.2, ease: 'power2.out', delay: 0.1 });
-  }
-
-  plusBtn.addEventListener('click', () => {
-    if (bar.classList.contains('is-expanded')) collapseTicker();
-    else expandTicker();
+  pauseBtn.addEventListener('click', () => {
+    paused = !paused;
+    pauseBtn.classList.toggle('is-paused', paused);
   });
+  prevBtn.addEventListener('click', () => goTo(idx - 1, -1));
+  nextBtn.addEventListener('click', () => goTo(idx + 1, 1));
 }
 
 /* ============================================================

@@ -93,29 +93,24 @@
   <!-- ============ PRODUCT TICKER (Sprint-1 240:14785) ============ -->
   <section id="product-ticker">
     <div class="container" data-fade>
-      <div class="pt-inner">
-        <div class="pt-label">
-          <div class="pt-label-text">
-            <p class="pt-heading">Fund performance</p>
-            <p class="pt-sub">NAV &amp; 1-day change as of 7/16/2026</p>
-          </div>
-          <a class="pt-finder-btn btn btn--outline" href="#">Open the Fund Finder</a>
+      <div class="pt-bar">
+        <div class="pt-bar-label">
+          <p class="pt-heading">Featured products</p>
+          <p class="pt-sub">NAV &amp; 1-day change as of 7/16/2026</p>
         </div>
-        <div class="pt-divider"><span class="pt-divider-fill" id="pt-divider-fill"></span></div>
-        <div class="pt-table" id="pt-table" aria-hidden="false">
-          <div class="pt-table-head">
-            <span class="pt-th">Ticker</span>
-            <span class="pt-th">Fund</span>
-            <span class="pt-th pt-th--right">NAV</span>
-            <span class="pt-th pt-th--right">1-Day</span>
-            <span class="pt-th pt-th--right">YTD</span>
-          </div>
-          <div class="pt-table-body" id="pt-table-body"></div>
+        <div class="pt-bar-vline"></div>
+        <div class="pt-bar-fund" id="pt-bar-fund"></div>
+        <div class="pt-bar-controls">
+          <button class="pt-ctrl" id="pt-pause" aria-label="Pause autoplay">
+            <svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16"><rect x="3.5" y="2.5" width="3" height="11" rx="0.5"/><rect x="9.5" y="2.5" width="3" height="11" rx="0.5"/></svg>
+          </button>
+          <button class="pt-ctrl" id="pt-prev" aria-label="Previous fund">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M10 3L5 8l5 5"/></svg>
+          </button>
+          <button class="pt-ctrl" id="pt-next" aria-label="Next fund">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M6 3l5 5-5 5"/></svg>
+          </button>
         </div>
-        <button class="pt-plus" id="pt-plus" aria-label="View fund performance" aria-expanded="false">
-          <svg class="pt-icon-plus" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 2v12M2 8h12"/></svg>
-          <svg class="pt-icon-minus" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 8h12"/></svg>
-        </button>
       </div>
     </div>
   </section>
