@@ -584,7 +584,7 @@ function initMarketViews() {
   });
   setInterval(() => {
     if (!mvHover && !animating && !mvQueue.length && !document.hidden) next();
-  }, 3000);
+  }, 6000);
 
   /* Adaptive vertical layout — keeps the 1440 design rhythm at any width:
      buttons/dots clear the tallest card (frame + title + expanded body),
@@ -1122,7 +1122,7 @@ function initTeams() {
   function layoutTeams() {
     const section = document.getElementById('teams');
     const headerH = section.querySelector('.tm-header').offsetHeight;
-    const top = 90 + headerH + 84;
+    const top = 90 + headerH + 56;
     track.style.top = top + 'px';
     const h = 185;
     track.style.height = h + 'px';
