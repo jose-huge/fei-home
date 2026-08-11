@@ -172,54 +172,29 @@ const OF_FUNDS = [
 ];
 
 function initFundFilter() {
-  const wrap = document.getElementById('of-cards');
-  if (!wrap) return;
-  const goalSel = document.getElementById('of-goal');
-  const timeSel = document.getElementById('of-time');
-  const riskSel = document.getElementById('of-risk');
+  const track = document.getElementById('of-cards-track');
+  if (!track) return;
 
-  const NEXT_H = { short:'med', med:'long', long:'xlong', xlong:'long' };
+  const pageEls = [...track.querySelectorAll('.of-cards-page')];
+  const totalPages = pageEls.length;
+  const dots = [...document.querySelectorAll('.of-dot')];
+  const prevBtn = document.getElementById('of-prev');
+  const nextBtn = document.getElementById('of-next');
+  if (!prevBtn || !nextBtn) return;
 
-  function pick() {
-    const goal = goalSel.value, time = timeSel.value, risk = riskSel.value;
-    // comp's landing state shows the flagship trio
-    if (goal === 'growth' && time === 'long' && risk === 'high') {
-      return ['SGENX','FESAX','SGGDX'].map(t => OF_FUNDS.find(f => f.t === t));
-    }
-    return OF_FUNDS
-      .map(f => {
-        let s = 0;
-        if (f.g.includes(goal)) s += 2;
-        if (f.r === risk) s += 1;
-        if (f.h === time) s += 1;
-        else if (NEXT_H[time] === f.h || NEXT_H[f.h] === time) s += 0.5;
-        return { f, s };
-      })
-      .sort((a, b) => b.s - a.s)
-      .slice(0, 3)
-      .map(x => x.f);
+  let page = 0;
+
+  function goTo(p) {
+    page = ((p % totalPages) + totalPages) % totalPages;
+    const viewport = track.parentElement.offsetWidth;
+    gsap.to(track, { x: -page * viewport, duration: 0.55, ease: 'power2.inOut' });
+    dots.forEach((d, i) => d.classList.toggle('active', i === page));
   }
 
-  function render(animate) {
-    wrap.innerHTML = pick().map(f => `
-      <div class="fund-card">
-        <div class="fund-card-copy">
-          <div>
-            <p class="fund-ticker">${f.t}</p>
-            <p class="fund-name">${f.n}</p>
-          </div>
-          <p class="fund-desc">${f.d}</p>
-        </div>
-        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16h20M18 6l10 10-10 10"/></svg>
-      </div>`).join('');
-    if (animate) {
-      gsap.fromTo(wrap.children, { y: 24, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', stagger: 0.09 });
-    }
-  }
+  dots.forEach((d, i) => d.classList.toggle('active', i === 0));
 
-  [goalSel, timeSel, riskSel].forEach(s => s.addEventListener('change', () => render(true)));
-  render(false);
+  prevBtn.addEventListener('click', () => goTo(page - 1));
+  nextBtn.addEventListener('click', () => goTo(page + 1));
 }
 
 /* ============================================================
@@ -1064,7 +1039,7 @@ function initTeams() {
   let first = 0;                       // leftmost fully-visible card index (finite, no wrap)
 
   const vpw = () => document.documentElement.clientWidth;
-  const CARD_W = 320, CARD_GAP = 8;    // Sprint-1 fixed card width + gap
+  const CARD_W = 422, CARD_GAP = 8;    // Sprint-1 fixed card width + gap
   const STEP = CARD_W + CARD_GAP;
   const TOTAL_W = N * STEP - CARD_GAP;            // full row width, all five cards
   const edge = () => Math.max(0, (vpw() - 1680) / 2);   // matches --max-w (1520 inner)
@@ -1081,29 +1056,12 @@ function initTeams() {
     el.className = 'team-card';
     const company = it.name.startsWith('First Eagle') ? 'First Eagle' : it.name;
     el.innerHTML = `
-      <div class="team-front">
-        <div class="team-banner"><img src="${it.banner}" alt="" onerror="this.remove()"></div>
-        <div class="team-content">
-          <div class="team-copy">
-            <p class="team-name">${it.name}</p>
-            <p class="team-desc">${it.desc}</p>
-          </div>
-          <svg class="team-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M13 5l7 7-7 7"/></svg>
-        </div>
+      <div class="team-copy">
+        <p class="team-name">${it.name}</p>
+        <p class="team-desc">${it.desc}</p>
       </div>
-      <div class="team-back">
-        <p class="team-back-desc">${it.desc}</p>
-        <div class="team-heads">
-          ${it.heads.map(h => `
-            <div class="insight-byline">
-              <div class="insight-portrait"><img src="${h.img}" alt="" onerror="this.remove()"></div>
-              <div class="insight-author">
-                <p class="name">${h.name}</p>
-                <p class="role">${h.role} &bull; ${company}</p>
-              </div>
-            </div>`).join('')}
-        </div>
-      </div>`;
+      <svg class="team-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <img class="team-card-motif" src="assets/img/team-card-motif.svg" aria-hidden="true">`;
     track.appendChild(el);
     return el;
   }
@@ -1163,7 +1121,7 @@ function initTeams() {
     const headerH = section.querySelector('.tm-header').offsetHeight;
     const top = 90 + headerH + 84;
     track.style.top = top + 'px';
-    const h = 360;
+    const h = 185;
     track.style.height = h + 'px';
     const arrowsTop = top + h + 24;
     section.querySelector('.tm-arrows').style.top = arrowsTop + 'px';

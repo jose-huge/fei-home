@@ -314,3 +314,18 @@ Values that could only be given a best-effort/approximate match (no exact primit
 | `#000a1e` / `#000715` (footer/gradient darks) | — | Darker than Oxford Blue; no primitive exists at this luminance |
 | Font family "Headings" = Air | Project uses Water for headings | Naming/usage convention mismatch between token system and actual site typography |
 | Icon sizes 20px, 28px | icon-md (24), icon-lg (32) | Fall between official steps |
+
+---
+
+## 11. Component Spacing Rule
+
+**Card padding and internal spacing must always match the Figma component exactly.**
+
+When implementing or updating any card component, fetch the Figma node with `get_design_context` and use the exact padding, gap, border-radius, and border values — never approximate or reuse values from a similar component. This applies to fund cards, video cards, insight cards, and any other card-based component.
+
+Current fund card spec (node `3475:94056`):
+- `padding: 25px`
+- `gap: 24px` (between copy block and arrow)
+- `background: #162035`
+- `border: 1px solid rgba(255,255,255,0.05)`
+- `border-radius: 8px`

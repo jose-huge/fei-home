@@ -73,6 +73,7 @@
         <h1 class="hero-title" data-sf>We invest<br>where others stop exploring.</h1>
         <p class="hero-body" data-sf>We look for resilient, undervalued companies and hold them with conviction. The losses your clients avoid matter as much as the gains you deliver.</p>
         <a class="btn" href="#" data-sf>Explore Our Strategies</a>
+        <p class="hero-disclosure" data-sf>Past performance is not indicative of future results. All investments involve risk, including possible loss of principal. The information provided is for informational purposes only and should not be construed as investment advice.</p>
       </div>
       <div class="hero-stats">
         <div class="hero-stat">
@@ -161,72 +162,219 @@
     <div class="of-gradient"></div>
     <div class="grid-lines grid-lines--right" style="top:-34px;"><span></span><span></span><span></span></div>
 
-    <div class="of-title" data-sf-group>
-      <h2 class="section-title" data-sf>Find your investment solution</h2>
-    </div>
+    <div class="of-inner" data-sf-group>
+      <div class="of-header">
+        <h2 class="section-title" data-sf>Find your investment solution</h2>
+        <a class="btn" href="#" data-sf>Open the Fund Finder</a>
+      </div>
 
-    <a class="btn of-find" href="#" data-sf>Open the Fund Finder</a>
+      <div class="of-search-bar">
+        <div class="of-search-field">
+          <div class="of-search-box">
+            <svg class="of-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+            <span class="of-search-field-value">Search</span>
+          </div>
+        </div>
+        <div class="of-search-field">
+          <div class="of-search-box">
+            <span class="of-search-field-value">Browse by asset class</span>
+            <svg class="of-search-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+      </div>
 
-    <div class="of-search-bar" data-sf>
-      <div class="of-search-field">
-        <span class="of-search-field-label">Asset class</span>
-        <div class="of-search-box">
-          <span class="of-search-field-value">All</span>
-          <svg class="of-search-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-      </div>
-      <div class="of-search-field">
-        <span class="of-search-field-label">Goal</span>
-        <div class="of-search-box">
-          <span class="of-search-field-value">Growth</span>
-          <svg class="of-search-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-      </div>
-      <div class="of-search-field">
-        <span class="of-search-field-label">Risk tolerance</span>
-        <div class="of-search-box">
-          <span class="of-search-field-value">High</span>
-          <svg class="of-search-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-      </div>
-    </div>
+      <p class="of-featured-label">Featured funds</p>
 
-    <div class="of-cards">
-      <div class="fund-card">
-        <div class="fund-card-copy">
-          <div class="fund-eyebrow">
-            <span class="fund-ticker-tag">SGENX</span>
-            <span aria-hidden="true">•</span>
-            <span>Class A</span>
+      <div class="of-cards" id="of-cards">
+        <div class="of-cards-track" id="of-cards-track">
+          <!-- Page 1 -->
+          <div class="of-cards-page">
+            <div class="fund-card">
+              <div class="fund-card-copy">
+                <div class="fund-eyebrow">
+                  <span class="fund-ticker-tag">SGENX</span>
+                  <span aria-hidden="true">•</span>
+                  <span>Class A</span>
+                </div>
+                <p class="fund-name">First Eagle Global Fund</p>
+                <div class="fund-ytd">
+                  <p class="fund-ytd-label">YTD Performance As of 07/20/2026</p>
+                  <div class="fund-ytd-value">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="M8 12V4M4 8l4-4 4 4"/></svg>
+                    <span>7.65%</span>
+                  </div>
+                </div>
+              </div>
+              <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <div class="fund-card">
+              <div class="fund-card-copy">
+                <div class="fund-eyebrow">
+                  <span class="fund-ticker-tag">FESAX</span>
+                  <span aria-hidden="true">•</span>
+                  <span>Class A</span>
+                </div>
+                <p class="fund-name">First Eagle Small Cap Opportunity Fund</p>
+                <div class="fund-ytd">
+                  <p class="fund-ytd-label">YTD Performance As of 07/20/2026</p>
+                  <div class="fund-ytd-value">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="M8 12V4M4 8l4-4 4 4"/></svg>
+                    <span>30.16%</span>
+                  </div>
+                </div>
+              </div>
+              <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <div class="fund-card">
+              <div class="fund-card-copy">
+                <div class="fund-eyebrow">
+                  <span class="fund-ticker-tag">SGGDX</span>
+                  <span aria-hidden="true">•</span>
+                  <span>Class A</span>
+                </div>
+                <p class="fund-name">First Eagle Gold Fund</p>
+                <div class="fund-ytd">
+                  <p class="fund-ytd-label">YTD Performance As of 07/20/2026</p>
+                  <div class="fund-ytd-value">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="M8 12V4M4 8l4-4 4 4"/></svg>
+                    <span>12.43%</span>
+                  </div>
+                </div>
+              </div>
+              <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
           </div>
-          <p class="fund-name">First Eagle Global Fund</p>
-          <p class="fund-desc">Global value investing with a margin of safety. US and international equities, plus cash and gold as a buffer.</p>
+          <!-- Page 2 -->
+          <div class="of-cards-page">
+            <div class="fund-card">
+              <div class="fund-card-copy">
+                <div class="fund-eyebrow">
+                  <span class="fund-ticker-tag">FEAFX</span>
+                  <span aria-hidden="true">•</span>
+                  <span>Class A</span>
+                </div>
+                <p class="fund-name">First Eagle Alternative Capital BDC</p>
+                <div class="fund-ytd">
+                  <p class="fund-ytd-label">YTD Performance As of 07/20/2026</p>
+                  <div class="fund-ytd-value">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="M8 12V4M4 8l4-4 4 4"/></svg>
+                    <span>9.21%</span>
+                  </div>
+                </div>
+              </div>
+              <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <div class="fund-card">
+              <div class="fund-card-copy">
+                <div class="fund-eyebrow">
+                  <span class="fund-ticker-tag">FESGX</span>
+                  <span aria-hidden="true">•</span>
+                  <span>Class A</span>
+                </div>
+                <p class="fund-name">First Eagle Global Income Builder Fund</p>
+                <div class="fund-ytd">
+                  <p class="fund-ytd-label">YTD Performance As of 07/20/2026</p>
+                  <div class="fund-ytd-value">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="M8 12V4M4 8l4-4 4 4"/></svg>
+                    <span>5.84%</span>
+                  </div>
+                </div>
+              </div>
+              <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <div class="fund-card">
+              <div class="fund-card-copy">
+                <div class="fund-eyebrow">
+                  <span class="fund-ticker-tag">FEHAX</span>
+                  <span aria-hidden="true">•</span>
+                  <span>Class A</span>
+                </div>
+                <p class="fund-name">First Eagle High Yield Municipal Fund</p>
+                <div class="fund-ytd">
+                  <p class="fund-ytd-label">YTD Performance As of 07/20/2026</p>
+                  <div class="fund-ytd-value">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="M8 12V4M4 8l4-4 4 4"/></svg>
+                    <span>4.17%</span>
+                  </div>
+                </div>
+              </div>
+              <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+          <!-- Page 3 -->
+          <div class="of-cards-page">
+            <div class="fund-card">
+              <div class="fund-card-copy">
+                <div class="fund-eyebrow">
+                  <span class="fund-ticker-tag">FESOX</span>
+                  <span aria-hidden="true">•</span>
+                  <span>Class A</span>
+                </div>
+                <p class="fund-name">First Eagle Overseas Fund</p>
+                <div class="fund-ytd">
+                  <p class="fund-ytd-label">YTD Performance As of 07/20/2026</p>
+                  <div class="fund-ytd-value">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="M8 12V4M4 8l4-4 4 4"/></svg>
+                    <span>11.08%</span>
+                  </div>
+                </div>
+              </div>
+              <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <div class="fund-card">
+              <div class="fund-card-copy">
+                <div class="fund-eyebrow">
+                  <span class="fund-ticker-tag">FEURX</span>
+                  <span aria-hidden="true">•</span>
+                  <span>Class A</span>
+                </div>
+                <p class="fund-name">First Eagle U.S. Value Fund</p>
+                <div class="fund-ytd">
+                  <p class="fund-ytd-label">YTD Performance As of 07/20/2026</p>
+                  <div class="fund-ytd-value">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="M8 12V4M4 8l4-4 4 4"/></svg>
+                    <span>8.53%</span>
+                  </div>
+                </div>
+              </div>
+              <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <div class="fund-card">
+              <div class="fund-card-copy">
+                <div class="fund-eyebrow">
+                  <span class="fund-ticker-tag">FERIX</span>
+                  <span aria-hidden="true">•</span>
+                  <span>Class A</span>
+                </div>
+                <p class="fund-name">First Eagle Rising Dividends Fund</p>
+                <div class="fund-ytd">
+                  <p class="fund-ytd-label">YTD Performance As of 07/20/2026</p>
+                  <div class="fund-ytd-value">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="M8 12V4M4 8l4-4 4 4"/></svg>
+                    <span>6.92%</span>
+                  </div>
+                </div>
+              </div>
+              <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
         </div>
-        <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </div>
-      <div class="fund-card">
-        <div class="fund-card-copy">
-          <div class="fund-eyebrow">
-            <span class="fund-ticker-tag">FESAX</span>
-            <span aria-hidden="true">•</span>
-            <span>Class A</span>
-          </div>
-          <p class="fund-name">First Eagle Small Cap Opportunity Fund</p>
-          <p class="fund-desc">Undervalued small-cap companies with a catalyst for change. Built for investors who can look past the noise.</p>
+
+      <div class="of-carousel-controls">
+        <div class="of-dots" id="of-dots">
+          <span class="of-dot active"></span>
+          <span class="of-dot"></span>
+          <span class="of-dot"></span>
         </div>
-        <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </div>
-      <div class="fund-card">
-        <div class="fund-card-copy">
-          <div class="fund-eyebrow">
-            <span class="fund-ticker-tag">SGGDX</span>
-            <span aria-hidden="true">•</span>
-            <span>Class A</span>
-          </div>
-          <p class="fund-name">First Eagle Gold Fund</p>
-          <p class="fund-desc">Gold and precious metals as a strategic position, not a trade. A hedge against inflation and market stress.</p>
+        <div class="of-btns">
+          <button class="of-btn" id="of-prev" aria-label="Previous">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M11 8H5M8 5l-3 3 3 3"/></svg>
+          </button>
+          <button class="of-btn" id="of-next" aria-label="Next">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M5 8h6M8 5l3 3-3 3"/></svg>
+          </button>
         </div>
-        <svg class="fund-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </div>
     </div>
 
@@ -377,29 +525,43 @@
 
   <!-- ============ BY THE NUMBERS (763:4840) ============ -->
   <section id="by-the-numbers">
-    <div class="btn-stats" data-sf-group>
-      <div class="btn-stat" data-sf>
-        <p class="label">Heritage</p>
-        <p class="value" data-tick="1864">1864</p>
-        <p class="desc">Over 160 years investing through every kind of market.</p>
+    <div class="btn-inner">
+      <div class="btn-stats" data-sf-group>
+        <div class="btn-stat" data-sf>
+          <div class="btn-stat-inner">
+            <p class="label">Heritage</p>
+            <p class="value" data-tick="1864">1864</p>
+            <p class="desc">Over 160 years investing through every kind of market.</p>
+          </div>
+        </div>
+        <div class="btn-stat" data-sf>
+          <div class="btn-stat-inner">
+            <p class="label">Scale</p>
+            <p class="value" data-tick="$213B">$213B</p>
+            <p class="desc">AUM Assets under management across the platform.</p>
+          </div>
+        </div>
+        <div class="btn-stat" data-sf>
+          <div class="btn-stat-inner">
+            <p class="label">Reach</p>
+            <p class="value" data-tick="630+">630+</p>
+            <p class="desc">Institutional investors globally.</p>
+          </div>
+        </div>
+        <div class="btn-stat" data-sf>
+          <div class="btn-stat-inner">
+            <p class="label">Expertise</p>
+            <p class="value" data-tick="195">195</p>
+            <p class="desc">Investment professionals across all teams.</p>
+          </div>
+        </div>
       </div>
-      <div class="btn-sep"></div>
-      <div class="btn-stat" data-sf>
-        <p class="label">Scale</p>
-        <p class="value" data-tick="$213B">$213B</p>
-        <p class="desc">AUM Assets under management across the platform.</p>
-      </div>
-      <div class="btn-sep"></div>
-      <div class="btn-stat" data-sf>
-        <p class="label">Reach</p>
-        <p class="value" data-tick="630+">630+</p>
-        <p class="desc">Institutional investors globally.</p>
-      </div>
-      <div class="btn-sep"></div>
-      <div class="btn-stat" data-sf>
-        <p class="label">Expertise</p>
-        <p class="value" data-tick="195">195</p>
-        <p class="desc">Investment professionals across all teams.</p>
+      <div class="btn-disclosure">
+        <p class="btn-disclosure-text">Performance data is historical and does not guarantee future results. AUM figures are approximate and subject to change. All investments involve risk, including possible loss of principal.</p>
+        <button class="btn-disclosure-toggle" aria-expanded="false" aria-controls="btn-disclosure-body">
+          READ DISCLOSURE INFORMATION
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>
+        </button>
       </div>
     </div>
   </section>
