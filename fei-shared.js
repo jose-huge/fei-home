@@ -504,9 +504,8 @@ function initMarketViews() {
     el.dataset.slot = slot;
     el.innerHTML = `
       <div class="mv-frame">
-        <img class="mv-still mv-still--color" src="${it.img}" alt="" onerror="this.remove()">
-        <img class="mv-still mv-still--ds" src="${it.imgDs}" alt="" onerror="this.remove()">
-        <div class="mv-vignette"></div>
+        <div class="mv-frame-fill" aria-hidden="true"></div>
+        <img class="mv-still" src="${it.img}" alt="" onerror="this.remove()">
         <div class="mv-date"><p class="eyebrow">${it.date}</p></div>
         <button class="mv-play"><span>${it.dur}</span>
           <svg viewBox="0 0 11 12"><path d="M0 0 L11 6 L0 12 Z" fill="currentColor"/></svg>
@@ -671,9 +670,8 @@ function initSmallCapViews() {
     el.dataset.slot = slot;
     el.innerHTML = `
       <div class="mv-frame">
-        <img class="mv-still mv-still--color" src="${it.img}" alt="" onerror="this.remove()">
-        <img class="mv-still mv-still--ds" src="${it.imgDs}" alt="" onerror="this.remove()">
-        <div class="mv-vignette"></div>
+        <div class="mv-frame-fill" aria-hidden="true"></div>
+        <img class="mv-still" src="${it.img}" alt="" onerror="this.remove()">
         <div class="mv-date"><p class="eyebrow">${it.date}</p></div>
         <button class="mv-play"><span>${it.dur}</span>
           <svg viewBox="0 0 11 12"><path d="M0 0 L11 6 L0 12 Z" fill="currentColor"/></svg>
