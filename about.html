@@ -40,7 +40,10 @@
           <button data-l1="insights">Insights</button>
           <button data-l1="resources">Resources</button>
           <button data-l1="who-we-are">Who We Are</button>
-<button class="hdr-search" aria-label="Search">
+<button class="hdr-burger" id="hdr-burger" aria-label="Menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+          <button class="hdr-search" data-l1="search" aria-label="Search">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5L18 18"/></svg>
           </button>
         </nav>
@@ -55,6 +58,49 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
       </button>
       <div id="nav-menu-body"><!-- built by JS --></div>
+    </div>
+  </div>
+
+  <!-- mobile nav (≤1023px) — Figma 187:15595 -->
+  <div id="mnav" aria-hidden="true" data-lenis-prevent>
+    <div class="mnav-header">
+      <a class="hdr-logo" href="index.html"><img src="assets/img/FEI-Logo.svg" alt="First Eagle Investments"></a>
+      <div class="mnav-icons">
+        <button class="mnav-icon" id="mnav-search" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+        </button>
+        <button class="mnav-icon" id="mnav-close" aria-label="Close menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="mnav-body" id="mnav-body"><!-- built by JS --></div>
+    <div class="mnav-foot" id="mnav-foot">
+      <div class="mnav-pz" id="mnav-pz" aria-hidden="true">
+        <p class="mnav-pz-title">Select your role</p>
+        <p class="mnav-pz-body">What we can share depends on where you invest from and the kind of investor you are. Tell us both and we&rsquo;ll show you the strategies, performance data and commentary available to you.</p>
+        <div class="mnav-pz-field">
+          <p class="mnav-pz-label">Select Your Country / Region</p>
+          <div class="mnav-pz-select" aria-disabled="true">
+            <span class="mnav-pz-flag">&#127482;&#127480;</span>
+            <span>United States</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="mnav-pz-field">
+          <p class="mnav-pz-label">Select Investor Type</p>
+          <div class="mnav-pz-select" aria-disabled="true">
+            <span>Financial Professional</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+      </div>
+      <span class="utility-nav">Financial Professional
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg>
+      </span>
+      <span class="utility-nav">US
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg>
+      </span>
     </div>
   </div>
 

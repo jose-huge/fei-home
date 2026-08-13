@@ -69,7 +69,7 @@
 
 /* ---------- Reset / base ---------- */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;overflow-x:hidden;}
 html.lenis,html.lenis body{height:auto;}
 .lenis.lenis-smooth{scroll-behavior:auto!important;}
 body{background:var(--oxford-blue);color:var(--text-inversed);font-family:var(--font-water);font-size:calc(16px * var(--ts));line-height:calc(22px * var(--ts));overflow-x:hidden;}
@@ -1030,10 +1030,14 @@ main{position:relative;z-index:1;}
 #nav-menu-body{flex:1;display:flex;align-items:stretch;min-width:0;}
 .mm-groups{
   flex:1;min-width:0;display:flex;align-items:stretch;gap:32px;
-  padding:48px 32px 48px var(--margin);
+  padding:48px 24px 48px var(--margin);
   overflow-y:auto;
 }
 .mm-group{display:flex;flex-direction:column;gap:16px;align-items:flex-start;flex-shrink:0;}
+/* a group that's only a description can give back width when the row is tight,
+   so the fixed 180px link columns never get squeezed */
+.mm-group:has(.mm-desc):not(:has(.mm-cols)){flex-shrink:1;min-width:0;}
+.mm-col{flex-shrink:0;}
 .mm-divider{width:1px;align-self:stretch;background:rgba(0,14,41,0.12);flex-shrink:0;}
 .mm-cta{
   display:inline-flex;align-items:center;gap:12px;padding:12px 0;
@@ -1048,7 +1052,9 @@ main{position:relative;z-index:1;}
   color:var(--text-secondary);max-width:256px;
 }
 .mm-cols{display:flex;gap:32px;align-items:flex-start;}
-.mm-col{width:180px;display:flex;flex-direction:column;gap:16px;}
+/* 180px is the Figma column; let a column grow to fit longer migrated labels
+   rather than wrapping them, capped so a dense panel still fits the row */
+.mm-col{width:max-content;min-width:180px;max-width:280px;display:flex;flex-direction:column;gap:16px;}
 .mm-col h5{
   font-family:var(--font-mono);font-weight:400;font-size:calc(12px * var(--ts));
   line-height:1.3;letter-spacing:0.72px;text-transform:uppercase;color:var(--text-secondary);
@@ -1059,6 +1065,44 @@ main{position:relative;z-index:1;}
   color:var(--oxford-blue);transition:color .2s var(--ease-out);
 }
 .mm-col a:hover{color:var(--bright-cobalt);}
+/* ---- search variant: query field spans the group area, results below ---- */
+.mm-groups--search{flex-direction:column;gap:32px;}
+.mm-search-bar{
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
+  height:56px;padding:0 16px;max-width:768px;
+  background:var(--white);border:1px solid rgba(0,14,41,0.12);border-radius:4px;
+  transition:border-color .2s var(--ease-out);
+}
+.mm-search-bar:focus-within{border-color:var(--bright-cobalt);}
+.mm-search-icon{display:flex;width:24px;height:24px;color:var(--oxford-blue);flex-shrink:0;}
+.mm-search-icon svg{width:24px;height:24px;}
+.mm-search-bar input{
+  flex:1;min-width:0;border:none;background:none;outline:none;appearance:none;
+  font-family:var(--font-water);font-size:calc(18px * var(--ts));line-height:1.3;color:var(--oxford-blue);
+}
+.mm-search-bar input::placeholder{color:var(--text-secondary);}
+.mm-search-bar input::-webkit-search-cancel-button{display:none;}
+.mm-search-clear[hidden]{display:none;}
+.mm-search-clear{
+  display:flex;align-items:center;justify-content:center;width:24px;height:24px;
+  flex-shrink:0;color:var(--text-secondary);transition:color .2s var(--ease-out);
+}
+.mm-search-clear:hover{color:var(--oxford-blue);}
+.mm-search-clear svg{width:16px;height:16px;}
+.mm-search-results{display:flex;align-items:flex-start;gap:32px;}
+.mm-search-results .mm-group{gap:16px;}
+.mm-search-label{
+  font-family:var(--font-mono);font-size:calc(12px * var(--ts));line-height:1.3;
+  letter-spacing:0.72px;text-transform:uppercase;color:var(--text-secondary);
+}
+.mm-search-list{list-style:none;display:flex;flex-wrap:wrap;gap:8px;max-width:768px;}
+.mm-search-chip{
+  padding:6px 12px;border-radius:100px;border:1px solid rgba(0,14,41,0.12);
+  font-family:var(--font-water);font-size:calc(14px * var(--ts));line-height:1.3;
+  color:var(--oxford-blue);cursor:pointer;transition:border-color .2s,color .2s;
+}
+.mm-search-chip:hover{border-color:var(--bright-cobalt);color:var(--bright-cobalt);}
+
 /* editorial brief rail — full-bleed top to bottom, flush right */
 .mm-brief{
   width:376px;flex-shrink:0;background:var(--dash-light-card);
@@ -1067,10 +1111,14 @@ main{position:relative;z-index:1;}
 }
 .mm-brief:hover{background:#eef2f4;}
 .mm-brief-text{display:flex;flex-direction:column;gap:24px;padding:24px;}
+.mm-brief-copy{display:flex;flex-direction:column;gap:8px;}
 .mm-brief-eyebrow{
   font-family:var(--font-mono);font-size:calc(12px * var(--ts));line-height:1.3;
   letter-spacing:0.72px;text-transform:uppercase;color:var(--text-secondary);
-  margin-bottom:-16px;   /* tighten to 8px against the title */
+}
+.mm-brief-body{
+  font-family:var(--font-water);font-size:calc(16px * var(--ts));line-height:1.4;
+  color:var(--text-secondary);
 }
 .mm-brief-title{
   font-family:var(--font-water);font-size:calc(24px * var(--ts));line-height:1.3;
@@ -1080,6 +1128,103 @@ main{position:relative;z-index:1;}
 .mm-brief-icon svg{width:16px;height:16px;}
 .mm-brief-thumb{height:259px;margin-top:auto;overflow:hidden;}
 .mm-brief-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+
+/* ---- mobile nav (≤1023px) — Figma 187:15595 ---- */
+.hdr-l1 .hdr-burger{display:none;}   /* must out-specify .hdr-l1 button{display:flex} */
+.hdr-burger svg{width:24px;height:24px;display:block;}
+#mnav{
+  position:fixed;inset:0;z-index:80;
+  display:none;flex-direction:column;
+  background:#cbdbe6;
+}
+#mnav.open{display:flex;}
+.mnav-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:24px;background:var(--oxford-blue);
+  border-bottom:1px solid var(--light-30);flex-shrink:0;
+}
+.mnav-header .hdr-logo img{height:22px;}
+.mnav-icons{display:flex;align-items:center;gap:24px;}
+.mnav-icon{display:flex;color:var(--white);}
+.mnav-icon svg{width:24px;height:24px;}
+.mnav-body{
+  flex:1;min-height:0;overflow-y:auto;
+  display:flex;flex-direction:column;justify-content:space-between;
+  gap:40px;padding:40px 24px 24px;
+}
+.mnav-l1{display:flex;flex-direction:column;gap:24px;}
+.mnav-l1 button{
+  display:flex;align-items:center;justify-content:space-between;width:100%;
+  font-family:var(--font-air);font-size:26px;line-height:36px;
+  color:var(--oxford-blue);text-align:left;
+}
+.mnav-l1 button svg{width:24px;height:24px;flex-shrink:0;}
+.mnav-utility{display:flex;flex-direction:column;gap:8px;align-items:flex-start;}
+.mnav-utility a{
+  display:inline-flex;align-items:center;gap:4px;padding:4px 0;
+  font-family:var(--font-water);font-size:14px;line-height:20px;color:var(--oxford-blue);
+}
+.mnav-utility a svg{width:20px;height:20px;}
+.mnav-foot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:24px;background:#162035;flex-shrink:0;
+  position:relative;cursor:pointer;
+}
+.mnav-foot .utility-nav svg{transition:transform .3s var(--ease-out);}
+.mnav-foot.open .utility-nav svg{transform:rotate(180deg);}
+/* personalize sheet — expands upward out of the footer bar */
+.mnav-pz{
+  position:absolute;bottom:100%;left:0;right:0;
+  background:#f1f2f4;padding:24px;
+  display:none;flex-direction:column;gap:16px;
+  max-height:calc(100vh - 220px);overflow-y:auto;cursor:default;
+  box-shadow:0 -8px 24px rgba(0,14,41,0.12);
+}
+.mnav-pz-title{
+  font-family:var(--font-water);font-weight:700;font-size:24px;line-height:1.25;
+  color:var(--text-primary);
+}
+.mnav-pz-body{
+  font-family:var(--font-water);font-size:16px;line-height:1.5;color:#3f4550;
+}
+.mnav-pz-field{display:flex;flex-direction:column;gap:8px;}
+.mnav-pz-label{
+  font-family:var(--font-water);font-weight:700;font-size:14px;line-height:1.3;
+  letter-spacing:0.5px;color:var(--text-primary);
+}
+.mnav-pz-select{
+  display:flex;align-items:center;gap:12px;
+  min-height:56px;padding:0 16px;
+  background:var(--white);border-radius:8px;
+  font-family:var(--font-water);font-size:14px;line-height:1.3;
+  letter-spacing:0.5px;text-transform:uppercase;color:var(--text-primary);
+  pointer-events:none;   /* static, non-interactive by design */
+}
+.mnav-pz-select svg{width:20px;height:20px;margin-left:auto;color:var(--oxford-blue);flex-shrink:0;}
+.mnav-pz-flag{font-size:20px;line-height:1;flex-shrink:0;}
+/* L2 drill-in screen */
+.mnav-back{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--font-air);font-size:26px;line-height:36px;color:var(--oxford-blue);
+}
+.mnav-back svg{width:24px;height:24px;transform:rotate(180deg);}
+.mnav-groups{display:flex;flex-direction:column;gap:32px;}
+.mnav-groups .mm-cta{padding:0;}
+.mnav-groups .mm-col{width:100%;max-width:none;}
+.mnav-group{display:flex;flex-direction:column;gap:16px;align-items:flex-start;}
+/* search screen */
+.mnav-search{display:flex;flex-direction:column;gap:24px;}
+.mnav-search .mm-search-bar{max-width:none;width:100%;}
+
+@media (max-width:1023px){
+  .hdr-eyebrow{display:none;}
+  .hdr-l1{gap:24px;height:72px;}
+  .hdr-l1 button[data-l1]:not(.hdr-search){display:none;}  /* hide L1s; search stays and opens the mobile sheet */
+  .hdr-l1 .hdr-burger{display:flex;align-items:center;order:2;}
+  .hdr-main-inner{height:72px;padding:0 24px;}
+  .hdr-logo img{height:22px;}
+  #nav-menu{display:none;}
+}
 
 /* ---------- Temporary module placeholders (removed as modules are built) ---------- */
 .ph{min-height:400px;display:flex;align-items:center;justify-content:center;}

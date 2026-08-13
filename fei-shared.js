@@ -249,13 +249,11 @@ const NAV = {
           { h: 'By Asset Class', items: ['Global Equity', 'US Equity', 'Real Assets', 'Multi-Asset', 'Alternative Credit', 'Real Estate Debt'] },
           { h: 'By Goal', items: ['Capital Preservation', 'Capital Appreciation', 'Income Generation'] }
         ] },
-      { cta: { label: 'Our philosophy', href: '#' },
-        desc: 'We don’t predict the future — we prepare for it. Real, absolute returns through a discipline that puts downside first.' }
-    ],
-    brief: {
-      img: 'assets/img/nav-img-road.png', eyebrow: 'Our Philosophy',
-      title: 'We don’t predict the future. We prepare for it.', href: '#'
-    }
+      { cta: { label: 'All Capabilities', href: '#' },
+        cols: [
+          { h: null, items: ['[Category]', '[Category]', '[Category]', '[Category]'] }
+        ] }
+    ]
   },
   'insights': {
     groups: [
@@ -276,8 +274,7 @@ const NAV = {
     groups: [
       { cta: { label: 'First Eagle Academy', href: '#' },
         cols: [
-          { h: 'Programs', items: ['About First Eagle Academy', 'Practice Management', 'High Net Worth Acquisition', 'Succession Planning'] },
-          { h: 'Learning', items: ['Behavioral Finance', 'Earn CE Credit Online', 'Alternative Credit Education'] }
+          { h: null, items: ['Practice Management', 'High Net Worth Acquisition', 'Succession Planning', 'Behavioral Finance', 'Earn CE Credit Online', 'Alternative Credit Education'] }
         ] },
       { cta: { label: 'Client Servicing', href: '#' },
         cols: [
@@ -295,23 +292,28 @@ const NAV = {
     groups: [
       { cta: { label: 'About First Eagle', href: 'about.html' },
         cols: [
-          { h: 'About', items: ['Overview|about.html', 'Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)'] },
-          { h: 'Capabilities', items: ['Municipal Credit', 'Gold', 'Interval Funds', 'ETF Investing', 'Retirement Solutions|retirement.html'] }
-        ] },
-      { cta: { label: 'Our clients', href: '#' },
-        cols: [
-          { h: null, items: ['Consultants', 'Corporate Pensions', 'Defined Contributions', 'Endowments and Foundations', 'Family Offices', 'Insurance', 'Public Pensions', 'Sovereign Wealth Funds', 'Taft Hartley Plans'] }
-        ] },
-      { cta: { label: 'Our company', href: '#' },
-        cols: [
-          { h: null, items: ['Senior Leadership', 'Corporate & Infrastructure Leadership', 'Client Team', 'Investment Teams', 'Press and Media', 'Careers', 'Contact Us'] }
+          { h: 'Company', items: ['Our clients', 'Our people & teams', 'Press & media', 'Careers'] },
+          { h: 'Culture', items: ['Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)'] }
         ] }
     ],
     brief: {
-      img: 'assets/img/nav-img-people.png', eyebrow: 'Our Philosophy',
-      title: 'A Margin of Safety Approach', href: '#'
+      img: 'assets/img/nav-brief-insights.jpg',
+      title: 'Contact us',
+      body: 'How we think about risk, resilience and long-term value across every strategy we manage. Learn more about our philosophy.',
+      href: '#'
     }
   }
+};
+
+/* Search shares the mega-menu shell: a query field spanning the group area,
+   then the same column-group grammar for suggestions. Typing filters the
+   funds and insights lists live; popular searches stay put as entry points. */
+const SEARCH = {
+  placeholder: 'Search funds, insights and more',
+  popular: [
+    'Gold', 'Municipal credit', 'Small cap', 'Alternative credit', 'Retirement income',
+    'First Eagle Global Fund', 'First Eagle Gold Fund', 'First Eagle Small Cap Opportunity Fund'
+  ]
 };
 
 function initNavMenu() {
@@ -346,20 +348,71 @@ function initNavMenu() {
       </div>`;
   }
 
+  function briefHTML(b) {
+    if (!b) return '';
+    return `<a class="mm-brief" href="${b.href}" data-anim>
+         <div class="mm-brief-text">
+           <div class="mm-brief-copy">
+             ${b.eyebrow ? `<p class="mm-brief-eyebrow">${b.eyebrow}</p>` : ''}
+             <p class="mm-brief-title">${b.title}</p>
+             ${b.body ? `<p class="mm-brief-body">${b.body}</p>` : ''}
+           </div>
+           <span class="mm-brief-icon">${arrR}</span>
+         </div>
+         <div class="mm-brief-thumb"><img src="${b.img}" alt="" onerror="this.remove()"></div>
+       </a>`;
+  }
+
   function render(key) {
+    if (key === 'search') return renderSearch();
     const d = NAV[key];
     body.innerHTML =
       `<div class="mm-groups">` +
         d.groups.map(groupHTML).join('<div class="mm-divider" data-anim></div>') +
       `</div>` +
-      `<a class="mm-brief" href="${d.brief.href}" data-anim>
-         <div class="mm-brief-text">
-           ${d.brief.eyebrow ? `<p class="mm-brief-eyebrow">${d.brief.eyebrow}</p>` : ''}
-           <p class="mm-brief-title">${d.brief.title}</p>
-           <span class="mm-brief-icon">${arrR}</span>
+      briefHTML(d.brief);
+  }
+
+  /* ---- search ---- */
+  const searchIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>';
+
+  function resultsHTML() {
+    return `
+      <div class="mm-group">
+        <p class="mm-search-label">Popular searches</p>
+        <ul class="mm-search-list">${SEARCH.popular.map(p =>
+          `<li><button type="button" class="mm-search-chip" data-q="${p}">${p}</button></li>`).join('')}</ul>
+      </div>`;
+  }
+
+  function renderSearch() {
+    body.innerHTML =
+      `<div class="mm-groups mm-groups--search">
+         <div class="mm-search-bar" data-anim>
+           <span class="mm-search-icon">${searchIcon}</span>
+           <input type="search" id="mm-search-input" autocomplete="off"
+                  placeholder="${SEARCH.placeholder}" aria-label="${SEARCH.placeholder}">
+           <button type="button" class="mm-search-clear" id="mm-search-clear" aria-label="Clear search" hidden>
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+           </button>
          </div>
-         <div class="mm-brief-thumb"><img src="${d.brief.img}" alt="" onerror="this.remove()"></div>
-       </a>`;
+         <div class="mm-search-results" data-anim>${resultsHTML()}</div>
+       </div>`;
+
+    const input = document.getElementById('mm-search-input');
+    const clear = document.getElementById('mm-search-clear');
+
+    input.addEventListener('input', () => { clear.hidden = !input.value; });
+    clear.addEventListener('click', () => { input.value = ''; clear.hidden = true; input.focus(); });
+    // a popular-search chip seeds the query field
+    body.addEventListener('click', e => {
+      const chip = e.target.closest('.mm-search-chip');
+      if (!chip) return;
+      input.value = chip.dataset.q;
+      clear.hidden = false;
+      input.focus();
+    });
+    requestAnimationFrame(() => input.focus());
   }
 
   function animateIn() {
@@ -395,7 +448,11 @@ function initNavMenu() {
   }
 
   gsap.set(menu, { opacity: 0, y: -16 });
-  l1Buttons.forEach(b => b.addEventListener('click', () => open(b.dataset.l1)));
+  // below the desktop breakpoint the mega-menu is display:none — let the mobile sheet handle these taps
+  l1Buttons.forEach(b => b.addEventListener('click', () => {
+    if (window.matchMedia('(max-width:1023px)').matches) return;
+    open(b.dataset.l1);
+  }));
   document.getElementById('nav-menu-close').addEventListener('click', close);
   overlay.addEventListener('click', close);
   window.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
@@ -411,6 +468,185 @@ function initNavMenu() {
     e.preventDefault();
     close();
     setTimeout(() => { window.location.href = href; }, 400);
+  });
+}
+
+/* ============================================================
+   MOBILE NAV  (≤1023px — Figma 187:15595)
+   ------------------------------------------------------------
+   Hamburger opens a full-screen sheet: L1 list on the first
+   screen, tapping an L1 slides to an L2 screen built from the
+   same NAV data (back row + groups). Search reuses SEARCH.
+   ============================================================ */
+function initMobileNav() {
+  const mnav = document.getElementById('mnav');
+  const body = document.getElementById('mnav-body');
+  const burger = document.getElementById('hdr-burger');
+  if (!mnav || !body || !burger) return;
+
+  const L1 = {
+    'investments': 'Investments', 'insights': 'Insights',
+    'resources': 'Resources', 'who-we-are': 'Who We Are'
+  };
+  const chevR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+  const arrOut = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14L14 6M8 6h6v6"/></svg>';
+  const searchIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>';
+  const burgerBars = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>';
+  const burgerX = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>';
+
+  function slideIn() {
+    gsap.fromTo(body.children, { opacity: 0, x: 24 },
+      { opacity: 1, x: 0, duration: 0.35, ease: 'power3.out', stagger: 0.05 });
+  }
+
+  function renderL1() {
+    body.innerHTML = `
+      <div class="mnav-l1">
+        ${Object.entries(L1).map(([k, label]) =>
+          `<button data-mnav-l1="${k}">${label}${chevR}</button>`).join('')}
+      </div>
+      <div class="mnav-utility">
+        <a href="#">Noteholder Services${arrOut}</a>
+        <a href="#">Subscriptions${arrOut}</a>
+        <a href="#">Account Access${arrOut}</a>
+      </div>`;
+    body.querySelectorAll('[data-mnav-l1]').forEach(b =>
+      b.addEventListener('click', () => { renderL2(b.dataset.mnavL1); slideIn(); }));
+  }
+
+  function renderL2(key) {
+    const d = NAV[key];
+    body.innerHTML = `
+      <div class="mnav-groups">
+        <button class="mnav-back">${chevR}${L1[key]}</button>
+        ${d.groups.map(g => `
+          <div class="mnav-group">
+            <a class="mm-cta" href="${g.cta.href}">${g.cta.label}<span class="mm-cta-icon">${chevR}</span></a>
+            ${g.desc ? `<p class="mm-desc">${g.desc}</p>` : ''}
+            ${g.cols ? g.cols.map(c => `
+              <div class="mm-col">
+                ${c.h ? `<h5>${c.h}</h5>` : ''}
+                <ul>${c.items.map(i => {
+                  const [label, href] = i.split('|');
+                  return `<li><a href="${href || '#'}">${label}</a></li>`;
+                }).join('')}</ul>
+              </div>`).join('') : ''}
+          </div>`).join('')}
+      </div>
+      <div></div>`;
+    body.querySelector('.mnav-back').addEventListener('click', () => { renderL1(); slideIn(); });
+  }
+
+  function renderSearch() {
+    body.innerHTML = `
+      <div class="mnav-search">
+        <button class="mnav-back">${chevR}Search</button>
+        <div class="mm-search-bar">
+          <span class="mm-search-icon">${searchIcon}</span>
+          <input type="search" id="mnav-search-input" autocomplete="off"
+                 placeholder="${SEARCH.placeholder}" aria-label="${SEARCH.placeholder}">
+        </div>
+        <div class="mm-group">
+          <p class="mm-search-label">Popular searches</p>
+          <ul class="mm-search-list">${SEARCH.popular.map(p =>
+            `<li><button type="button" class="mm-search-chip" data-q="${p}">${p}</button></li>`).join('')}</ul>
+        </div>
+      </div>
+      <div></div>`;
+    body.querySelector('.mnav-back').addEventListener('click', () => { renderL1(); slideIn(); });
+    body.addEventListener('click', e => {
+      const chip = e.target.closest('.mm-search-chip');
+      if (!chip) return;
+      const input = document.getElementById('mnav-search-input');
+      input.value = chip.dataset.q;
+      input.focus();
+    });
+    requestAnimationFrame(() => document.getElementById('mnav-search-input').focus());
+  }
+
+  /* personalize sheet — GSAP owns display so the collapse can play out
+     instead of snapping to display:none the moment the class drops */
+  let pzTl;
+  function openPz() {
+    const foot = document.getElementById('mnav-foot');
+    const pz = document.getElementById('mnav-pz');
+    if (!foot || !pz) return;
+    foot.classList.add('open');
+    pz.setAttribute('aria-hidden', 'false');
+    pz.style.display = 'flex';
+    pzTl && pzTl.kill();
+    pzTl = gsap.timeline()
+      .fromTo(pz, { height: 0, opacity: 0 },
+        { height: 'auto', opacity: 1, duration: 0.4, ease: 'power3.out' })
+      .fromTo(pz.children, { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out', stagger: 0.05 }, 0.1);
+  }
+  function closePz(instant) {
+    const foot = document.getElementById('mnav-foot');
+    const pz = document.getElementById('mnav-pz');
+    if (!foot || !pz) return;
+    foot.classList.remove('open');
+    pz.setAttribute('aria-hidden', 'true');
+    pzTl && pzTl.kill();
+    const done = () => {
+      pz.style.display = 'none';
+      gsap.set(pz, { clearProps: 'height,opacity' });
+      gsap.set(pz.children, { clearProps: 'opacity,transform' });
+    };
+    if (instant) { gsap.killTweensOf([pz, ...pz.children]); done(); return; }
+    pzTl = gsap.timeline({ onComplete: done })
+      .to(pz.children, { opacity: 0, y: 8, duration: 0.18, ease: 'power2.in',
+        stagger: { each: 0.04, from: 'end' } })
+      .to(pz, { height: 0, opacity: 0, duration: 0.3, ease: 'power2.inOut' }, 0.12);
+  }
+
+  function open(screen = 'l1') {
+    screen === 'search' ? renderSearch() : renderL1();
+    mnav.classList.add('open');
+    burger.innerHTML = burgerX;
+    mnav.setAttribute('aria-hidden', 'false');
+    lenis.stop();
+    gsap.fromTo(mnav, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
+    slideIn();
+  }
+  function close() {
+    mnav.classList.remove('open');
+    burger.innerHTML = burgerBars;
+    mnav.setAttribute('aria-hidden', 'true');
+    closePz(true);            // whole sheet is going away — reset without playing the collapse
+    lenis.start();
+  }
+  function toggle() { mnav.classList.contains('open') ? close() : open(); }
+
+  burger.addEventListener('click', toggle);
+  document.getElementById('mnav-close').addEventListener('click', close);
+
+  // footer bar expands the "Personalize Your Experience" sheet upward
+  const foot = document.getElementById('mnav-foot');
+  const pz = document.getElementById('mnav-pz');
+  if (foot && pz) {
+    foot.addEventListener('click', e => {
+      if (e.target.closest('.mnav-pz')) return;          // taps inside the sheet don't collapse it
+      foot.classList.contains('open') ? closePz() : openPz();
+    });
+  }
+  document.getElementById('mnav-search').addEventListener('click', () => { renderSearch(); slideIn(); });
+  // the page-header search icon opens the sheet on its search screen at mobile widths
+  document.querySelector('.hdr-search')?.addEventListener('click', () => {
+    if (!window.matchMedia('(max-width:1023px)').matches) return;
+    open('search');
+  });
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+  // real links: close first, then navigate
+  body.addEventListener('click', e => {
+    const a = e.target.closest('a[href]');
+    if (!a) return;
+    const href = a.getAttribute('href');
+    if (!href || href === '#') return;
+    e.preventDefault();
+    close();
+    setTimeout(() => { window.location.href = href; }, 250);
   });
 }
 
@@ -1503,6 +1739,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTickUps();
   initFades();
   initNavMenu();
+  initMobileNav();
   initProductTicker();
   initFundFilter();
   initMarketViews();
