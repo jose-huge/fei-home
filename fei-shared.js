@@ -572,6 +572,7 @@ function initMobileNav() {
     const pz = document.getElementById('mnav-pz');
     if (!foot || !pz) return;
     foot.classList.add('open');
+    document.getElementById('mnav-scrim')?.classList.add('open');
     pz.setAttribute('aria-hidden', 'false');
     pz.style.display = 'flex';
     pzTl && pzTl.kill();
@@ -586,6 +587,7 @@ function initMobileNav() {
     const pz = document.getElementById('mnav-pz');
     if (!foot || !pz) return;
     foot.classList.remove('open');
+    document.getElementById('mnav-scrim')?.classList.remove('open');
     pz.setAttribute('aria-hidden', 'true');
     pzTl && pzTl.kill();
     const done = () => {
@@ -629,6 +631,7 @@ function initMobileNav() {
       if (e.target.closest('.mnav-pz')) return;          // taps inside the sheet don't collapse it
       foot.classList.contains('open') ? closePz() : openPz();
     });
+    document.getElementById('mnav-scrim')?.addEventListener('click', () => closePz());
   }
   document.getElementById('mnav-search').addEventListener('click', () => { renderSearch(); slideIn(); });
   // the page-header search icon opens the sheet on its search screen at mobile widths
