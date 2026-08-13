@@ -231,109 +231,105 @@ function initFundFilter() {
 }
 
 /* ============================================================
-   NAVIGATION SHEET
+   NAVIGATION MEGA-MENU  (Sprint 2 — 187:20082)
    ------------------------------------------------------------
-   L1 tap slides a steel-blue sheet in from the right (~72% of
-   the page width, below the 132px header). Lists stagger in,
-   the editorial brief slide-fades, motion is quick and snappy.
-   Investments = 3 headed columns; other L1s = L2 rail + panel.
+   L1 tap drops a full-width steel-blue panel from under the
+   132px header. Each panel is a row of column GROUPS separated
+   by hairline dividers; a group leads with a large cobalt CTA
+   and holds sub-columns (mono eyebrow + link list), a
+   description, or both. An editorial brief rail is pinned to
+   the right edge, full-bleed top to bottom.
    ============================================================ */
 const NAV = {
   'investments': {
-    title: 'Investments',
-    cta: 'View all funds',
-    cols: [
-      { h: 'By Vehicle', items: ['Mutual Funds', 'ETFs', 'Interval Funds', 'SMAs', 'CITs', 'BDCs'] },
-      { h: 'By Asset Class', items: ['Global Equity', 'US Equity', 'Real Assets', 'Multi-Asset', 'Alternative Credit', 'Real Estate Debt'] },
-      { h: 'By Goal', items: ['Capital Preservation', 'Capital Appreciation', 'Income Generation'] }
+    groups: [
+      { cta: { label: 'View all funds', href: '#' },
+        cols: [
+          { h: 'By Vehicle', items: ['Mutual Funds', 'ETFs', 'Interval Funds', 'SMAs', 'CITs', 'BDCs'] },
+          { h: 'By Asset Class', items: ['Global Equity', 'US Equity', 'Real Assets', 'Multi-Asset', 'Alternative Credit', 'Real Estate Debt'] },
+          { h: 'By Goal', items: ['Capital Preservation', 'Capital Appreciation', 'Income Generation'] }
+        ] },
+      { cta: { label: 'Our philosophy', href: '#' },
+        desc: 'We don’t predict the future — we prepare for it. Real, absolute returns through a discipline that puts downside first.' }
     ],
     brief: {
-      img: 'assets/img/nav-img-road.png', eyebrow: null,
-      title: 'We don’t predict the future.<br>We prepare for it.',
-      body: 'Real, absolute returns through a philosophy that puts downside first.',
-      cta: 'Explore our philosophy'
+      img: 'assets/img/nav-img-road.png', eyebrow: 'Our Philosophy',
+      title: 'We don’t predict the future. We prepare for it.', href: '#'
     }
   },
   'insights': {
-    title: 'Insights',
-    l2: [
-      {
-        label: 'Bird’s Eye View',
-        panel: { desc: 'Timely market insights, thoughtful perspectives, and expert commentary — our commitment to providing modern investment solutions to modern challenges.',
-          cols: [{ h: 'Blog', rows: ['Read the Bird’s Eye View', 'Subscribe'] }] }
-      },
-      {
-        label: 'Explore Insights',
-        panel: { cols: [
-          { h: 'Theme', items: ['Market Outlook', 'Fund Updates', 'Investment Ideas', 'Alternative Credit', 'Municipal Credit', 'Gold & Real Assets', 'Retirement & DC Plans', 'Practice Building', 'Diamond Hill'] },
-          { h: 'Asset Class', items: ['Global Equity', 'US Equity', 'International Equity', 'Municipal Fixed Income', 'Core Fixed Income', 'Alternative Credit', 'Gold', 'Real Assets', 'Multi-Asset'] }
-        ]}
-      }
+    groups: [
+      { cta: { label: 'All insights', href: '#' },
+        cols: [
+          { h: 'Market', items: ['Featured Insights', 'Market Outlook', 'Investment Ideas', 'Practice Building'] },
+          { h: 'Portfolio', items: ['Global Equity', 'US Equity', 'International Equity', 'Municipal Fixed Income', 'Core Fixed Income', 'Alternative Credit', 'Gold', 'Real Assets', 'Multi-Asset'] }
+        ] },
+      { cta: { label: 'Bird’s Eye View blog', href: '#' },
+        desc: 'Timely market insights, thoughtful perspectives, and expert commentary — our commitment to providing modern investment solutions to modern challenges.' }
     ],
     brief: {
-      img: 'assets/img/nav-img-road.png', eyebrow: 'Latest Insight',
-      title: 'Navigating Uncertainty: A Mid-Year Market Outlook',
-      body: 'Where conviction meets the road ahead — our teams on positioning for the second half.',
-      cta: 'Read Insight'
+      img: 'assets/img/nav-brief-insights.jpg', eyebrow: 'First Eagle Academy',
+      title: 'Navigating Uncertainty: A Mid-Year Market Outlook', href: '#'
     }
   },
   'resources': {
-    title: 'Resources',
-    l2: [
-      {
-        label: 'First Eagle Academy',
-        panel: { cols: [{ h: null, rows: ['About First Eagle Academy', 'Practice Management', 'High Net Worth Acquisition', 'Succession Planning', 'Behavioral Finance', 'Earn CE Credit Online', 'Alternative Credit Education'] }] }
-      },
-      {
-        label: 'Client Servicing',
-        panel: { cols: [{ h: null, rows: ['Account Services', 'Forms & Applications', 'Tax Center', 'FAQs'] }] }
-      },
-      { label: 'Retirement Solutions', href: 'retirement.html', panel: null }
+    groups: [
+      { cta: { label: 'First Eagle Academy', href: '#' },
+        cols: [
+          { h: 'Programs', items: ['About First Eagle Academy', 'Practice Management', 'High Net Worth Acquisition', 'Succession Planning'] },
+          { h: 'Learning', items: ['Behavioral Finance', 'Earn CE Credit Online', 'Alternative Credit Education'] }
+        ] },
+      { cta: { label: 'Client Servicing', href: '#' },
+        cols: [
+          { h: null, items: ['Account Services', 'Forms & Applications', 'Tax Center', 'FAQs'] }
+        ] },
+      { cta: { label: 'Retirement Solutions', href: 'retirement.html' },
+        desc: 'Education and insights on the issues that matter most to retirement savers and their fiduciaries.' }
     ],
     brief: {
       img: 'assets/img/nav-img-people.png', eyebrow: 'First Eagle Academy',
-      title: 'Markets Get Emotional. Your Clients Do Not Have To.',
-      body: 'A program built to help advisors keep clients rational and long-term-minded when markets get shaky.',
-      cta: 'Explore behavioral finance'
+      title: 'Markets Get Emotional. Your Clients Do Not Have To.', href: '#'
     }
   },
   'who-we-are': {
-    title: 'Who We Are',
-    l2: [
-      { label: 'About First Eagle', panel: { cols: [{ h: 'About First Eagle', rows: ['Overview|about.html', 'Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)'] }] } },
-      { label: 'Capabilities', panel: { cols: [{ h: 'Capabilities', rows: ['Municipal Credit', 'Gold', 'Interval Funds', 'ETF Investing', 'Retirement Solutions'] }] } },
-      { label: 'Our Clients', panel: { cols: [{ h: 'Our Clients', rows: ['Consultants', 'Corporate Pensions', 'Defined Contributions', 'Endowments and Foundations', 'Family Offices', 'Insurance', 'Public Pensions', 'Sovereign Wealth Funds', 'Taft Hartley Plans'] }] } },
-      { label: 'Leadership', panel: { cols: [{ h: 'Leadership', rows: ['Senior Leadership', 'Corporate & Infrastructure Leadership', 'Client Team'] }] } },
-      { label: 'Investment Teams', panel: { cols: [{ h: 'Investment Teams', rows: ['First Eagle Global Value', 'First Eagle Small Cap', 'First Eagle Municipal Credit', 'Napier Park', 'Diamond Hill'] }] } },
-      { label: 'Press and Media', panel: null },
-      { label: 'Careers', panel: null },
-      { label: 'Contact Us', panel: null }
+    groups: [
+      { cta: { label: 'About First Eagle', href: 'about.html' },
+        cols: [
+          { h: 'About', items: ['Overview|about.html', 'Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)'] },
+          { h: 'Capabilities', items: ['Municipal Credit', 'Gold', 'Interval Funds', 'ETF Investing', 'Retirement Solutions|retirement.html'] }
+        ] },
+      { cta: { label: 'Our clients', href: '#' },
+        cols: [
+          { h: null, items: ['Consultants', 'Corporate Pensions', 'Defined Contributions', 'Endowments and Foundations', 'Family Offices', 'Insurance', 'Public Pensions', 'Sovereign Wealth Funds', 'Taft Hartley Plans'] }
+        ] },
+      { cta: { label: 'Our company', href: '#' },
+        cols: [
+          { h: null, items: ['Senior Leadership', 'Corporate & Infrastructure Leadership', 'Client Team', 'Investment Teams', 'Press and Media', 'Careers', 'Contact Us'] }
+        ] }
     ],
     brief: {
       img: 'assets/img/nav-img-people.png', eyebrow: 'Our Philosophy',
-      title: 'A Margin of Safety Approach',
-      body: 'How we think about risk, resilience and long-term value across every strategy we manage.',
-      cta: 'Learn More'
+      title: 'A Margin of Safety Approach', href: '#'
     }
   }
 };
 
-function initNavSheet() {
-  const sheet = document.getElementById('nav-sheet');
-  const body = document.getElementById('sheet-body');
+function initNavMenu() {
+  const menu = document.getElementById('nav-menu');
+  const body = document.getElementById('nav-menu-body');
   const overlay = document.getElementById('nav-overlay');
   const l1Buttons = [...document.querySelectorAll('.hdr-l1 button[data-l1]')];
+  if (!menu || !body) return;
   let openKey = null;
 
-  const chevR = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg>';
-  const arrOut = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14L14 6M8 6h6v6"/></svg>';
+  const arrR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
 
-  function colsHTML(cols, useRows) {
-    return `<div class="sheet-cols">` + cols.map(c => `
-      <div class="sheet-col">
+  function colsHTML(cols) {
+    return `<div class="mm-cols">` + cols.map(c => `
+      <div class="mm-col">
         ${c.h ? `<h5>${c.h}</h5>` : ''}
-        <ul class="${c.rows ? 'rows' : ''}">
-          ${(c.items || c.rows).map(i => {
+        <ul>
+          ${c.items.map(i => {
             const [label, href] = i.split('|');
             return `<li><a href="${href || '#'}">${label}</a></li>`;
           }).join('')}
@@ -341,66 +337,35 @@ function initNavSheet() {
       </div>`).join('') + `</div>`;
   }
 
-  function render(key, l2Index = 0) {
-    const d = NAV[key];
-    let main;
-    if (d.cols) {
-      main = colsHTML(d.cols);
-    } else {
-      const sel = d.l2[l2Index];
-      main = `
-        <div class="sheet-rail" data-anim>
-          ${d.l2.map((item, i) => item.href
-            ? `<a href="${item.href}" class="sheet-rail-link">${item.label}</a>`
-            : `<button data-l2="${i}" class="${i === l2Index ? 'sel' : ''}">${item.label}${item.panel ? chevR : ''}</button>`
-          ).join('')}
-        </div>
-        <div class="sheet-panel" data-anim>
-          ${sel.panel ? (sel.panel.desc ? `<p class="panel-desc">${sel.panel.desc}</p>` : '') + colsHTML(sel.panel.cols) : ''}
-        </div>`;
-      main = `<div class="sheet-main">${main}</div>`;
-    }
-    body.innerHTML = `
-      <div>
-        <div class="sheet-head" data-anim>
-          <p class="sheet-title">${d.title}</p>
-          ${d.cta ? `<a class="sheet-cta" href="#">${d.cta}${arrOut}</a>` : ''}
-        </div>
-        <div style="height:64px"></div>
-        ${d.cols ? `<div data-anim>${main}</div>` : main}
-      </div>
-      <div class="sheet-brief" data-anim>
-        <div class="sheet-brief-img"><img src="${d.brief.img}" alt="" onerror="this.remove()"></div>
-        <div class="sheet-brief-copy">
-          ${d.brief.eyebrow ? `<p class="eyebrow">${d.brief.eyebrow}</p>` : ''}
-          <div>
-            <p class="sheet-brief-title">${d.brief.title}</p>
-            <p class="sheet-brief-body" style="margin-top:8px;">${d.brief.body}</p>
-          </div>
-          <a class="sheet-brief-cta" href="#">${d.brief.cta}${arrOut}</a>
-        </div>
+  function groupHTML(g) {
+    return `
+      <div class="mm-group" data-anim>
+        <a class="mm-cta" href="${g.cta.href}">${g.cta.label}<span class="mm-cta-icon">${arrR}</span></a>
+        ${g.desc ? `<p class="mm-desc">${g.desc}</p>` : ''}
+        ${g.cols ? colsHTML(g.cols) : ''}
       </div>`;
-    // L2 rail interaction
-    body.querySelectorAll('[data-l2]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (!NAV[key].l2[+btn.dataset.l2].panel) return;
-        render(key, +btn.dataset.l2);
-        animateIn(true);
-      });
-    });
   }
 
-  function animateIn(panelOnly = false) {
-    const targets = panelOnly
-      ? body.querySelectorAll('.sheet-panel a, .sheet-panel h5, .panel-desc')
-      : body.querySelectorAll('[data-anim]');
-    if (panelOnly) {
-      gsap.fromTo(targets, { opacity: 0, y: 14 },
-        { opacity: 1, y: 0, duration: 0.3, ease: 'power3.out', stagger: 0.025 });
-    } else {
-      gsap.fromTo(targets, { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out', stagger: 0.06, delay: 0.12 });
-    }
+  function render(key) {
+    const d = NAV[key];
+    body.innerHTML =
+      `<div class="mm-groups">` +
+        d.groups.map(groupHTML).join('<div class="mm-divider" data-anim></div>') +
+      `</div>` +
+      `<a class="mm-brief" href="${d.brief.href}" data-anim>
+         <div class="mm-brief-text">
+           ${d.brief.eyebrow ? `<p class="mm-brief-eyebrow">${d.brief.eyebrow}</p>` : ''}
+           <p class="mm-brief-title">${d.brief.title}</p>
+           <span class="mm-brief-icon">${arrR}</span>
+         </div>
+         <div class="mm-brief-thumb"><img src="${d.brief.img}" alt="" onerror="this.remove()"></div>
+       </a>`;
+  }
+
+  function animateIn() {
+    gsap.fromTo(body.querySelectorAll('[data-anim]'),
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out', stagger: 0.06, delay: 0.1 });
   }
 
   function open(key) {
@@ -409,11 +374,12 @@ function initNavSheet() {
     openKey = key;
     l1Buttons.forEach(b => b.classList.toggle('open', b.dataset.l1 === key));
     render(key);
-    sheet.setAttribute('aria-hidden', 'false');
+    menu.setAttribute('aria-hidden', 'false');
+    menu.classList.add('open');
     overlay.classList.add('open');
     lenis.stop();
-    if (wasOpen) { animateIn(); return; }        // already out — just swap content
-    gsap.to(sheet, { x: '0%', duration: 0.45, ease: 'power4.out' });
+    if (!wasOpen) gsap.fromTo(menu, { y: -16, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.35, ease: 'power3.out' });
     animateIn();
   }
 
@@ -422,20 +388,21 @@ function initNavSheet() {
     openKey = null;
     l1Buttons.forEach(b => b.classList.remove('open'));
     overlay.classList.remove('open');
-    sheet.setAttribute('aria-hidden', 'true');
+    menu.setAttribute('aria-hidden', 'true');
+    menu.classList.remove('open');
     lenis.start();
-    gsap.to(sheet, { x: '102%', duration: 0.35, ease: 'power3.in' });
+    gsap.to(menu, { y: -16, opacity: 0, duration: 0.25, ease: 'power3.in' });
   }
 
-  gsap.set(sheet, { x: '102%' });
+  gsap.set(menu, { opacity: 0, y: -16 });
   l1Buttons.forEach(b => b.addEventListener('click', () => open(b.dataset.l1)));
-  document.getElementById('sheet-close').addEventListener('click', close);
+  document.getElementById('nav-menu-close').addEventListener('click', close);
   overlay.addEventListener('click', close);
   window.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 
-  // Real navigation links (e.g. "Overview" -> about.html) close the sheet
+  // Real navigation links (e.g. "Overview" -> about.html) close the menu
   // first, then navigate once the close animation finishes — instead of
-  // the page unloading mid-slide while the sheet is still open.
+  // the page unloading mid-transition while the menu is still open.
   body.addEventListener('click', e => {
     const a = e.target.closest('a[href]');
     if (!a) return;
@@ -443,7 +410,7 @@ function initNavSheet() {
     if (!href || href === '#') return;
     e.preventDefault();
     close();
-    setTimeout(() => { window.location.href = href; }, 600);
+    setTimeout(() => { window.location.href = href; }, 400);
   });
 }
 
@@ -1535,7 +1502,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSlideFades();
   initTickUps();
   initFades();
-  initNavSheet();
+  initNavMenu();
   initProductTicker();
   initFundFilter();
   initMarketViews();
