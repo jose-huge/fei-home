@@ -198,6 +198,36 @@ function initFundFilter() {
 
   prevBtn.addEventListener('click', () => goTo(page - 1));
   nextBtn.addEventListener('click', () => goTo(page + 1));
+
+  // Asset class dropdown
+  const assetField = document.getElementById('of-asset-field');
+  const assetBox   = document.getElementById('of-asset-box');
+  const assetValue = document.getElementById('of-asset-value');
+  const assetOpts  = assetField ? [...assetField.querySelectorAll('.of-asset-option')] : [];
+
+  if (assetBox) {
+    assetBox.addEventListener('click', (e) => {
+      e.stopPropagation();
+      assetField.classList.toggle('open');
+      assetBox.setAttribute('aria-expanded', assetField.classList.contains('open'));
+    });
+
+    assetOpts.forEach(opt => {
+      opt.addEventListener('click', () => {
+        const val = opt.dataset.value;
+        assetOpts.forEach(o => o.classList.remove('selected'));
+        if (val) { opt.classList.add('selected'); assetValue.textContent = val; }
+        else { assetValue.textContent = 'Browse by asset class'; }
+        assetField.classList.remove('open');
+        assetBox.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.addEventListener('click', () => {
+      assetField.classList.remove('open');
+      assetBox.setAttribute('aria-expanded', 'false');
+    });
+  }
 }
 
 /* ============================================================

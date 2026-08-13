@@ -175,11 +175,20 @@
             <span class="of-search-field-value">Search</span>
           </div>
         </div>
-        <div class="of-search-field">
-          <div class="of-search-box">
-            <span class="of-search-field-value">Browse by asset class</span>
-            <svg class="of-search-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        <div class="of-search-field of-search-field--dropdown" id="of-asset-field">
+          <div class="of-search-box" id="of-asset-box" aria-haspopup="listbox" aria-expanded="false">
+            <span class="of-search-field-value" id="of-asset-value">Browse by asset class</span>
+            <svg class="of-search-chevron" id="of-asset-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
           </div>
+          <ul class="of-asset-dropdown" id="of-asset-dropdown" role="listbox">
+            <li class="of-asset-option of-asset-option--all" data-value="" role="option">All</li>
+            <li class="of-asset-option" data-value="Global Equity" role="option">Global Equity</li>
+            <li class="of-asset-option" data-value="US Equity" role="option">US Equity</li>
+            <li class="of-asset-option" data-value="Real Assets" role="option">Real Assets</li>
+            <li class="of-asset-option" data-value="Multi-Asset" role="option">Multi-Asset</li>
+            <li class="of-asset-option" data-value="Alternative Credit" role="option">Alternative Credit</li>
+            <li class="of-asset-option" data-value="Real Estate Debt" role="option">Real Estate Debt</li>
+          </ul>
         </div>
       </div>
 
