@@ -182,6 +182,21 @@ main{position:relative;z-index:1;}
 }
 .stat-divider{width:234px;height:1px;border:none;background:var(--light-30);margin:0;}
 
+@media (max-width:1023px){
+  /* Hero (mobile) — Figma 287:40908 */
+  .hero-content{
+    padding:91px 24px 64px;flex-direction:column;align-items:flex-start;gap:64px;
+  }
+  .hero-copy{width:100%;gap:26px;}
+  .hero-title{font-size:calc(64px * var(--ts));letter-spacing:-2.56px;}
+  .hero-body{width:100%;font-size:calc(18px * var(--ts));}
+  .hero-disclosure{max-width:none;}
+  .hero-stats{width:100%;gap:24px;margin-bottom:0;}
+  .hero-stat{white-space:normal;}
+  .stat-num{font-size:calc(64px * var(--ts));letter-spacing:-2.56px;}
+  .stat-divider{width:234px;}
+}
+
 /* ---------- Product Ticker ---------- */
 #product-ticker{padding:24px 0;}
 .pt-bar{
