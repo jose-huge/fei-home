@@ -251,8 +251,7 @@ const NAV = {
         ] },
       { cta: { label: 'All Capabilities', href: '#' },
         cols: [
-          { h: null, items: ['US Equity', 'Fixed Income', 'Tax Free Fixed Income', 'Taxable Fixed Income', 'Direct Lending', 'CLOs', 'Real Assets', 'Mid Cap'] },
-          { h: null, items: ['SMID', 'Private Credit', 'Structured Credit', 'High Yield', 'Short Duration Bond', 'Securitized Bond', 'Alternatives', 'Diamond Hill', 'Napier Park'] }
+          { h: null, items: ['Equities', 'Fixed Income & Currencies', 'Alternative Credit', 'Real Assets'] }
         ] }
     ]
   },

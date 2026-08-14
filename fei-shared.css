@@ -69,7 +69,7 @@
 
 /* ---------- Reset / base ---------- */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;overflow-x:hidden;}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;}
 html.lenis,html.lenis body{height:auto;}
 .lenis.lenis-smooth{scroll-behavior:auto!important;}
 body{background:var(--oxford-blue);color:var(--text-inversed);font-family:var(--font-water);font-size:calc(16px * var(--ts));line-height:calc(22px * var(--ts));overflow-x:hidden;}
@@ -1245,6 +1245,7 @@ main{position:relative;z-index:1;}
   .hdr-eyebrow{display:none;}
   .hdr-l1{gap:24px;height:72px;}
   .hdr-l1 button[data-l1]:not(.hdr-search){display:none;}  /* hide L1s; search stays and opens the mobile sheet */
+  .hdr-search svg{width:24px;height:24px;}   /* match .mnav-icon svg so the icon doesn't jump when the sheet opens */
   .hdr-l1 .hdr-burger{display:flex;align-items:center;order:2;}
   .hdr-main-inner{height:72px;padding:0 24px;}
   .hdr-logo img{height:22px;}
