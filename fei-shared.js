@@ -259,8 +259,8 @@ const NAV = {
     groups: [
       { cta: { label: 'All insights', href: '#' },
         cols: [
-          { h: 'Market', items: ['Featured Insights', 'Market Outlook', 'Investment Ideas', 'Practice Building'] },
-          { h: 'Portfolio', items: ['Global Equity', 'US Equity', 'International Equity', 'Municipal Fixed Income', 'Core Fixed Income', 'Alternative Credit', 'Gold', 'Real Assets', 'Multi-Asset'] }
+          { h: 'Theme', items: ['Market & Economic', 'Investment Approach', 'Asset Class & Strategy', 'Sectors & Themes', 'Audience & Use Case'] },
+          { h: 'Asset Class', items: ['Global Equity', 'US Equity', 'International Equity', 'Municipal Fixed Income', 'Core Fixed Income', 'Alternative Credit', 'Gold', 'Real Assets', 'Multi-Asset'] }
         ] },
       { cta: { label: 'Bird’s Eye View blog', href: '#' },
         desc: 'Timely market insights, thoughtful perspectives, and expert commentary — our commitment to providing modern investment solutions to modern challenges.' }
@@ -369,11 +369,6 @@ const ROLES = {
     label: 'Individual Investor', option: 'Individual Investors',
     l1: [['investments', 'Investments'], ['insights', 'Insights'], ['resources', 'Resources'], ['who-we-are', 'Who We Are']],
     nav: NAV_INDIVIDUAL
-  },
-  'general-public': {
-    label: 'General Public', option: 'General Public',
-    l1: [['investments', 'Investments'], ['insights', 'Insights'], ['resources', 'Resources'], ['who-we-are', 'Who We Are']],
-    nav: NAV   // placeholder — role-specific nav TBD
   }
 };
 let currentRole = localStorage.getItem('fei-role');
@@ -423,26 +418,6 @@ function initRoleSwitcher() {
     .filter(([k]) => k !== currentRole)
     .map(([k, r]) => `<button data-role="${k}">${r.option}</button>`).join('');
 
-  // desktop: eyebrow trigger opens a small dropdown
-  const trigger = document.querySelector('.hdr-eyebrow-left .utility-nav');
-  if (trigger) {
-    trigger.classList.add('role-trigger');
-    const dd = document.createElement('div');
-    dd.className = 'role-dd';
-    trigger.appendChild(dd);
-    // no stopPropagation: the click must bubble so an open mega-menu sees it and closes
-    trigger.addEventListener('click', e => {
-      const opt = e.target.closest('[data-role]');
-      if (opt) { setRole(opt.dataset.role); trigger.classList.remove('open'); return; }
-      dd.innerHTML = optionsHTML();
-      trigger.classList.toggle('open');
-    });
-    document.addEventListener('click', e => {
-      if (e.target.closest('.role-trigger')) return;
-      trigger.classList.remove('open');
-    });
-  }
-
   // mobile: the personalize sheet's investor-type field is the picker
   const roleField = document.querySelector('.mnav-pz-field--role');
   const roleSelect = document.querySelector('.mnav-pz-select--role');
@@ -466,16 +441,134 @@ function initRoleSwitcher() {
   syncRoleLabels();
 }
 
-/* Search shares the mega-menu shell: a query field spanning the group area,
-   then the same column-group grammar for suggestions. Typing filters the
-   funds and insights lists live; popular searches stay put as entry points. */
-const SEARCH = {
-  placeholder: 'Search funds, insights and more',
-  popular: [
-    'Gold', 'Municipal credit', 'Small cap', 'Alternative credit', 'Retirement income',
-    'First Eagle Global Fund', 'First Eagle Gold Fund', 'First Eagle Small Cap Opportunity Fund'
-  ]
+/* Locations for the modal's country field. Single entry for now — the
+   picker is built to take more without changing its behavior. */
+/* order matches the Figma list (408:63271): US / UK / Global Site, then
+   the rest alphabetically. Always defaults to United States for now. */
+const LOCATIONS = {
+  us: { label: 'United States', flag: '🇺🇸' },
+  uk: { label: 'UK', flag: '🇬🇧' },
+  global: { label: 'Global Site', flag: '🌐' },
+  au: { label: 'Australia', flag: '🇦🇺' },
+  at: { label: 'Austria', flag: '🇦🇹' },
+  be: { label: 'Belgium', flag: '🇧🇪' },
+  dk: { label: 'Denmark', flag: '🇩🇰' },
+  fi: { label: 'Finland', flag: '🇫🇮' },
+  fr: { label: 'France', flag: '🇫🇷' },
+  de: { label: 'Germany', flag: '🇩🇪' },
+  ie: { label: 'Ireland', flag: '🇮🇪' },
+  it: { label: 'Italy', flag: '🇮🇹' },
+  jp: { label: 'Japan', flag: '🇯🇵' },
+  lu: { label: 'Luxembourg', flag: '🇱🇺' },
+  nl: { label: 'Netherlands', flag: '🇳🇱' },
+  pt: { label: 'Portugal', flag: '🇵🇹' },
+  sg: { label: 'Singapore', flag: '🇸🇬' },
+  kr: { label: 'South Korea', flag: '🇰🇷' },
+  es: { label: 'Spain', flag: '🇪🇸' },
+  ch: { label: 'Switzerland', flag: '🇨🇭' },
+  tw: { label: 'Taiwan', flag: '🇹🇼' }
 };
+let currentLocation = 'us';
+
+/* Desktop "Financial Professional / US" modal (402:59809). Selections are
+   staged in the two mini-dropdowns and only committed on Accept, matching
+   the design's explicit confirm step (unlike the instant-apply mobile
+   personalize sheet). */
+function initRoleModal() {
+  const modal = document.getElementById('role-modal');
+  if (!modal) return;
+  const locField = document.getElementById('role-modal-location-field');
+  const locSelect = document.getElementById('role-modal-location-select');
+  const locList = document.getElementById('role-modal-location-list');
+  const roleField = document.getElementById('role-modal-role-field');
+  const roleSelect = document.getElementById('role-modal-role-select');
+  const roleList = document.getElementById('role-modal-role-list');
+  let staged = { location: currentLocation, role: currentRole };
+
+  function closeLists() {
+    locField.classList.remove('open');
+    roleField.classList.remove('open');
+  }
+
+  function renderLists() {
+    locList.innerHTML = Object.entries(LOCATIONS).map(([k, l], i) =>
+      (i === 3 ? `<div class="role-modal-list-divider"></div>` : '') +
+      `<button data-loc="${k}"><span class="role-modal-flag">${l.flag}</span>${l.label}</button>`).join('');
+    roleList.innerHTML = Object.entries(ROLES).map(([k, r]) =>
+      `<button data-role="${k}">${r.option}</button>`).join('');
+  }
+
+  const terms = document.getElementById('role-modal-terms');
+  function paintStaged() {
+    locSelect.querySelector('.role-modal-value').textContent = LOCATIONS[staged.location].label;
+    roleSelect.querySelector('.role-modal-value').textContent = ROLES[staged.role].label;
+    if (terms) terms.hidden = staged.role !== 'institutional-investors';
+  }
+
+  function open() {
+    staged = { location: currentLocation, role: currentRole };
+    renderLists();
+    paintStaged();
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    lenis.stop();
+  }
+  function close() {
+    closeLists();
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    lenis.start();
+  }
+
+  document.querySelectorAll('.role-modal-trigger').forEach(trigger =>
+    trigger.addEventListener('click', open));
+
+  locSelect.addEventListener('click', () => {
+    roleField.classList.remove('open');
+    locField.classList.toggle('open');
+  });
+  roleSelect.addEventListener('click', () => {
+    locField.classList.remove('open');
+    roleField.classList.toggle('open');
+  });
+  locList.addEventListener('click', e => {
+    const opt = e.target.closest('[data-loc]');
+    if (!opt) return;
+    staged.location = opt.dataset.loc;
+    paintStaged();
+    locField.classList.remove('open');
+  });
+  roleList.addEventListener('click', e => {
+    const opt = e.target.closest('[data-role]');
+    if (!opt) return;
+    staged.role = opt.dataset.role;
+    paintStaged();
+    roleField.classList.remove('open');
+  });
+
+  document.getElementById('role-modal-accept').addEventListener('click', () => {
+    currentLocation = staged.location;
+    const locLabel = document.querySelectorAll('.role-modal-trigger')[1];
+    if (locLabel && locLabel.firstChild) locLabel.firstChild.textContent = LOCATIONS[currentLocation].label + ' ';
+    setRole(staged.role);
+    close();
+  });
+  document.getElementById('role-modal-close').addEventListener('click', close);
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
+  window.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || !modal.classList.contains('open')) return;
+    if (locField.classList.contains('open') || roleField.classList.contains('open')) { closeLists(); return; }
+    close();
+  });
+  document.addEventListener('click', e => {
+    if (e.target.closest('.role-modal-field')) return;
+    closeLists();
+  });
+}
+
+/* Search (405:63055) — a slim single-row bar in the mega-menu shell:
+   input + a "Search" submit button. No suggestions, no results panel. */
+const SEARCH = { placeholder: 'Search' };
 
 function initNavMenu() {
   const menu = document.getElementById('nav-menu');
@@ -525,6 +618,7 @@ function initNavMenu() {
   }
 
   function render(key) {
+    menu.classList.toggle('search-open', key === 'search');
     if (key === 'search') return renderSearch();
     const d = roleData().nav[key];
     body.innerHTML =
@@ -537,43 +631,17 @@ function initNavMenu() {
   /* ---- search ---- */
   const searchIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>';
 
-  function resultsHTML() {
-    return `
-      <div class="mm-group">
-        <p class="mm-search-label">Popular searches</p>
-        <ul class="mm-search-list">${SEARCH.popular.map(p =>
-          `<li><button type="button" class="mm-search-chip" data-q="${p}">${p}</button></li>`).join('')}</ul>
-      </div>`;
-  }
-
   function renderSearch() {
     body.innerHTML =
-      `<div class="mm-groups mm-groups--search">
-         <div class="mm-search-bar" data-anim>
+      `<div class="mm-search-simple" data-anim>
+         <div class="mm-search-input">
            <span class="mm-search-icon">${searchIcon}</span>
            <input type="search" id="mm-search-input" autocomplete="off"
                   placeholder="${SEARCH.placeholder}" aria-label="${SEARCH.placeholder}">
-           <button type="button" class="mm-search-clear" id="mm-search-clear" aria-label="Clear search" hidden>
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
-           </button>
          </div>
-         <div class="mm-search-results" data-anim>${resultsHTML()}</div>
+         <button type="button" class="btn mm-search-submit">Search</button>
        </div>`;
-
-    const input = document.getElementById('mm-search-input');
-    const clear = document.getElementById('mm-search-clear');
-
-    input.addEventListener('input', () => { clear.hidden = !input.value; });
-    clear.addEventListener('click', () => { input.value = ''; clear.hidden = true; input.focus(); });
-    // a popular-search chip seeds the query field
-    body.addEventListener('click', e => {
-      const chip = e.target.closest('.mm-search-chip');
-      if (!chip) return;
-      input.value = chip.dataset.q;
-      clear.hidden = false;
-      input.focus();
-    });
-    requestAnimationFrame(() => input.focus());
+    requestAnimationFrame(() => document.getElementById('mm-search-input').focus());
   }
 
   function animateIn() {
@@ -710,26 +778,17 @@ function initMobileNav() {
     body.innerHTML = `
       <div class="mnav-search">
         <button class="mnav-back">${chevR}Search</button>
-        <div class="mm-search-bar">
-          <span class="mm-search-icon">${searchIcon}</span>
-          <input type="search" id="mnav-search-input" autocomplete="off"
-                 placeholder="${SEARCH.placeholder}" aria-label="${SEARCH.placeholder}">
-        </div>
-        <div class="mm-group">
-          <p class="mm-search-label">Popular searches</p>
-          <ul class="mm-search-list">${SEARCH.popular.map(p =>
-            `<li><button type="button" class="mm-search-chip" data-q="${p}">${p}</button></li>`).join('')}</ul>
+        <div class="mm-search-simple">
+          <div class="mm-search-input">
+            <span class="mm-search-icon">${searchIcon}</span>
+            <input type="search" id="mnav-search-input" autocomplete="off"
+                   placeholder="${SEARCH.placeholder}" aria-label="${SEARCH.placeholder}">
+          </div>
+          <button type="button" class="btn mm-search-submit">Search</button>
         </div>
       </div>
       <div></div>`;
     body.querySelector('.mnav-back').addEventListener('click', () => { renderL1(); slideIn(); });
-    body.addEventListener('click', e => {
-      const chip = e.target.closest('.mm-search-chip');
-      if (!chip) return;
-      const input = document.getElementById('mnav-search-input');
-      input.value = chip.dataset.q;
-      input.focus();
-    });
     requestAnimationFrame(() => document.getElementById('mnav-search-input').focus());
   }
 
@@ -1914,6 +1973,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavMenu();
   initMobileNav();
   initRoleSwitcher();
+  initRoleModal();
   initProductTicker();
   initFundFilter();
   initMarketViews();
