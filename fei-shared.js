@@ -266,8 +266,8 @@ const NAV = {
         desc: 'Timely market insights, thoughtful perspectives, and expert commentary — our commitment to providing modern investment solutions to modern challenges.' }
     ],
     brief: {
-      img: 'assets/img/nav-brief-insights.jpg', eyebrow: 'First Eagle Academy',
-      title: 'Navigating Uncertainty: A Mid-Year Market Outlook', href: '#'
+      img: 'assets/img/nav-brief-insights.jpg', eyebrow: 'Macro & Market Views',
+      title: '2Q26 Market Overview: The Cost of Credibility', href: '#'
     }
   },
   'resources': {
@@ -284,8 +284,8 @@ const NAV = {
         desc: 'Education and insights on the issues that matter most to retirement savers and their fiduciaries.' }
     ],
     brief: {
-      img: 'assets/img/nav-img-people.png', eyebrow: 'First Eagle Academy',
-      title: 'Markets Get Emotional. Your Clients Do Not Have To.', href: '#'
+      img: 'assets/img/nav-img-people.png', eyebrow: 'Macro & Market Views',
+      title: '2Q26 Market Overview: The Cost of Credibility', href: '#'
     }
   },
   'who-we-are': {
@@ -305,6 +305,167 @@ const NAV = {
   }
 };
 
+/* ============================================================
+   ROLES — the site personalizes per investor type. Each role owns
+   its trigger label, dropdown option label, L1 list and NAV
+   content. All three currently share the Financial Professionals
+   nav; per-role content lands when it's defined.
+   ============================================================ */
+/* Institutional Investors swap "Investments" for a "Strategies" panel:
+   one All Strategies group, single column, Contact us brief rail.
+   The other three L1 panels are shared with Financial Professionals. */
+const NAV_INSTITUTIONAL = {
+  'strategies': {
+    groups: [
+      { cta: { label: 'All Strategies', href: '#' },
+        cols: [
+          { h: null, items: ['Alternative Credit', 'Fixed Income', 'Equity', 'Multi-Asset', 'Real assets'] }
+        ] }
+    ],
+    brief: {
+      img: 'assets/img/nav-brief-insights.jpg',
+      title: 'Contact us',
+      body: 'How we think about risk, resilience and long-term value across every strategy we manage. Learn more about our philosophy.',
+      href: '#'
+    }
+  },
+  'insights': NAV['insights'],
+  'resources': NAV['resources'],
+  'who-we-are': NAV['who-we-are']
+};
+
+/* Individual Investors keep everything from Financial Professionals except
+   Resources, which becomes two flat groups: documents/forms and how-to-invest. */
+const NAV_INDIVIDUAL = {
+  'investments': NAV['investments'],
+  'insights': NAV['insights'],
+  'resources': {
+    groups: [
+      { cta: { label: 'Documents and Resources', href: '#' },
+        cols: [
+          { h: null, items: ['Applications & Forms', 'Minimum Investments', 'Fees & Expenses', 'Tax Information', 'Fund Holdings', 'Proxy Voting', 'XBRL Filings'] }
+        ] },
+      { cta: { label: 'Ways to Invest', href: '#' },
+        cols: [
+          { h: null, items: ['Invest Directly', 'Through Your Brokerage', 'Through a Financial Advisor', 'Buy an ETF'] }
+        ] }
+    ]
+  },
+  'who-we-are': NAV['who-we-are']
+};
+
+const ROLES = {
+  'financial-professionals': {
+    label: 'Financial Professional', option: 'Financial Professionals',
+    l1: [['investments', 'Investments'], ['insights', 'Insights'], ['resources', 'Resources'], ['who-we-are', 'Who We Are']],
+    nav: NAV
+  },
+  'institutional-investors': {
+    label: 'Institutional Investor', option: 'Institutional Investors',
+    l1: [['strategies', 'Strategies'], ['insights', 'Insights'], ['who-we-are', 'Who We Are']],
+    nav: NAV_INSTITUTIONAL
+  },
+  'individual-investors': {
+    label: 'Individual Investor', option: 'Individual Investors',
+    l1: [['investments', 'Investments'], ['insights', 'Insights'], ['resources', 'Resources'], ['who-we-are', 'Who We Are']],
+    nav: NAV_INDIVIDUAL
+  },
+  'general-public': {
+    label: 'General Public', option: 'General Public',
+    l1: [['investments', 'Investments'], ['insights', 'Insights'], ['resources', 'Resources'], ['who-we-are', 'Who We Are']],
+    nav: NAV   // placeholder — role-specific nav TBD
+  }
+};
+let currentRole = localStorage.getItem('fei-role');
+if (!ROLES[currentRole]) currentRole = 'financial-professionals';
+const roleData = () => ROLES[currentRole];
+
+/* hooks other modules register so a role change re-renders their UI */
+const roleChangeHooks = [];
+
+function setRole(key) {
+  if (!ROLES[key] || key === currentRole) return;
+  currentRole = key;
+  localStorage.setItem('fei-role', key);
+  buildHeaderL1();
+  syncRoleLabels();
+  roleChangeHooks.forEach(fn => fn());
+}
+
+/* rebuild the desktop L1 buttons for the active role (burger/search stay) */
+function buildHeaderL1() {
+  const nav = document.querySelector('.hdr-l1');
+  if (!nav) return;
+  nav.querySelectorAll('button[data-l1]:not(.hdr-search)').forEach(b => b.remove());
+  const anchor = nav.querySelector('.hdr-burger') || nav.querySelector('.hdr-search');
+  roleData().l1.forEach(([k, label]) => {
+    const b = document.createElement('button');
+    b.dataset.l1 = k;
+    b.textContent = label;
+    nav.insertBefore(b, anchor);
+  });
+}
+
+/* keep every place the role name appears in sync */
+function syncRoleLabels() {
+  const { label } = roleData();
+  const eyebrow = document.querySelector('.hdr-eyebrow-left .utility-nav');
+  if (eyebrow && eyebrow.firstChild) eyebrow.firstChild.textContent = label + ' ';
+  const foot = document.querySelector('.mnav-foot > .utility-nav');
+  if (foot && foot.firstChild) foot.firstChild.textContent = label + ' ';
+  const pzSel = document.querySelector('.mnav-pz-select--role span');
+  if (pzSel) pzSel.textContent = label;
+}
+
+function initRoleSwitcher() {
+  // the current role is the trigger's own label — the list below it only offers the others
+  const optionsHTML = () => Object.entries(ROLES)
+    .filter(([k]) => k !== currentRole)
+    .map(([k, r]) => `<button data-role="${k}">${r.option}</button>`).join('');
+
+  // desktop: eyebrow trigger opens a small dropdown
+  const trigger = document.querySelector('.hdr-eyebrow-left .utility-nav');
+  if (trigger) {
+    trigger.classList.add('role-trigger');
+    const dd = document.createElement('div');
+    dd.className = 'role-dd';
+    trigger.appendChild(dd);
+    // no stopPropagation: the click must bubble so an open mega-menu sees it and closes
+    trigger.addEventListener('click', e => {
+      const opt = e.target.closest('[data-role]');
+      if (opt) { setRole(opt.dataset.role); trigger.classList.remove('open'); return; }
+      dd.innerHTML = optionsHTML();
+      trigger.classList.toggle('open');
+    });
+    document.addEventListener('click', e => {
+      if (e.target.closest('.role-trigger')) return;
+      trigger.classList.remove('open');
+    });
+  }
+
+  // mobile: the personalize sheet's investor-type field is the picker
+  const roleField = document.querySelector('.mnav-pz-field--role');
+  const roleSelect = document.querySelector('.mnav-pz-select--role');
+  if (roleField && roleSelect) {
+    const list = document.createElement('div');
+    list.className = 'mnav-role-list';
+    roleField.appendChild(list);
+    roleSelect.addEventListener('click', () => {
+      list.innerHTML = optionsHTML();
+      roleField.classList.toggle('open');
+    });
+    list.addEventListener('click', e => {
+      const opt = e.target.closest('[data-role]');
+      if (!opt) return;
+      setRole(opt.dataset.role);
+      roleField.classList.remove('open');
+    });
+  }
+
+  buildHeaderL1();
+  syncRoleLabels();
+}
+
 /* Search shares the mega-menu shell: a query field spanning the group area,
    then the same column-group grammar for suggestions. Typing filters the
    funds and insights lists live; popular searches stay put as entry points. */
@@ -320,7 +481,7 @@ function initNavMenu() {
   const menu = document.getElementById('nav-menu');
   const body = document.getElementById('nav-menu-body');
   const overlay = document.getElementById('nav-overlay');
-  const l1Buttons = [...document.querySelectorAll('.hdr-l1 button[data-l1]')];
+  const l1Buttons = () => [...document.querySelectorAll('.hdr-l1 button[data-l1]')];
   if (!menu || !body) return;
   let openKey = null;
 
@@ -365,7 +526,7 @@ function initNavMenu() {
 
   function render(key) {
     if (key === 'search') return renderSearch();
-    const d = NAV[key];
+    const d = roleData().nav[key];
     body.innerHTML =
       `<div class="mm-groups">` +
         d.groups.map(groupHTML).join('<div class="mm-divider" data-anim></div>') +
@@ -425,7 +586,7 @@ function initNavMenu() {
     if (openKey === key) return close();
     const wasOpen = !!openKey;
     openKey = key;
-    l1Buttons.forEach(b => b.classList.toggle('open', b.dataset.l1 === key));
+    l1Buttons().forEach(b => b.classList.toggle('open', b.dataset.l1 === key));
     render(key);
     menu.setAttribute('aria-hidden', 'false');
     menu.classList.add('open');
@@ -439,7 +600,7 @@ function initNavMenu() {
   function close() {
     if (!openKey) return;
     openKey = null;
-    l1Buttons.forEach(b => b.classList.remove('open'));
+    l1Buttons().forEach(b => b.classList.remove('open'));
     overlay.classList.remove('open');
     menu.setAttribute('aria-hidden', 'true');
     menu.classList.remove('open');
@@ -448,13 +609,24 @@ function initNavMenu() {
   }
 
   gsap.set(menu, { opacity: 0, y: -16 });
-  // below the desktop breakpoint the mega-menu is display:none — let the mobile sheet handle these taps
-  l1Buttons.forEach(b => b.addEventListener('click', () => {
+  // delegated: role changes rebuild the L1 buttons, so bind the container.
+  // below the desktop breakpoint the mega-menu is display:none — the mobile sheet handles these taps
+  document.querySelector('.hdr-l1')?.addEventListener('click', e => {
+    const b = e.target.closest('button[data-l1]');
+    if (!b) return;
     if (window.matchMedia('(max-width:1023px)').matches) return;
     open(b.dataset.l1);
-  }));
+  });
+  // a role change while the menu is open re-renders it with the new role's content
+  roleChangeHooks.push(() => { if (openKey) render(openKey); });
   document.getElementById('nav-menu-close').addEventListener('click', close);
   overlay.addEventListener('click', close);
+  // any click outside the open panel closes it (header, logo, eyebrow — not just the scrim)
+  document.addEventListener('click', e => {
+    if (!openKey) return;
+    if (e.target.closest('#nav-menu') || e.target.closest('.hdr-l1 button[data-l1]')) return;
+    close();
+  });
   window.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 
   // Real navigation links (e.g. "Overview" -> about.html) close the menu
@@ -484,10 +656,7 @@ function initMobileNav() {
   const burger = document.getElementById('hdr-burger');
   if (!mnav || !body || !burger) return;
 
-  const L1 = {
-    'investments': 'Investments', 'insights': 'Insights',
-    'resources': 'Resources', 'who-we-are': 'Who We Are'
-  };
+  const l1Label = key => (roleData().l1.find(([k]) => k === key) || [])[1] || key;
   const chevR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
   const arrOut = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14L14 6M8 6h6v6"/></svg>';
   const searchIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>';
@@ -502,7 +671,7 @@ function initMobileNav() {
   function renderL1() {
     body.innerHTML = `
       <div class="mnav-l1">
-        ${Object.entries(L1).map(([k, label]) =>
+        ${roleData().l1.map(([k, label]) =>
           `<button data-mnav-l1="${k}">${label}${chevR}</button>`).join('')}
       </div>
       <div class="mnav-utility">
@@ -515,10 +684,10 @@ function initMobileNav() {
   }
 
   function renderL2(key) {
-    const d = NAV[key];
+    const d = roleData().nav[key];
     body.innerHTML = `
       <div class="mnav-groups">
-        <button class="mnav-back">${chevR}${L1[key]}</button>
+        <button class="mnav-back">${chevR}${l1Label(key)}</button>
         ${d.groups.map(g => `
           <div class="mnav-group">
             <a class="mm-cta" href="${g.cta.href}">${g.cta.label}<span class="mm-cta-icon">${chevR}</span></a>
@@ -621,6 +790,7 @@ function initMobileNav() {
   function toggle() { mnav.classList.contains('open') ? close() : open(); }
 
   burger.addEventListener('click', toggle);
+  roleChangeHooks.push(() => { if (mnav.classList.contains('open')) renderL1(); });
   document.getElementById('mnav-close').addEventListener('click', close);
 
   // footer bar expands the "Personalize Your Experience" sheet upward
@@ -1743,6 +1913,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFades();
   initNavMenu();
   initMobileNav();
+  initRoleSwitcher();
   initProductTicker();
   initFundFilter();
   initMarketViews();
