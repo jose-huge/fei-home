@@ -245,9 +245,9 @@ const NAV = {
     groups: [
       { cta: { label: 'View All Funds', href: '#' },
         cols: [
-          { h: 'By Vehicle', items: ['Mutual Funds', 'ETFs', 'Interval Funds', 'SMAs', 'CITs', 'BDCs'] },
-          { h: 'By Asset Class', items: ['Global Equity', 'US Equity', 'Real Assets', 'Multi-Asset', 'Alternative Credit', 'Real Estate Debt'] },
-          { h: 'By Goal', items: ['Capital Preservation', 'Capital Appreciation', 'Income Generation'] }
+          { h: 'Vehicle', items: ['Mutual Funds', 'ETFs', 'Interval Funds', 'SMAs', 'CITs', 'BDCs'] },
+          { h: 'Asset Class', items: ['Global Equity', 'US Equity', 'Real Assets', 'Multi-Asset', 'Alternative Credit', 'Real Estate Debt'] },
+          { h: 'Goal', items: ['Capital Preservation', 'Capital Appreciation', 'Income Generation'] }
         ] },
       { cta: { label: 'All Capabilities', href: '#' },
         cols: [
@@ -259,7 +259,7 @@ const NAV = {
     groups: [
       { cta: { label: 'All Insights', href: '#' },
         cols: [
-          { h: 'Theme', items: ['Market & Economic', 'Investment Approach', 'Asset Class & Strategy', 'Sectors & Themes', 'Audience & Use Case'] },
+          { h: 'Theme', items: ['Alternative Credit', 'Investment Ideas', 'Fund Updates', 'Gold + Real Assets', 'Market Outlook', 'Municipal Credit', 'Practice Building', 'Retirement Planning'] },
           { h: 'Content Type', items: ['Papers/Articles', 'Podcasts', 'Webinars', 'Videos'] }
         ] },
       { cta: { label: 'Bird’s Eye View Blog', href: '#' },
@@ -356,19 +356,19 @@ const NAV_INDIVIDUAL = {
 
 const ROLES = {
   'financial-professionals': {
-    label: 'Financial Professional', option: 'Financial Professionals',
+    label: 'Advisor', option: 'Advisors',
     l1: [['investments', 'Investments'], ['insights', 'Insights'], ['resources', 'Resources'], ['who-we-are', 'Who We Are']],
     nav: NAV
   },
-  'institutional-investors': {
-    label: 'Institutional Investor', option: 'Institutional Investors',
-    l1: [['strategies', 'Strategies'], ['insights', 'Insights'], ['who-we-are', 'Who We Are']],
-    nav: NAV_INSTITUTIONAL
-  },
   'individual-investors': {
-    label: 'Individual Investor', option: 'Individual Investors',
+    label: 'Individual', option: 'Individuals',
     l1: [['investments', 'Investments'], ['insights', 'Insights'], ['resources', 'Resources'], ['who-we-are', 'Who We Are']],
     nav: NAV_INDIVIDUAL
+  },
+  'institutional-investors': {
+    label: 'Institution', option: 'Institutions',
+    l1: [['strategies', 'Strategies'], ['insights', 'Insights'], ['who-we-are', 'Who We Are']],
+    nav: NAV_INSTITUTIONAL
   }
 };
 let currentRole = localStorage.getItem('fei-role');
@@ -448,7 +448,7 @@ function initRoleSwitcher() {
 const LOCATIONS = {
   us: { label: 'United States', flag: '🇺🇸' },
   uk: { label: 'UK', flag: '🇬🇧' },
-  global: { label: 'Global Site', flag: '🌐' },
+  global: { label: 'Rest of World', flag: '🌐' },
   au: { label: 'Australia', flag: '🇦🇺' },
   at: { label: 'Austria', flag: '🇦🇹' },
   be: { label: 'Belgium', flag: '🇧🇪' },
