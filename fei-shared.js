@@ -241,66 +241,86 @@ function initFundFilter() {
    the right edge, full-bleed top to bottom.
    ============================================================ */
 const NAV = {
+  /* Investments: fourth pilot for the intro+brief template. The last
+     column keeps its own "All capabilities" link+arrow instead of a
+     separate cta group — everything else stays the default navy link. */
   'investments': {
-    groups: [
-      { cta: { label: 'View All Funds', href: '#' },
-        cols: [
-          { h: 'Vehicle', items: ['Mutual Funds', 'ETFs', 'Interval Funds', 'SMAs', 'CITs', 'BDCs'] },
-          { h: 'Asset Class', items: ['Global Equity', 'US Equity', 'Real Assets', 'Multi-Asset', 'Alternative Credit', 'Real Estate Debt'] },
-          { h: 'Goal', items: ['Capital Preservation', 'Capital Appreciation', 'Income Generation'] }
-        ] },
-      { cta: { label: 'All Capabilities', href: '#' },
-        cols: [
-          { h: null, items: ['Equities', 'Fixed Income & Currencies', 'Alternative Credit', 'Real Assets'] }
-        ] }
-    ]
+    panel: {
+      title: 'Investments',
+      body: 'Our strategies, funds, and how we invest.',
+      cta: { label: 'Find Finder', href: '#' },
+      accentLinks: true,
+      cols: [
+        { h: 'Vehicle', items: ['Mutual Funds', 'ETFs', 'Interval Funds', 'SMAs', 'CITs', 'BDCs'] },
+        { h: 'Asset Class', items: ['Global Equity', 'US Equity', 'Real Assets', 'Multi-Asset', 'Alternative Credit', 'Real Estate Debt'] },
+        { h: 'Goal', items: ['Capital Preservation', 'Capital Appreciation', 'Income Generation'] },
+        { h: 'Capabilities', items: ['Equities', 'Fixed Income & Currencies', 'Alternative Credit', 'Real Assets'],
+          more: { label: 'All capabilities', href: '#' } }
+      ]
+    }
+    // no brief — Investments doesn't get the featured/Contact Us rail
   },
+  /* Insights is the second pilot for the new intro+brief template
+     (552:37345): title/body/cta on the left, eyebrow columns kept in
+     the middle (unlike Who We Are's flat list), light-blue brief. */
   'insights': {
-    groups: [
-      { cta: { label: 'All Insights', href: '#' },
-        cols: [
-          { h: 'Theme', items: ['Alternative Credit', 'Investment Ideas', 'Fund Updates', 'Gold + Real Assets', 'Market Outlook', 'Municipal Credit', 'Practice Building', 'Retirement Planning'] },
-          { h: 'Content Type', items: ['Papers/Articles', 'Podcasts', 'Webinars', 'Videos'] }
-        ] },
-      { cta: { label: 'Bird’s Eye View Blog', href: '#' },
-        desc: 'Timely market insights, thoughtful perspectives, and expert commentary — our commitment to providing modern investment solutions to modern challenges.' }
-    ],
-    brief: {
-      img: 'assets/img/nav-brief-insights.jpg', eyebrow: 'Macro & Market Views',
-      title: '2Q26 Market Overview: The Cost of Credibility', href: '#'
-    }
-  },
-  'resources': {
-    groups: [
-      { cta: { label: 'First Eagle Academy', href: '#' },
-        cols: [
-          { h: null, items: ['Practice Management', 'High Net Worth Acquisition', 'Succession Planning', 'Behavioral Finance', 'Earn CE Credit Online', 'Alternative Credit Education'] }
-        ] },
-      { cta: { label: 'Client Servicing', href: '#' },
-        cols: [
-          { h: null, items: ['Account Services', 'Forms & Applications', 'Tax Center', 'FAQs'] }
-        ] },
-      { cta: { label: 'Retirement Solutions', href: 'retirement.html' },
-        desc: 'Education and insights on the issues that matter most to retirement savers and their fiduciaries.' }
-    ],
-    brief: {
-      img: 'assets/img/nav-img-people.png', eyebrow: 'Macro & Market Views',
-      title: '2Q26 Market Overview: The Cost of Credibility', href: '#'
-    }
-  },
-  'who-we-are': {
-    groups: [
-      { cta: { label: 'About First Eagle', href: 'about.html' },
-        cols: [
-          { h: 'Company', items: ['Our Clients', 'Our People & Teams', 'Press & Media', 'Careers'] },
-          { h: 'Culture', items: ['Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)'] }
-        ] }
-    ],
+    panel: {
+      title: 'Insights',
+      body: 'Discover our view on the economy, market and investment strategy in our latest insight articles.',
+      cta: { label: 'Featured Insights', href: '#' },
+      accentLinks: true,
+      cols: [
+        { h: 'Theme', items: ['Alternative Credit', 'Investment Ideas', 'Fund Updates', 'Gold + Real Assets', 'Market Outlook', 'Municipal Credit', 'Practice Building', 'Retirement Planning'] },
+        { h: 'Birds Eye View', items: ['All Blogs'],
+          desc: 'Timely market insights, thoughtful perspectives, and expert commentary — our commitment to providing modern investment solutions to modern challenges.' }
+      ]
+    },
     brief: {
       img: 'assets/img/nav-brief-insights.jpg',
+      eyebrow: 'Macro & Market Views',
+      title: 'Navigating Uncertainty: A Mid-Year Market Outlook',
+      href: '#',
+      light: true
+    }
+  },
+  /* Resources: third pilot for the intro+brief template. Links stay the
+     default oxford-blue (no accentLinks) unlike Insights' cobalt. */
+  'resources': {
+    panel: {
+      title: 'Resources',
+      body: 'Education, tools, and support for your practice.',
+      cta: { label: 'First Eagle Academy', href: '#' },
+      accentLinks: true,
+      cols: [
+        { h: 'First Eagle Academy', items: ['Practice Management', 'High Net Worth Acquisition', 'Succession Planning', 'Behavioral Finance', 'Earn CE Credit Online', 'Alternative Credit Education'] },
+        { h: 'More', items: ['Client Servicing', 'Retirement Solutions|retirement.html'] }
+      ]
+    },
+    brief: {
+      img: 'assets/img/nav-img-people.png',
       title: 'Contact Us',
       body: 'How we think about risk, resilience and long-term value across every strategy we manage. Learn more about our philosophy.',
-      href: '#'
+      href: '#',
+      light: true
+    }
+  },
+  /* Who We Are is the pilot for the new flat-panel layout (552:37345):
+     intro copy + secondary CTA on the left, one flat link list (no
+     sub-column eyebrows) in the middle, light-blue brief on the right.
+     Every other dropdown keeps the eyebrow/cta-column pattern for now. */
+  'who-we-are': {
+    panel: {
+      title: 'Who We Are',
+      body: 'Our firm, our people, and what drives us.',
+      cta: { label: 'Overview', href: 'about.html' },
+      links: ['Our Clients', 'Our People & Teams', 'Press & Media', 'Careers', 'Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)']
+    },
+    brief: {
+      img: 'assets/img/nav-img-people.png',
+      eyebrow: 'Investment Teams',
+      title: 'The people behind our investment strategies.',
+      href: '#',
+      light: true
     }
   }
 };
@@ -315,18 +335,23 @@ const NAV = {
    one All Strategies group, single column, Contact us brief rail.
    The other three L1 panels are shared with Financial Professionals. */
 const NAV_INSTITUTIONAL = {
+  /* Strategies is on the same intro+brief template as the other panels.
+     Links stay the default oxford-blue (no accentLinks). */
   'strategies': {
-    groups: [
-      { cta: { label: 'All Strategies', href: '#' },
-        cols: [
-          { h: null, items: ['Alternative Credit', 'Fixed Income', 'Equity', 'Multi-Asset', 'Real Assets'] }
-        ] }
-    ],
+    panel: {
+      title: 'Strategies',
+      body: 'How we invest across asset classes and mandates.',
+      cta: { label: 'All Strategies', href: '#' },
+      cols: [
+        { h: null, items: ['Alternative Credit', 'Fixed Income', 'Equity', 'Multi-Asset', 'Real Assets'] }
+      ]
+    },
     brief: {
       img: 'assets/img/nav-brief-insights.jpg',
-      title: 'Contact Us',
-      body: 'How we think about risk, resilience and long-term value across every strategy we manage. Learn more about our philosophy.',
-      href: '#'
+      eyebrow: 'Macro & Market Views',
+      title: 'Navigating Uncertainty: A Mid-Year Market Outlook',
+      href: '#',
+      light: true
     }
   },
   'insights': NAV['insights'],
@@ -603,8 +628,8 @@ function initNavMenu() {
 
   const arrR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
 
-  function colsHTML(cols) {
-    return `<div class="mm-cols">` + cols.map(c => `
+  function colsHTML(cols, anim) {
+    return `<div class="mm-cols"${anim ? ' data-anim' : ''}>` + cols.map(c => `
       <div class="mm-col">
         ${c.h ? `<h5>${c.h}</h5>` : ''}
         <ul>
@@ -613,6 +638,8 @@ function initNavMenu() {
             return `<li><a href="${href || '#'}">${label}</a></li>`;
           }).join('')}
         </ul>
+        ${c.desc ? `<p class="mm-desc">${c.desc}</p>` : ''}
+        ${c.more ? `<a class="mm-col-more" href="${c.more.href}">${c.more.label}<span class="mm-col-more-icon">${arrR}</span></a>` : ''}
       </div>`).join('') + `</div>`;
   }
 
@@ -627,7 +654,7 @@ function initNavMenu() {
 
   function briefHTML(b) {
     if (!b) return '';
-    return `<a class="mm-brief" href="${b.href}" data-anim>
+    return `<a class="mm-brief${b.light ? ' mm-brief--light' : ''}" href="${b.href}" data-anim>
          <div class="mm-brief-text">
            <div class="mm-brief-copy">
              ${b.eyebrow ? `<p class="mm-brief-eyebrow">${b.eyebrow}</p>` : ''}
@@ -640,15 +667,40 @@ function initNavMenu() {
        </a>`;
   }
 
+  function flatPanelHTML(p) {
+    const intro = `
+      <div class="mm-flat-intro" data-anim>
+        <div class="mm-flat-intro-copy">
+          <p class="mm-flat-title">${p.title}</p>
+          <p class="mm-flat-body">${p.body}</p>
+        </div>
+        <a class="mm-flat-cta" href="${p.cta.href}">${p.cta.label}</a>
+      </div>`;
+    // "links" is one flat, eyebrow-less list (Who We Are); "cols" keeps the
+    // usual eyebrow-headed columns (Insights) — a panel provides exactly one.
+    const rest = p.links
+      ? `<ul class="mm-flat-links" data-anim>${p.links.map(i => {
+          const [label, href] = i.split('|');
+          return `<li><a href="${href || '#'}">${label}</a></li>`;
+        }).join('')}</ul>`
+      : colsHTML(p.cols, true);
+    return intro + rest;
+  }
+
+  const mailIcon = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14.6673 4.6665L8.67332 8.4845C8.46991 8.60265 8.23888 8.66487 8.00365 8.66487C7.76843 8.66487 7.53739 8.60265 7.33398 8.4845L1.33398 4.6665M2.66732 2.6665H13.334C14.0704 2.6665 14.6673 3.26346 14.6673 3.99984V11.9998C14.6673 12.7362 14.0704 13.3332 13.334 13.3332H2.66732C1.93094 13.3332 1.33398 12.7362 1.33398 11.9998V3.99984C1.33398 3.26346 1.93094 2.6665 2.66732 2.6665Z"/></svg>';
+
   function render(key) {
     menu.classList.toggle('search-open', key === 'search');
     if (key === 'search') return renderSearch();
     const d = roleData().nav[key];
-    body.innerHTML =
-      `<div class="mm-groups">` +
-        d.groups.map(groupHTML).join('<div class="mm-divider" data-anim></div>') +
-      `</div>` +
-      briefHTML(d.brief);
+    const main = d.panel
+      ? `<div class="mm-groups mm-groups--flat${d.panel.accentLinks ? ' mm-groups--flat-accent' : ''}">${flatPanelHTML(d.panel)}</div>`
+      : `<div class="mm-groups">${d.groups.map(groupHTML).join('<div class="mm-divider" data-anim></div>')}</div>`;
+    const quicklinks = `
+      <div class="mm-quicklinks" data-anim>
+        <a class="mm-quicklinks-btn" href="#contact"><span class="mm-quicklinks-icon">${mailIcon}</span>Contact</a>
+      </div>`;
+    body.innerHTML = `<div class="mm-panel">${main}${quicklinks}</div>` + briefHTML(d.brief);
   }
 
   /* ---- search ---- */

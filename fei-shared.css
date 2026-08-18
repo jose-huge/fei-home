@@ -1044,11 +1044,23 @@ main{position:relative;z-index:1;}
 .nav-menu-close svg{width:20px;height:20px;}
 /* content rail: the padded group area, then the brief flush to the right edge */
 #nav-menu-body{flex:1;display:flex;align-items:stretch;min-width:0;}
+.mm-panel{flex:1;min-width:0;display:flex;flex-direction:column;}
 .mm-groups{
   flex:1;min-width:0;display:flex;align-items:stretch;gap:32px;
   padding:48px 24px 48px var(--margin);
   overflow-y:auto;
 }
+/* quicklinks bar (598:86539) — flush to the bottom of the content column, under every panel */
+.mm-quicklinks{background:#f5f7f8;flex-shrink:0;}
+.mm-quicklinks-btn{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:12px 16px;margin-left:var(--margin);
+  font-family:var(--font-water);font-size:calc(16px * var(--ts));line-height:1.3;color:var(--oxford-blue);
+  transition:opacity .2s var(--ease-out);
+}
+.mm-quicklinks-btn:hover{opacity:0.6;}
+.mm-quicklinks-icon{display:flex;width:16px;height:16px;flex-shrink:0;}
+.mm-quicklinks-icon svg{width:16px;height:16px;}
 .mm-group{display:flex;flex-direction:column;gap:16px;align-items:flex-start;flex-shrink:0;}
 /* a group that's only a description can give back width when the row is tight,
    so the fixed 180px link columns never get squeezed */
@@ -1067,6 +1079,14 @@ main{position:relative;z-index:1;}
   font-family:var(--font-water);font-size:calc(16px * var(--ts));line-height:1.3;
   color:var(--text-secondary);max-width:256px;
 }
+.mm-col-more{
+  display:inline-flex;align-items:center;gap:8px;margin-top:8px;
+  font-family:var(--font-water);font-size:calc(16px * var(--ts));line-height:1.3;
+  color:#233c98;white-space:nowrap;transition:opacity .2s var(--ease-out);
+}
+.mm-col-more:hover{opacity:0.7;}
+.mm-col-more-icon{display:flex;width:16px;height:16px;flex-shrink:0;}
+.mm-col-more-icon svg{width:16px;height:16px;}
 .mm-cols{display:flex;gap:32px;align-items:flex-start;}
 /* 180px is the Figma column; let a column grow to fit longer migrated labels
    rather than wrapping them, capped so a dense panel still fits the row */
@@ -1081,6 +1101,33 @@ main{position:relative;z-index:1;}
   color:var(--oxford-blue);transition:color .2s var(--ease-out);
 }
 .mm-col a:hover{color:var(--bright-cobalt);}
+/* ---- flat panel (552:37345) — pilot layout for Who We Are ---- */
+.mm-groups--flat{gap:56px;}
+/* panels on the new intro+brief template use the larger link size;
+   Insights additionally opts into the cobalt accent color */
+.mm-groups--flat .mm-col a{font-size:calc(18px * var(--ts));}
+.mm-groups--flat-accent .mm-col a{color:#233c98;}
+.mm-groups--flat-accent .mm-col a:hover{color:var(--oxford-blue);}
+.mm-flat-intro{width:223px;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-start;gap:24px;}
+.mm-flat-intro-copy{display:flex;flex-direction:column;gap:16px;}
+.mm-flat-title{font-family:var(--font-water);font-size:32px;line-height:1;color:var(--oxford-blue);}
+.mm-flat-body{font-family:var(--font-water);font-size:20px;line-height:1.3;color:var(--oxford-blue);}
+.mm-flat-cta{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:12px 16px;border:1px solid var(--oxford-blue);border-radius:4px;
+  font-family:var(--font-water);font-size:16px;line-height:1.3;color:var(--oxford-blue);
+  transition:opacity .2s var(--ease-out);
+}
+.mm-flat-cta:hover{opacity:0.6;}
+.mm-flat-links{
+  width:243px;flex-shrink:0;list-style:none;
+  display:flex;flex-direction:column;gap:16px;padding:8px 0;
+}
+.mm-flat-links a{
+  font-family:var(--font-water);font-size:calc(18px * var(--ts));line-height:1.3;
+  color:#233c98;white-space:nowrap;transition:color .2s var(--ease-out);
+}
+.mm-flat-links a:hover{color:var(--oxford-blue);}
 /* ---- search: a slim single-row bar, no suggestions (405:63055) ---- */
 #nav-menu.search-open .nav-menu-inner{min-height:0;}
 #nav-menu.search-open #nav-menu-body{padding:16px 80px 16px 32px;}
@@ -1193,6 +1240,8 @@ main{position:relative;z-index:1;}
   transition:background .2s var(--ease-out);
 }
 .mm-brief:hover{background:#d3e0e9;}
+.mm-brief--light{background:#dde5fd;}
+.mm-brief--light:hover{background:#ccd7fb;}
 .mm-brief-text{display:flex;flex-direction:column;gap:24px;padding:24px;}
 .mm-brief-copy{display:flex;flex-direction:column;gap:8px;}
 .mm-brief-eyebrow{
