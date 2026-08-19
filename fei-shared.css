@@ -1288,7 +1288,6 @@ main{position:relative;z-index:1;}
 }
 .gate-terms p{font-family:var(--font-water);font-size:14px;line-height:1.3;color:var(--text-secondary);}
 .gate-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;}
-.gate-footer--solo{justify-content:flex-end;}
 .gate-accept{flex-shrink:0;}
 
 @media (max-width:1023px){
