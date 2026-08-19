@@ -1311,7 +1311,8 @@ main{position:relative;z-index:1;}
   font-family:var(--font-water);font-size:calc(24px * var(--ts));line-height:1.3;
   color:var(--text-primary);
 }
-.mm-brief-icon{display:flex;width:16px;height:16px;color:var(--bright-cobalt);}
+.mm-brief-icon{display:flex;width:16px;height:16px;color:var(--bright-cobalt);transition:transform .2s var(--ease-out);}
+.mm-brief:hover .mm-brief-icon{transform:translateX(4px);}
 .mm-brief-icon svg{width:16px;height:16px;}
 .mm-brief-thumb{height:259px;margin-top:auto;overflow:hidden;}
 .mm-brief-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
