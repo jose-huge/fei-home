@@ -241,9 +241,8 @@ function initFundFilter() {
    the right edge, full-bleed top to bottom.
    ============================================================ */
 const NAV = {
-  /* Investments: fourth pilot for the intro+brief template. The last
-     column keeps its own "All capabilities" link+arrow instead of a
-     separate cta group — everything else stays the default navy link. */
+  /* Investments: fourth pilot for the intro+brief template. Capabilities
+     used to live here as a fourth column; it now sits under Who We Are. */
   'investments': {
     panel: {
       title: 'Investments',
@@ -253,9 +252,7 @@ const NAV = {
       cols: [
         { h: 'Vehicle', items: ['Mutual Funds', 'ETFs', 'Interval Funds', 'SMAs', 'CITs', 'BDCs'] },
         { h: 'Asset Class', items: ['Global Equity', 'US Equity', 'Real Assets', 'Multi-Asset', 'Alternative Credit', 'Real Estate Debt'] },
-        { h: 'Goal', items: ['Capital Preservation', 'Capital Appreciation', 'Income Generation'] },
-        { h: 'Capabilities', items: ['Equities', 'Fixed Income & Currencies', 'Alternative Credit', 'Real Assets'],
-          more: { label: 'All capabilities', href: '#' } }
+        { h: 'Goal', items: ['Capital Preservation', 'Capital Appreciation', 'Income Generation'] }
       ]
     }
     // no brief — Investments doesn't get the featured/Contact Us rail
@@ -304,16 +301,21 @@ const NAV = {
       light: true
     }
   },
-  /* Who We Are is the pilot for the new flat-panel layout (552:37345):
-     intro copy + secondary CTA on the left, one flat link list (no
-     sub-column eyebrows) in the middle, light-blue brief on the right.
-     Every other dropdown keeps the eyebrow/cta-column pattern for now. */
+  /* Who We Are: intro copy + secondary CTA on the left, two eyebrow columns
+     in the middle, light-blue brief on the right. Capabilities moved here
+     from Investments and keeps its own "All capabilities" link+arrow
+     instead of a separate cta group. */
   'who-we-are': {
     panel: {
       title: 'Who We Are',
       body: 'Our firm, our people, and what drives us.',
       cta: { label: 'Overview', href: 'about.html' },
-      links: ['Our Clients', 'Our People & Teams', 'Press & Media', 'Careers', 'Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)']
+      accentLinks: true,
+      cols: [
+        { h: 'First Eagle', items: ['Our Clients', 'Our People & Teams', 'Press & Media', 'Careers', 'Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)'] },
+        { h: 'Capabilities', items: ['Equities', 'Fixed Income & Currencies', 'Alternative Credit', 'Real Assets'],
+          more: { label: 'All capabilities', href: '#' } }
+      ]
     },
     brief: {
       img: 'assets/img/nav-img-people.png',
