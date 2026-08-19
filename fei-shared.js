@@ -360,21 +360,30 @@ const NAV_INSTITUTIONAL = {
 };
 
 /* Individual Investors keep everything from Financial Professionals except
-   Resources, which becomes two flat groups: documents/forms and how-to-invest. */
+   Resources, which moves onto the same intro+brief template as the other
+   panels: documents/forms and how-to-invest as eyebrow columns, plus a
+   featured-insight brief instead of Contact Us. */
 const NAV_INDIVIDUAL = {
   'investments': NAV['investments'],
   'insights': NAV['insights'],
   'resources': {
-    groups: [
-      { cta: { label: 'Documents and Resources', href: '#' },
-        cols: [
-          { h: null, items: ['Applications & Forms', 'Minimum Investments', 'Fees & Expenses', 'Tax Information', 'Fund Holdings', 'Proxy Voting', 'XBRL Filings'] }
-        ] },
-      { cta: { label: 'Ways to Invest', href: '#' },
-        cols: [
-          { h: null, items: ['Invest Directly', 'Through Your Brokerage', 'Through a Financial Advisor', 'Buy an ETF'] }
-        ] }
-    ]
+    panel: {
+      title: 'Resources',
+      body: 'Tools, and support for your financial journey.',
+      cta: { label: 'Explore Resources', href: '#' },
+      accentLinks: true,
+      cols: [
+        { h: 'Documents & Resources', items: ['Applications & Forms', 'Minimum Investments', 'Fees & Expenses', 'Tax Information', 'Fund Holdings', 'Proxy Voting', 'XBRL Filings'] },
+        { h: 'Ways to Invest', items: ['Invest Directly', 'Through Your Brokerage', 'Through a Financial Advisor', 'Buy an ETF'] }
+      ]
+    },
+    brief: {
+      img: 'assets/img/nav-brief-insights.jpg',
+      eyebrow: 'Macro & Market Views',
+      title: 'Navigating Uncertainty: A Mid-Year Market Outlook',
+      href: '#',
+      light: true
+    }
   },
   'who-we-are': NAV['who-we-are']
 };
