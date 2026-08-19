@@ -620,13 +620,25 @@ function initGate() {
     // no back chevron only when reached straight from the eyebrow's location
     // trigger — a "Change" link inside the role step still returns to it
     const back = standaloneLocation ? '' : `<button type="button" class="gate-back" data-gate-act="back" aria-label="Back">${chevL}</button>`;
+    // Rest of World stacks below North America in the same grid column,
+    // labeled "Global" rather than the location's own "Rest of World" label
+    const restOfWorld = `<div class="gate-loc-region">
+        <p class="gate-loc-region-title">Rest of World</p>
+        <div class="gate-loc-region-items">
+          <button type="button" class="gate-loc${staged === 'global' ? ' gate-loc--selected' : ''}" data-gate-loc="global">
+            ${flagHTML('global')}Global</button>
+        </div>
+      </div>`;
     body.innerHTML = `
       <div class="gate-head" data-anim>
         ${back}
         <p class="gate-title">Select Your Location</p>
       </div>
       <p class="gate-body-copy" data-anim>If your location is not listed here, please visit our <button type="button" class="gate-link gate-link--underline" data-gate-loc="global">Global Site</button>.</p>
-      <div class="gate-loc-regions" data-anim>${REGION_ORDER.map(region).join('')}</div>`;
+      <div class="gate-loc-regions" data-anim>
+        <div class="gate-loc-col-1">${region('North America')}${restOfWorld}</div>
+        ${REGION_ORDER.filter(r => r !== 'North America').map(region).join('')}
+      </div>`;
   }
 
   function renderTerms() {
