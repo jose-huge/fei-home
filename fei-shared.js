@@ -381,23 +381,24 @@ const NAV_INDIVIDUAL = {
 
 const ROLES = {
   'financial-professionals': {
-    label: 'Advisor', option: 'Advisors',
+    label: 'Advisor', option: 'Advisors', desc: 'I advise clients on their investments.',
     l1: [['investments', 'Investments'], ['insights', 'Insights'], ['resources', 'Resources'], ['who-we-are', 'Who We Are']],
     nav: NAV
   },
   'individual-investors': {
-    label: 'Individual', option: 'Individuals',
+    label: 'Individual', option: 'Individuals', desc: 'I manage my own investments.',
     l1: [['investments', 'Investments'], ['insights', 'Insights'], ['resources', 'Resources'], ['who-we-are', 'Who We Are']],
     nav: NAV_INDIVIDUAL
   },
   'institutional-investors': {
-    label: 'Institution', option: 'Institutions',
+    label: 'Institution', option: 'Institutions', desc: 'I invest on behalf of a company or fund.',
     l1: [['strategies', 'Strategies'], ['insights', 'Insights'], ['who-we-are', 'Who We Are']],
     nav: NAV_INSTITUTIONAL
   }
 };
-let currentRole = localStorage.getItem('fei-role');
-if (!ROLES[currentRole]) currentRole = 'financial-professionals';
+/* in-memory only — no persistence, so every page load starts as a fresh
+   new visitor and the gate demo can be repeated without clearing storage */
+let currentRole = 'financial-professionals';
 const roleData = () => ROLES[currentRole];
 
 /* hooks other modules register so a role change re-renders their UI */
@@ -406,7 +407,6 @@ const roleChangeHooks = [];
 function setRole(key) {
   if (!ROLES[key] || key === currentRole) return;
   currentRole = key;
-  localStorage.setItem('fei-role', key);
   buildHeaderL1();
   syncRoleLabels();
   roleChangeHooks.forEach(fn => fn());
@@ -493,102 +493,247 @@ const LOCATIONS = {
   ch: { label: 'Switzerland', flag: '🇨🇭' },
   tw: { label: 'Taiwan', flag: '🇹🇼' }
 };
+/* in-memory only, like currentRole above — resets on every reload so the
+   gate's new-visitor state can be demoed repeatedly without clearing storage */
 let currentLocation = 'us';
+let gateSatisfiedFlag = false;
+const gateSatisfied = () => gateSatisfiedFlag;
 
-/* Desktop "Financial Professional / US" modal (402:59809). Selections are
-   staged in the two mini-dropdowns and only committed on Accept, matching
-   the design's explicit confirm step (unlike the instant-apply mobile
-   personalize sheet). */
-function initRoleModal() {
-  const modal = document.getElementById('role-modal');
-  if (!modal) return;
-  const locField = document.getElementById('role-modal-location-field');
-  const locSelect = document.getElementById('role-modal-location-select');
-  const locList = document.getElementById('role-modal-location-list');
-  const roleField = document.getElementById('role-modal-role-field');
-  const roleSelect = document.getElementById('role-modal-role-select');
-  const roleList = document.getElementById('role-modal-role-list');
-  let staged = { location: currentLocation, role: currentRole };
+/* ============================================================
+   ENTRY GATE  (630:46762 / 651:111874 / 630:46967)
+   ------------------------------------------------------------
+   A panel that sits IN THE HEADER'S FLOW between the eyebrow bar
+   and the main nav, pushing the nav and hero down. The eyebrow
+   stays crisp above the scrim; everything from the main nav down
+   is dimmed and blocked. Three steps:
+     1        role cards + current location
+     location country picker
+     terms    institutional disclosure + Accept and Continue
+   New visitors cannot dismiss it — a role must be chosen before
+   entering the site. Once satisfied, the same panel doubles as
+   the eyebrow's role/location switcher and IS dismissible, so a
+   returning user can't get trapped. No close button either way.
+   ============================================================ */
+const GATE_ROLE_ORDER = ['institutional-investors', 'financial-professionals', 'individual-investors'];
 
-  function closeLists() {
-    locField.classList.remove('open');
-    roleField.classList.remove('open');
+const GATE_TERMS = [
+  'By selecting Institutional Investor, you represent that you are a qualified institutional buyer, accredited investor, or otherwise meet the eligibility requirements to receive information intended for institutional use only.',
+  'Materials made available under this designation may include fund characteristics, performance data, and commentary not authorized for distribution to retail investors. First Eagle Investments has not independently verified your eligibility and relies on your representation in providing access.',
+  'Information provided is for informational purposes only and does not constitute an offer or solicitation to buy or sell any security. Past performance is not indicative of future results. All investments involve risk, including possible loss of principal.',
+  'Please review the applicable fund prospectus and disclosure documents before making any investment decision. If you are unsure whether you meet these eligibility requirements, please select a different investor type or contact your First Eagle representative.'
+];
+
+function initGate() {
+  const header = document.getElementById('site-header');
+  const main = header && header.querySelector('.hdr-main');
+  if (!main) return;
+
+  const chevL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>';
+
+  // injected rather than duplicated across the three HTML files
+  const scrim = document.createElement('div');
+  scrim.id = 'gate-scrim';
+  const panel = document.createElement('div');
+  panel.id = 'gate';
+  panel.setAttribute('aria-hidden', 'true');
+  panel.setAttribute('data-lenis-prevent', '');
+  panel.innerHTML = '<div class="gate-inner" id="gate-body"></div>';
+  header.insertBefore(scrim, main);
+  header.insertBefore(panel, main);
+  const body = document.getElementById('gate-body');
+
+  let step = 1;
+  let staged = currentLocation;      // discarded if the user backs out of the picker
+  let openState = false;
+  let tl;
+  // true only when the location step was reached straight from the eyebrow's
+  // location trigger, as opposed to a "Change" link inside the role step
+  let standaloneLocation = false;
+
+  const locLabel = k => `${LOCATIONS[k].label} (EN)`;
+
+  function cardsHTML() {
+    return `<div class="gate-cards" data-anim>` + GATE_ROLE_ORDER.map(k => {
+      const r = ROLES[k];
+      // on the terms step, institutions is the one being decided on;
+      // otherwise, a returning user sees their already-picked role (621:105033)
+      const sel = step === 'terms' ? k === 'institutional-investors' : (gateSatisfied() && k === currentRole);
+      return `<button type="button" class="gate-card${sel ? ' gate-card--selected' : ''}" data-gate-role="${k}">
+        <span class="gate-card-text">
+          <span class="gate-card-title">${r.option}</span>
+          <span class="gate-card-desc">${r.desc}</span>
+        </span>
+        <span class="gate-radio"></span>
+      </button>`;
+    }).join('') + `</div>`;
   }
 
-  function renderLists() {
-    locList.innerHTML = Object.entries(LOCATIONS).map(([k, l], i) =>
-      (i === 3 ? `<div class="role-modal-list-divider"></div>` : '') +
-      `<button data-loc="${k}"><span class="role-modal-flag">${l.flag}</span>${l.label}</button>`).join('');
-    roleList.innerHTML = Object.entries(ROLES).map(([k, r]) =>
-      `<button data-role="${k}">${r.option}</button>`).join('');
+  const introHTML = `
+    <div class="gate-intro" data-anim>
+      <p class="gate-title">Welcome to the First Eagle Investments</p>
+      <p class="gate-body-copy">Please select your <button type="button" class="gate-link" data-gate-act="location">user type</button>.</p>
+    </div>`;
+
+  function renderStep1() {
+    // a returning user reopening the role trigger skips the welcome copy —
+    // already showing their pick — but Your Location always stays visible (621:105033)
+    body.innerHTML = (gateSatisfied() ? '' : introHTML) +
+      `${cardsHTML()}
+       <p class="gate-location" data-anim>
+         <span>Your Location:</span>
+         <strong>${locLabel(staged)}</strong>
+         <button type="button" class="gate-link" data-gate-act="location">Change</button>
+       </p>`;
   }
 
-  const terms = document.getElementById('role-modal-terms');
-  function paintStaged() {
-    locSelect.querySelector('.role-modal-value').textContent = LOCATIONS[staged.location].label;
-    roleSelect.querySelector('.role-modal-value').textContent = ROLES[staged.role].label;
-    if (terms) terms.hidden = staged.role !== 'institutional-investors';
+  function renderLocation() {
+    const keys = Object.keys(LOCATIONS);
+    const cell = k => `<button type="button" class="gate-loc${k === staged ? ' gate-loc--selected' : ''}" data-gate-loc="${k}">
+        <span class="gate-loc-flag">${LOCATIONS[k].flag}</span>${LOCATIONS[k].label}</button>`;
+    // no back chevron only when reached straight from the eyebrow's location
+    // trigger — a "Change" link inside the role step still returns to it
+    const back = standaloneLocation ? '' : `<button type="button" class="gate-back" data-gate-act="back" aria-label="Back">${chevL}</button>`;
+    body.innerHTML = `
+      <div class="gate-head" data-anim>
+        ${back}
+        <p class="gate-title">Select Your Location</p>
+      </div>
+      <div class="gate-locs gate-locs--featured" data-anim>${keys.slice(0, 3).map(cell).join('')}</div>
+      <div class="gate-divider" data-anim></div>
+      <div class="gate-locs" data-anim>${keys.slice(3).map(cell).join('')}</div>`;
   }
 
-  function open() {
-    staged = { location: currentLocation, role: currentRole };
-    renderLists();
-    paintStaged();
-    modal.classList.add('open');
-    modal.setAttribute('aria-hidden', 'false');
-    lenis.stop();
+  function renderTerms() {
+    // a returning user re-picking Institutions skips the welcome copy, but
+    // Your Location always stays visible alongside the button
+    body.innerHTML = (gateSatisfied() ? '' : introHTML) +
+      `${cardsHTML()}
+       <div class="gate-terms" data-anim>${GATE_TERMS.map(p => `<p>${p}</p>`).join('')}</div>
+       <div class="gate-footer" data-anim>
+         <p class="gate-location">
+           <span>Your Location:</span>
+           <strong>${locLabel(staged)}</strong>
+           <button type="button" class="gate-link" data-gate-act="location">Change</button>
+         </p>
+         <button type="button" class="btn gate-accept" data-gate-act="accept">Accept and Continue</button>
+       </div>`;
   }
-  function close() {
-    closeLists();
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden', 'true');
+
+  function render() {
+    if (step === 'location') renderLocation();
+    else if (step === 'terms') renderTerms();
+    else renderStep1();
+  }
+
+  /* step changes re-stagger the content without re-collapsing the panel */
+  function stagger() {
+    gsap.fromTo(body.querySelectorAll('[data-anim]'), { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out', stagger: 0.05 });
+  }
+
+  function goTo(next) { if (next !== 'location') standaloneLocation = false; step = next; render(); stagger(); }
+
+  function openGate(at = 1) {
+    step = at;
+    standaloneLocation = (at === 'location');
+    staged = currentLocation;
+    render();
+    if (openState) { stagger(); return; }
+    openState = true;
+    panel.setAttribute('aria-hidden', 'false');
+    panel.style.display = 'block';
+    // a returning user already has access — no scrim/blur, no scroll lock,
+    // this is just a dropdown reopening, not the blocking first-visit gate
+    if (!gateSatisfied()) { scrim.classList.add('open'); lenis.stop(); }
+    tl && tl.kill();
+    tl = gsap.timeline()
+      .fromTo(panel, { height: 0, opacity: 0 },
+        { height: 'auto', opacity: 1, duration: 0.4, ease: 'power3.out' })
+      .fromTo(body.querySelectorAll('[data-anim]'), { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out', stagger: 0.05 }, 0.1);
+  }
+
+  function closeGate() {
+    if (!openState) return;
+    openState = false;
+    panel.setAttribute('aria-hidden', 'true');
+    scrim.classList.remove('open');
     lenis.start();
+    tl && tl.kill();
+    tl = gsap.timeline({ onComplete: () => {
+      panel.style.display = 'none';
+      gsap.set(panel, { clearProps: 'height,opacity' });
+    } })
+      .to(body.querySelectorAll('[data-anim]'), { opacity: 0, y: 8, duration: 0.18,
+        ease: 'power2.in', stagger: { each: 0.04, from: 'end' } })
+      .to(panel, { height: 0, opacity: 0, duration: 0.3, ease: 'power2.inOut' }, 0.12);
   }
 
-  document.querySelectorAll('.role-modal-trigger').forEach(trigger =>
-    trigger.addEventListener('click', open));
+  /* the eyebrow's role + location labels */
+  function syncGateTriggers() {
+    const roleEl = document.getElementById('gate-trigger-role');
+    const locEl = document.getElementById('gate-trigger-location');
+    if (roleEl && roleEl.firstChild) roleEl.firstChild.textContent = (gateSatisfied() ? roleData().label : 'Role') + ' ';
+    if (locEl && locEl.firstChild) locEl.firstChild.textContent = LOCATIONS[currentLocation].label + ' ';
+  }
 
-  locSelect.addEventListener('click', () => {
-    roleField.classList.remove('open');
-    locField.classList.toggle('open');
-  });
-  roleSelect.addEventListener('click', () => {
-    locField.classList.remove('open');
-    roleField.classList.toggle('open');
-  });
-  locList.addEventListener('click', e => {
-    const opt = e.target.closest('[data-loc]');
-    if (!opt) return;
-    staged.location = opt.dataset.loc;
-    paintStaged();
-    locField.classList.remove('open');
-  });
-  roleList.addEventListener('click', e => {
-    const opt = e.target.closest('[data-role]');
-    if (!opt) return;
-    staged.role = opt.dataset.role;
-    paintStaged();
-    roleField.classList.remove('open');
+  function commit(role) {
+    currentLocation = staged;
+    gateSatisfiedFlag = true;
+    // setRole no-ops when the role is unchanged, which would skip the very
+    // first commit (default role picked for the first time) — force it
+    const forced = role === currentRole;
+    if (forced) currentRole = null;
+    setRole(role);
+    syncGateTriggers();
+    closeGate();
+  }
+
+  body.addEventListener('click', e => {
+    const roleBtn = e.target.closest('[data-gate-role]');
+    if (roleBtn) {
+      const role = roleBtn.dataset.gateRole;
+      // institutions must accept the disclosure first; the others apply straight away
+      if (role === 'institutional-investors') return goTo('terms');
+      // let the radio visibly fill in before committing, so the click reads as a choice, not a jump-cut
+      body.querySelectorAll('.gate-card').forEach(c => c.classList.remove('gate-card--selected'));
+      roleBtn.classList.add('gate-card--selected');
+      setTimeout(() => commit(role), 450);
+      return;
+    }
+    const loc = e.target.closest('[data-gate-loc]');
+    if (loc) {
+      staged = loc.dataset.gateLoc;
+      // reached straight from the eyebrow's location trigger: apply and close.
+      // reached via "Change" inside the role step: still mid-flow, go back to it
+      if (standaloneLocation) {
+        currentLocation = staged;
+        syncGateTriggers();
+        return closeGate();
+      }
+      return goTo(1);
+    }
+    const act = e.target.closest('[data-gate-act]');
+    if (!act) return;
+    if (act.dataset.gateAct === 'location') { standaloneLocation = false; goTo('location'); }
+    else if (act.dataset.gateAct === 'back') goTo(1);
+    else if (act.dataset.gateAct === 'accept') commit('institutional-investors');
   });
 
-  document.getElementById('role-modal-accept').addEventListener('click', () => {
-    currentLocation = staged.location;
-    const locLabel = document.querySelectorAll('.role-modal-trigger')[1];
-    if (locLabel && locLabel.firstChild) locLabel.firstChild.textContent = LOCATIONS[currentLocation].label + ' ';
-    setRole(staged.role);
-    close();
-  });
-  document.getElementById('role-modal-close').addEventListener('click', close);
-  modal.addEventListener('click', e => { if (e.target === modal) close(); });
+  /* dismissible only once the gate has been satisfied — a first-time
+     visitor has to pick a role, a returning user must not get stuck */
+  const dismissible = () => openState && gateSatisfied();
+  scrim.addEventListener('click', () => { if (dismissible()) closeGate(); });
   window.addEventListener('keydown', e => {
-    if (e.key !== 'Escape' || !modal.classList.contains('open')) return;
-    if (locField.classList.contains('open') || roleField.classList.contains('open')) { closeLists(); return; }
-    close();
+    if (e.key === 'Escape' && dismissible()) closeGate();
   });
-  document.addEventListener('click', e => {
-    if (e.target.closest('.role-modal-field')) return;
-    closeLists();
-  });
+
+  document.getElementById('gate-trigger-role')?.addEventListener('click', () => openGate(1));
+  document.getElementById('gate-trigger-location')?.addEventListener('click', () => openGate('location'));
+
+  panel.style.display = 'none';
+  syncGateTriggers();
+  if (!gateSatisfied()) openGate(1);
 }
 
 /* Search (405:63055) — a slim single-row bar in the mega-menu shell.
@@ -777,7 +922,6 @@ function initNavMenu() {
   });
   // a role change while the menu is open re-renders it with the new role's content
   roleChangeHooks.push(() => { if (openKey) render(openKey); });
-  document.getElementById('nav-menu-close').addEventListener('click', close);
   overlay.addEventListener('click', close);
   // any click outside the open panel closes it (header, logo, eyebrow — not just the scrim)
   document.addEventListener('click', e => {
@@ -2073,7 +2217,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavMenu();
   initMobileNav();
   initRoleSwitcher();
-  initRoleModal();
+  initGate();
   initProductTicker();
   initFundFilter();
   initMarketViews();

@@ -26,11 +26,11 @@
     <div class="hdr-eyebrow">
       <div class="container hdr-eyebrow-inner">
         <div class="hdr-eyebrow-left">
-          <span class="utility-nav role-modal-trigger">Financial Professional
+          <span class="utility-nav gate-trigger" id="gate-trigger-role">Financial Professional
             <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg>
           </span>
-          <span class="utility-nav" style="padding-left:0;">/</span>
-          <span class="utility-nav role-modal-trigger">US
+          <span class="hdr-eyebrow-divider"></span>
+          <span class="utility-nav gate-trigger" id="gate-trigger-location">US
             <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg>
           </span>
         </div>
@@ -62,49 +62,8 @@
 
   <div id="nav-overlay"></div>
 
-  <!-- Location + Role modal (402:59809) -->
-  <div id="role-modal" aria-hidden="true" data-lenis-prevent>
-    <div class="role-modal-card">
-      <button class="role-modal-close" id="role-modal-close" aria-label="Close">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
-      </button>
-      <a class="hdr-logo role-modal-logo" href="index.html"><img src="assets/img/FEI-Logo-color.svg" alt="First Eagle Investments"></a>
-      <div class="role-modal-body">
-        <p class="role-modal-title">Select your Location and Role</p>
-        <div class="role-modal-fields">
-          <div class="role-modal-field" id="role-modal-location-field">
-            <p class="role-modal-label">Select a Location</p>
-            <button class="role-modal-select" id="role-modal-location-select" type="button">
-              <span class="role-modal-flag">&#127482;&#127480;</span>
-              <span class="role-modal-value">United States</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </button>
-            <div class="role-modal-list" id="role-modal-location-list"></div>
-          </div>
-          <div class="role-modal-field" id="role-modal-role-field">
-            <p class="role-modal-label">Select a Role</p>
-            <button class="role-modal-select" id="role-modal-role-select" type="button">
-              <span class="role-modal-value">Individual Investor</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </button>
-            <div class="role-modal-list" id="role-modal-role-list"></div>
-          </div>
-        </div>
-        <div class="role-modal-terms" id="role-modal-terms" hidden>
-          <p>By selecting Institutional Investor, you represent that you are a qualified institutional buyer, accredited investor, or otherwise meet the eligibility requirements to receive information intended for institutional use only.</p>
-          <p>Materials made available under this designation may include fund characteristics, performance data, and commentary not authorized for distribution to retail investors. First Eagle Investments has not independently verified your eligibility and relies on your representation in providing access.</p>
-          <p>Information provided is for informational purposes only and does not constitute an offer or solicitation to buy or sell any security. Past performance is not indicative of future results. All investments involve risk, including possible loss of principal.</p>
-          <p>Please review the applicable fund prospectus and disclosure documents before making any investment decision. If you are unsure whether you meet these eligibility requirements, please select a different investor type or contact your First Eagle representative.</p>
-        </div>
-        <button class="btn role-modal-accept" id="role-modal-accept" type="button">Accept and Continue</button>
-      </div>
-    </div>
-  </div>
   <div id="nav-menu" aria-hidden="true" data-lenis-prevent>
     <div class="nav-menu-inner">
-      <button class="nav-menu-close" id="nav-menu-close" aria-label="Close menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
-      </button>
       <div id="nav-menu-body"><!-- built by JS --></div>
     </div>
   </div>
