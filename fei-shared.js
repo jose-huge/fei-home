@@ -590,6 +590,10 @@ function initGate() {
   // location trigger, as opposed to a "Change" link inside the role step
   let standaloneLocation = false;
   let termsRole = null;              // which role's disclosure the terms step is showing
+  // the role a "Change" (non-standalone) location pick should return terms
+  // for — the role being decided on if we're mid-terms, else the already-
+  // committed role for a returning user; null if there's no role context yet
+  let locationReturnRole = null;
 
   const locLabel = k => `${LOCATIONS[k].label} (EN)`;
 
@@ -736,13 +740,13 @@ function initGate() {
     const roleEl = document.getElementById('gate-trigger-role');
     const locEl = document.getElementById('gate-trigger-location');
     if (roleEl && roleEl.firstChild) roleEl.firstChild.textContent = (gateSatisfied() ? roleData().label : 'Role') + ' ';
-    if (locEl && locEl.firstChild) locEl.firstChild.textContent = LOCATIONS[currentLocation].label + ' ';
+    if (locEl && locEl.firstChild) locEl.firstChild.textContent = (currentLocation === 'global' ? 'Global' : LOCATIONS[currentLocation].label) + ' ';
   }
 
   function commit(role) {
     // the new role may not be served where they are (e.g. an advisor in Japan
-    // switching to Individuals) — fall back to the US site
-    if (!locationAllowed(role, staged)) staged = 'us';
+    // switching to Individuals, who only get US or Global) — fall back to Global
+    if (!locationAllowed(role, staged)) staged = 'global';
     currentLocation = staged;
     gateSatisfiedFlag = true;
     // setRole no-ops when the role is unchanged, which would skip the very
@@ -769,12 +773,16 @@ function initGate() {
     const loc = e.target.closest('[data-gate-loc]');
     if (loc) {
       staged = loc.dataset.gateLoc;
-      // reached via "Change" inside the role step: still mid-flow, go back to it
-      if (!standaloneLocation) return goTo(1);
-      // eligibility for a gated role is per-jurisdiction, so changing location
-      // sends them back through the disclosure rather than applying silently.
-      // commit() is what finally moves `staged` into currentLocation, so
-      // backing out here leaves the old location in place.
+      // reached via "Change" inside the role step: still mid-flow. If a gated
+      // role is in play (being decided on, or already committed), eligibility
+      // is per-jurisdiction, so re-show its disclosure instead of just going
+      // back to step 1 — commit() is what finally applies `staged`, so
+      // landing on terms here leaves the old location in place until Accept.
+      if (!standaloneLocation) {
+        if (needsTerms(locationReturnRole)) { termsRole = locationReturnRole; return goTo('terms'); }
+        return goTo(1);
+      }
+      // reached straight from the eyebrow's location trigger, same rule applies
       if (needsTerms(currentRole)) { termsRole = currentRole; return goTo('terms'); }
       // ungated role: a standalone location pick applies and closes
       currentLocation = staged;
@@ -783,7 +791,11 @@ function initGate() {
     }
     const act = e.target.closest('[data-gate-act]');
     if (!act) return;
-    if (act.dataset.gateAct === 'location') { standaloneLocation = false; goTo('location'); }
+    if (act.dataset.gateAct === 'location') {
+      standaloneLocation = false;
+      locationReturnRole = step === 'terms' ? termsRole : (gateSatisfied() ? currentRole : null);
+      goTo('location');
+    }
     else if (act.dataset.gateAct === 'back') goTo(1);
     else if (act.dataset.gateAct === 'accept') commit(termsRole);
   });
