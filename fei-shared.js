@@ -470,29 +470,35 @@ function initRoleSwitcher() {
    picker is built to take more without changing its behavior. */
 /* order matches the Figma list (408:63271): US / UK / Global Site, then
    the rest alphabetically. Always defaults to United States for now. */
+/* iso is the flagcdn.com country code (differs from the key only for uk/global) */
 const LOCATIONS = {
-  us: { label: 'United States', flag: '🇺🇸' },
-  uk: { label: 'UK', flag: '🇬🇧' },
-  global: { label: 'Rest of World', flag: '🌐' },
-  au: { label: 'Australia', flag: '🇦🇺' },
-  at: { label: 'Austria', flag: '🇦🇹' },
-  be: { label: 'Belgium', flag: '🇧🇪' },
-  dk: { label: 'Denmark', flag: '🇩🇰' },
-  fi: { label: 'Finland', flag: '🇫🇮' },
-  fr: { label: 'France', flag: '🇫🇷' },
-  de: { label: 'Germany', flag: '🇩🇪' },
-  ie: { label: 'Ireland', flag: '🇮🇪' },
-  it: { label: 'Italy', flag: '🇮🇹' },
-  jp: { label: 'Japan', flag: '🇯🇵' },
-  lu: { label: 'Luxembourg', flag: '🇱🇺' },
-  nl: { label: 'Netherlands', flag: '🇳🇱' },
-  pt: { label: 'Portugal', flag: '🇵🇹' },
-  sg: { label: 'Singapore', flag: '🇸🇬' },
-  kr: { label: 'South Korea', flag: '🇰🇷' },
-  es: { label: 'Spain', flag: '🇪🇸' },
-  ch: { label: 'Switzerland', flag: '🇨🇭' },
-  tw: { label: 'Taiwan', flag: '🇹🇼' }
+  us: { label: 'United States', iso: 'us' },
+  uk: { label: 'UK', iso: 'gb' },
+  global: { label: 'Rest of World', iso: null },
+  au: { label: 'Australia', iso: 'au' },
+  at: { label: 'Austria', iso: 'at' },
+  be: { label: 'Belgium', iso: 'be' },
+  dk: { label: 'Denmark', iso: 'dk' },
+  fi: { label: 'Finland', iso: 'fi' },
+  fr: { label: 'France', iso: 'fr' },
+  de: { label: 'Germany', iso: 'de' },
+  ie: { label: 'Ireland', iso: 'ie' },
+  it: { label: 'Italy', iso: 'it' },
+  jp: { label: 'Japan', iso: 'jp' },
+  lu: { label: 'Luxembourg', iso: 'lu' },
+  nl: { label: 'Netherlands', iso: 'nl' },
+  pt: { label: 'Portugal', iso: 'pt' },
+  sg: { label: 'Singapore', iso: 'sg' },
+  kr: { label: 'South Korea', iso: 'kr' },
+  es: { label: 'Spain', iso: 'es' },
+  ch: { label: 'Switzerland', iso: 'ch' },
+  tw: { label: 'Taiwan', iso: 'tw' }
 };
+/* real flag images (flagcdn.com) — falls back to a globe glyph for Rest of World */
+const globeIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 4 5.7 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.7-4-9s1.5-6.5 4-9z"/></svg>';
+const flagHTML = k => LOCATIONS[k].iso
+  ? `<img class="gate-loc-flag" src="https://flagcdn.com/${LOCATIONS[k].iso}.svg" alt="" width="20" height="15" onerror="this.remove()">`
+  : `<span class="gate-loc-flag gate-loc-flag--globe">${globeIcon}</span>`;
 /* in-memory only, like currentRole above — resets on every reload so the
    gate's new-visitor state can be demoed repeatedly without clearing storage */
 let currentLocation = 'us';
@@ -592,7 +598,7 @@ function initGate() {
   function renderLocation() {
     const keys = Object.keys(LOCATIONS);
     const cell = k => `<button type="button" class="gate-loc${k === staged ? ' gate-loc--selected' : ''}" data-gate-loc="${k}">
-        <span class="gate-loc-flag">${LOCATIONS[k].flag}</span>${LOCATIONS[k].label}</button>`;
+        ${flagHTML(k)}${LOCATIONS[k].label}</button>`;
     // no back chevron only when reached straight from the eyebrow's location
     // trigger — a "Change" link inside the role step still returns to it
     const back = standaloneLocation ? '' : `<button type="button" class="gate-back" data-gate-act="back" aria-label="Back">${chevL}</button>`;

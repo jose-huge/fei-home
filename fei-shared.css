@@ -1255,7 +1255,9 @@ main{position:relative;z-index:1;}
 }
 .gate-loc:hover{background:#eef1f4;}
 .gate-loc--selected{background:#f5f7f8;}
-.gate-loc-flag{font-size:18px;line-height:1;flex-shrink:0;}
+.gate-loc-flag{width:20px;height:15px;flex-shrink:0;object-fit:cover;border-radius:2px;box-shadow:0 0 0 1px rgba(35,60,152,0.12);}
+.gate-loc-flag--globe{display:flex;align-items:center;justify-content:center;color:var(--oxford-blue);box-shadow:none;}
+.gate-loc-flag--globe svg{width:16px;height:16px;}
 .gate-divider{height:1px;width:100%;background:rgba(35,60,152,0.1);}
 /* institutional disclosure — the old modal's scrollable-terms recipe */
 .gate-terms{
