@@ -506,6 +506,11 @@ const LOCATIONS = {
   ch: { label: 'Switzerland', iso: 'ch', region: 'Europe and the Middle East' },
   tw: { label: 'Taiwan', iso: 'tw', region: 'Asia Pacific' }
 };
+/* Some roles are only served in certain locations — individuals get the US
+   site and the global site, nothing else. A role absent here is unrestricted. */
+const ROLE_LOCATIONS = { 'individual-investors': ['us', 'global'] };
+const locationAllowed = (role, k) => !ROLE_LOCATIONS[role] || ROLE_LOCATIONS[role].includes(k);
+
 /* real flag images (flagcdn.com) — falls back to a globe glyph for Rest of World */
 const globeIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 4 5.7 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.7-4-9s1.5-6.5 4-9z"/></svg>';
 const flagHTML = k => LOCATIONS[k].iso
@@ -526,7 +531,7 @@ const gateSatisfied = () => gateSatisfiedFlag;
    is dimmed and blocked. Three steps:
      1        role cards + current location
      location country picker
-     terms    institutional disclosure + Accept and Continue
+     terms    the selected role's disclosure + Accept and Continue
    New visitors cannot dismiss it — a role must be chosen before
    entering the site. Once satisfied, the same panel doubles as
    the eyebrow's role/location switcher and IS dismissible, so a
@@ -534,12 +539,27 @@ const gateSatisfied = () => gateSatisfiedFlag;
    ============================================================ */
 const GATE_ROLE_ORDER = ['institutional-investors', 'financial-professionals', 'individual-investors'];
 
-const GATE_TERMS = [
-  'By selecting Institutional Investor, you represent that you are a qualified institutional buyer, accredited investor, or otherwise meet the eligibility requirements to receive information intended for institutional use only.',
-  'Materials made available under this designation may include fund characteristics, performance data, and commentary not authorized for distribution to retail investors. First Eagle Investments has not independently verified your eligibility and relies on your representation in providing access.',
+/* Disclosures are per-role: a role listed here must accept its terms before
+   entering, and must re-accept whenever the location changes (eligibility is
+   per-jurisdiction). Individuals aren't gated and apply straight away.
+   The closing two paragraphs are identical across roles. */
+const GATE_TERMS_COMMON = [
   'Information provided is for informational purposes only and does not constitute an offer or solicitation to buy or sell any security. Past performance is not indicative of future results. All investments involve risk, including possible loss of principal.',
   'Please review the applicable fund prospectus and disclosure documents before making any investment decision. If you are unsure whether you meet these eligibility requirements, please select a different investor type or contact your First Eagle representative.'
 ];
+const GATE_TERMS = {
+  'institutional-investors': [
+    'By selecting Institutional Investor, you represent that you are a qualified institutional buyer, accredited investor, or otherwise meet the eligibility requirements to receive information intended for institutional use only.',
+    'Materials made available under this designation may include fund characteristics, performance data, and commentary not authorized for distribution to retail investors. First Eagle Investments has not independently verified your eligibility and relies on your representation in providing access.',
+    ...GATE_TERMS_COMMON
+  ],
+  'financial-professionals': [
+    'By selecting Advisor, you represent that you are a registered representative, investment adviser, or other financial intermediary acting in a professional capacity, and not a retail investor accessing this information for your own account.',
+    'Materials made available under this designation may include strategy detail, performance data, and commentary intended for professional use and not authorized for distribution to retail investors. First Eagle Investments has not independently verified your status and relies on your representation in providing access.',
+    ...GATE_TERMS_COMMON
+  ]
+};
+const needsTerms = role => !!GATE_TERMS[role];
 
 function initGate() {
   const header = document.getElementById('site-header');
@@ -567,15 +587,16 @@ function initGate() {
   // true only when the location step was reached straight from the eyebrow's
   // location trigger, as opposed to a "Change" link inside the role step
   let standaloneLocation = false;
+  let termsRole = null;              // which role's disclosure the terms step is showing
 
   const locLabel = k => `${LOCATIONS[k].label} (EN)`;
 
   function cardsHTML() {
     return `<div class="gate-cards" data-anim>` + GATE_ROLE_ORDER.map(k => {
       const r = ROLES[k];
-      // on the terms step, institutions is the one being decided on;
+      // on the terms step, the role being decided on is the selected one;
       // otherwise, a returning user sees their already-picked role (621:105033)
-      const sel = step === 'terms' ? k === 'institutional-investors' : (gateSatisfied() && k === currentRole);
+      const sel = step === 'terms' ? k === termsRole : (gateSatisfied() && k === currentRole);
       return `<button type="button" class="gate-card${sel ? ' gate-card--selected' : ''}" data-gate-role="${k}">
         <span class="gate-card-text">
           <span class="gate-card-title">${r.option}</span>
@@ -610,8 +631,12 @@ function initGate() {
   function renderLocation() {
     const cell = k => `<button type="button" class="gate-loc${k === staged ? ' gate-loc--selected' : ''}" data-gate-loc="${k}">
         ${flagHTML(k)}${LOCATIONS[k].label}</button>`;
+    // once a role is set, hide the locations it isn't served in; before that
+    // (first visit, reached via "Change") there's no role to restrict by yet
+    const allowed = k => locationAllowed(gateSatisfied() ? currentRole : null, k);
     const region = r => {
-      const keys = Object.keys(LOCATIONS).filter(k => LOCATIONS[k].region === r);
+      const keys = Object.keys(LOCATIONS).filter(k => LOCATIONS[k].region === r && allowed(k));
+      if (!keys.length) return '';
       return `<div class="gate-loc-region${keys.length > 6 ? ' gate-loc-region--split' : ''}">
           <p class="gate-loc-region-title">${r}</p>
           <div class="gate-loc-region-items">${keys.map(cell).join('')}</div>
@@ -642,8 +667,8 @@ function initGate() {
   }
 
   function renderTerms() {
-    // a returning user re-picking Institutions just sees cards, terms, and
-    // the button — no welcome copy, no location line (same rule as renderStep1)
+    // a returning user re-accepting just sees cards, terms, and the button —
+    // no welcome copy, no location line (same rule as renderStep1)
     const satisfied = gateSatisfied();
     const footer = satisfied
       ? `<div class="gate-footer gate-footer--solo" data-anim>
@@ -659,7 +684,7 @@ function initGate() {
          </div>`;
     body.innerHTML = (satisfied ? '' : introHTML) +
       `${cardsHTML()}
-       <div class="gate-terms" data-anim>${GATE_TERMS.map(p => `<p>${p}</p>`).join('')}</div>
+       <div class="gate-terms" data-anim>${(GATE_TERMS[termsRole] || []).map(p => `<p>${p}</p>`).join('')}</div>
        ${footer}`;
   }
 
@@ -722,6 +747,9 @@ function initGate() {
   }
 
   function commit(role) {
+    // the new role may not be served where they are (e.g. an advisor in Japan
+    // switching to Individuals) — fall back to the US site
+    if (!locationAllowed(role, staged)) staged = 'us';
     currentLocation = staged;
     gateSatisfiedFlag = true;
     // setRole no-ops when the role is unchanged, which would skip the very
@@ -737,8 +765,8 @@ function initGate() {
     const roleBtn = e.target.closest('[data-gate-role]');
     if (roleBtn) {
       const role = roleBtn.dataset.gateRole;
-      // institutions must accept the disclosure first; the others apply straight away
-      if (role === 'institutional-investors') return goTo('terms');
+      // gated roles must accept their disclosure first; the rest apply straight away
+      if (needsTerms(role)) { termsRole = role; return goTo('terms'); }
       // let the radio visibly fill in before committing, so the click reads as a choice, not a jump-cut
       body.querySelectorAll('.gate-card').forEach(c => c.classList.remove('gate-card--selected'));
       roleBtn.classList.add('gate-card--selected');
@@ -748,20 +776,23 @@ function initGate() {
     const loc = e.target.closest('[data-gate-loc]');
     if (loc) {
       staged = loc.dataset.gateLoc;
-      // reached straight from the eyebrow's location trigger: apply and close.
       // reached via "Change" inside the role step: still mid-flow, go back to it
-      if (standaloneLocation) {
-        currentLocation = staged;
-        syncGateTriggers();
-        return closeGate();
-      }
-      return goTo(1);
+      if (!standaloneLocation) return goTo(1);
+      // eligibility for a gated role is per-jurisdiction, so changing location
+      // sends them back through the disclosure rather than applying silently.
+      // commit() is what finally moves `staged` into currentLocation, so
+      // backing out here leaves the old location in place.
+      if (needsTerms(currentRole)) { termsRole = currentRole; return goTo('terms'); }
+      // ungated role: a standalone location pick applies and closes
+      currentLocation = staged;
+      syncGateTriggers();
+      return closeGate();
     }
     const act = e.target.closest('[data-gate-act]');
     if (!act) return;
     if (act.dataset.gateAct === 'location') { standaloneLocation = false; goTo('location'); }
     else if (act.dataset.gateAct === 'back') goTo(1);
-    else if (act.dataset.gateAct === 'accept') commit('institutional-investors');
+    else if (act.dataset.gateAct === 'accept') commit(termsRole);
   });
 
   /* dismissible only once the gate has been satisfied — a first-time
