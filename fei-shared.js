@@ -314,7 +314,7 @@ const NAV = {
       cols: [
         { h: 'First Eagle', items: ['Our Clients', 'Our People & Teams', 'Press & Media', 'Careers', 'Investment Culture', 'Engagement and Inclusion', 'Corporate Social Responsibility', 'Responsible Investing (ESG)'] },
         { h: 'Capabilities', items: ['Equities', 'Fixed Income & Currencies', 'Alternative Credit', 'Real Assets'],
-          more: { label: 'All capabilities', href: '#' } }
+          more: { label: 'All Capabilities', href: '#' } }
       ]
     },
     brief: {
