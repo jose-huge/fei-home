@@ -571,19 +571,22 @@ function initGate() {
   const introHTML = `
     <div class="gate-intro" data-anim>
       <p class="gate-title">Welcome to the First Eagle Investments</p>
-      <p class="gate-body-copy">Please select your <button type="button" class="gate-link" data-gate-act="location">user type</button>.</p>
+      <p class="gate-body-copy">Please select your user type.</p>
     </div>`;
 
   function renderStep1() {
-    // a returning user reopening the role trigger skips the welcome copy —
-    // already showing their pick — but Your Location always stays visible (621:105033)
-    body.innerHTML = (gateSatisfied() ? '' : introHTML) +
-      `${cardsHTML()}
+    // a returning user reopening the role trigger just sees the cards,
+    // already showing their pick — welcome copy and location line are
+    // first-visit-only (621:105033)
+    const satisfied = gateSatisfied();
+    body.innerHTML = (satisfied ? '' : introHTML) +
+      `${cardsHTML()}` +
+      (satisfied ? '' : `
        <p class="gate-location" data-anim>
          <span>Your Location:</span>
          <strong>${locLabel(staged)}</strong>
          <button type="button" class="gate-link" data-gate-act="location">Change</button>
-       </p>`;
+       </p>`);
   }
 
   function renderLocation() {
@@ -604,19 +607,25 @@ function initGate() {
   }
 
   function renderTerms() {
-    // a returning user re-picking Institutions skips the welcome copy, but
-    // Your Location always stays visible alongside the button
-    body.innerHTML = (gateSatisfied() ? '' : introHTML) +
+    // a returning user re-picking Institutions just sees cards, terms, and
+    // the button — no welcome copy, no location line (same rule as renderStep1)
+    const satisfied = gateSatisfied();
+    const footer = satisfied
+      ? `<div class="gate-footer gate-footer--solo" data-anim>
+           <button type="button" class="btn gate-accept" data-gate-act="accept">Accept and Continue</button>
+         </div>`
+      : `<div class="gate-footer" data-anim>
+           <p class="gate-location">
+             <span>Your Location:</span>
+             <strong>${locLabel(staged)}</strong>
+             <button type="button" class="gate-link" data-gate-act="location">Change</button>
+           </p>
+           <button type="button" class="btn gate-accept" data-gate-act="accept">Accept and Continue</button>
+         </div>`;
+    body.innerHTML = (satisfied ? '' : introHTML) +
       `${cardsHTML()}
        <div class="gate-terms" data-anim>${GATE_TERMS.map(p => `<p>${p}</p>`).join('')}</div>
-       <div class="gate-footer" data-anim>
-         <p class="gate-location">
-           <span>Your Location:</span>
-           <strong>${locLabel(staged)}</strong>
-           <button type="button" class="gate-link" data-gate-act="location">Change</button>
-         </p>
-         <button type="button" class="btn gate-accept" data-gate-act="accept">Accept and Continue</button>
-       </div>`;
+       ${footer}`;
   }
 
   function render() {
