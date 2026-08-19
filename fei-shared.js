@@ -480,28 +480,31 @@ function initRoleSwitcher() {
 /* order matches the Figma list (408:63271): US / UK / Global Site, then
    the rest alphabetically. Always defaults to United States for now. */
 /* iso is the flagcdn.com country code (differs from the key only for uk/global) */
+/* region groups the location list; "global" has none — it's reached via
+   the "visit our Global Site" copy instead of sitting in the grid */
+const REGION_ORDER = ['North America', 'Europe and the Middle East', 'Asia Pacific'];
 const LOCATIONS = {
-  us: { label: 'United States', iso: 'us' },
-  uk: { label: 'UK', iso: 'gb' },
+  us: { label: 'United States', iso: 'us', region: 'North America' },
+  uk: { label: 'UK', iso: 'gb', region: 'Europe and the Middle East' },
   global: { label: 'Rest of World', iso: null },
-  au: { label: 'Australia', iso: 'au' },
-  at: { label: 'Austria', iso: 'at' },
-  be: { label: 'Belgium', iso: 'be' },
-  dk: { label: 'Denmark', iso: 'dk' },
-  fi: { label: 'Finland', iso: 'fi' },
-  fr: { label: 'France', iso: 'fr' },
-  de: { label: 'Germany', iso: 'de' },
-  ie: { label: 'Ireland', iso: 'ie' },
-  it: { label: 'Italy', iso: 'it' },
-  jp: { label: 'Japan', iso: 'jp' },
-  lu: { label: 'Luxembourg', iso: 'lu' },
-  nl: { label: 'Netherlands', iso: 'nl' },
-  pt: { label: 'Portugal', iso: 'pt' },
-  sg: { label: 'Singapore', iso: 'sg' },
-  kr: { label: 'South Korea', iso: 'kr' },
-  es: { label: 'Spain', iso: 'es' },
-  ch: { label: 'Switzerland', iso: 'ch' },
-  tw: { label: 'Taiwan', iso: 'tw' }
+  au: { label: 'Australia', iso: 'au', region: 'Asia Pacific' },
+  at: { label: 'Austria', iso: 'at', region: 'Europe and the Middle East' },
+  be: { label: 'Belgium', iso: 'be', region: 'Europe and the Middle East' },
+  dk: { label: 'Denmark', iso: 'dk', region: 'Europe and the Middle East' },
+  fi: { label: 'Finland', iso: 'fi', region: 'Europe and the Middle East' },
+  fr: { label: 'France', iso: 'fr', region: 'Europe and the Middle East' },
+  de: { label: 'Germany', iso: 'de', region: 'Europe and the Middle East' },
+  ie: { label: 'Ireland', iso: 'ie', region: 'Europe and the Middle East' },
+  it: { label: 'Italy', iso: 'it', region: 'Europe and the Middle East' },
+  jp: { label: 'Japan', iso: 'jp', region: 'Asia Pacific' },
+  lu: { label: 'Luxembourg', iso: 'lu', region: 'Europe and the Middle East' },
+  nl: { label: 'Netherlands', iso: 'nl', region: 'Europe and the Middle East' },
+  pt: { label: 'Portugal', iso: 'pt', region: 'Europe and the Middle East' },
+  sg: { label: 'Singapore', iso: 'sg', region: 'Asia Pacific' },
+  kr: { label: 'South Korea', iso: 'kr', region: 'Asia Pacific' },
+  es: { label: 'Spain', iso: 'es', region: 'Europe and the Middle East' },
+  ch: { label: 'Switzerland', iso: 'ch', region: 'Europe and the Middle East' },
+  tw: { label: 'Taiwan', iso: 'tw', region: 'Asia Pacific' }
 };
 /* real flag images (flagcdn.com) — falls back to a globe glyph for Rest of World */
 const globeIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 4 5.7 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.7-4-9s1.5-6.5 4-9z"/></svg>';
@@ -605,9 +608,15 @@ function initGate() {
   }
 
   function renderLocation() {
-    const keys = Object.keys(LOCATIONS);
     const cell = k => `<button type="button" class="gate-loc${k === staged ? ' gate-loc--selected' : ''}" data-gate-loc="${k}">
         ${flagHTML(k)}${LOCATIONS[k].label}</button>`;
+    const region = r => {
+      const keys = Object.keys(LOCATIONS).filter(k => LOCATIONS[k].region === r);
+      return `<div class="gate-loc-region${keys.length > 6 ? ' gate-loc-region--split' : ''}">
+          <p class="gate-loc-region-title">${r}</p>
+          <div class="gate-loc-region-items">${keys.map(cell).join('')}</div>
+        </div>`;
+    };
     // no back chevron only when reached straight from the eyebrow's location
     // trigger — a "Change" link inside the role step still returns to it
     const back = standaloneLocation ? '' : `<button type="button" class="gate-back" data-gate-act="back" aria-label="Back">${chevL}</button>`;
@@ -616,9 +625,8 @@ function initGate() {
         ${back}
         <p class="gate-title">Select Your Location</p>
       </div>
-      <div class="gate-locs gate-locs--featured" data-anim>${keys.slice(0, 3).map(cell).join('')}</div>
-      <div class="gate-divider" data-anim></div>
-      <div class="gate-locs" data-anim>${keys.slice(3).map(cell).join('')}</div>`;
+      <p class="gate-body-copy" data-anim>If your location is not listed here, please visit our <button type="button" class="gate-link gate-link--underline" data-gate-loc="global">Global Site</button>.</p>
+      <div class="gate-loc-regions" data-anim>${REGION_ORDER.map(region).join('')}</div>`;
   }
 
   function renderTerms() {
